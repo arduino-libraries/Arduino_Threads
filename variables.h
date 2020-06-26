@@ -8,3 +8,5 @@ struct i2cScanResults {
 Shared<float> temperature;
 
 Shared<struct i2cScanResults> scanResults;
+Shared<uint8_t> pf1550_id;
+Shared<uint8_t> ecc608_id;
