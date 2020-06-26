@@ -1,27 +1,27 @@
-template<class T> class Shared;
-
-rtos::Queue<Shared<float>, 16> queue;
-
 template<class T>
 class Shared // template definition
 {
   public:
+    Shared() {
+      queue = new rtos::Queue<Shared<T>, 16>;
+    }
     operator T() const {
-      osEvent evt = queue.get();
+      osEvent evt = queue->get();
       if (evt.status == osEventMessage) {
-        Shared<float> *x = (Shared<float>*)evt.value.p;
+        Shared<T> *x = (Shared<T>*)evt.value.p;
         return x->val;
       }
     }
     T& operator= (const T& other) {
       val = other;
-      queue.put(this);
+      queue->put(this);
     }
     T& peek() {
       return val;
     }
   private:
     T val;
+    rtos::Queue<Shared<T>, 16> *queue;
 };
 
 #define CONCAT2(x,y) x##y
