@@ -5,9 +5,11 @@ void setup() {
 
 void loop() {
   Wire.beginTransmission(0x60);
-  Wire.write(0x0);
+  Wire.write((uint8_t)0x0);
   Wire.endTransmission(false);
-  Wire.requestFrom(0x60, 1);
-  delay(random() % 100);
-  ecc608_id = Wire.read();
+  int res = Wire.requestFrom(0x60, 1);
+  delay(random() % 5);
+  if (res == 1) {
+    ecc608_id = Wire.read();
+  }
 }

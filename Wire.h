@@ -1,3 +1,12 @@
+#if 0
+
+#include "Portenta_System.h" // just a trick to allow including the real Wire.h
+#define Wire WireReal
+#include "../Wire/Wire.h"
+#define Wire Wire1
+
+#else
+
 #include "Portenta_System.h" // just a trick to allow including the real Wire.h
 #define Wire WireReal
 #include "../Wire/Wire.h"
@@ -8,6 +17,7 @@ struct requiredClocks {
   osThreadId_t id;
   int clock;
   RingBuffer rxBuffer;
+  bool transaction;
 };
 
 class WireClassDispatcher : public HardwareI2C {
@@ -64,7 +74,12 @@ class WireClassDispatcher : public HardwareI2C {
 
     uint8_t endTransmission(bool stopBit) {
       uint8_t res = wire.endTransmission(stopBit);
-      sem->release();
+      if (stopBit) {
+        sem->release();
+        *transactionInProgress(rtos::ThisThread::get_id()) = false;
+      } else {
+        *transactionInProgress(rtos::ThisThread::get_id()) = true;
+      }
       return res;
     }
 
@@ -73,14 +88,21 @@ class WireClassDispatcher : public HardwareI2C {
     }
 
     uint8_t requestFrom(uint8_t address, size_t len, bool stopBit) {
-      sem->acquire();
+      if (!transactionInProgress(rtos::ThisThread::get_id())) {
+        sem->acquire();
+      }
       uint8_t ret = wire.requestFrom(address, len, stopBit);
       if (ret > 0) {
         while (wire.available()) {
           findThreadRxBuffer(rtos::ThisThread::get_id()).store_char(wire.read());
         }
       }
-      sem->release();
+      if (stopBit) {
+        sem->release();
+        *transactionInProgress(rtos::ThisThread::get_id()) = false;
+      } else {
+        *transactionInProgress(rtos::ThisThread::get_id()) = true;
+      }
       return ret;
     }
 
@@ -125,6 +147,13 @@ class WireClassDispatcher : public HardwareI2C {
         }
       }
     }
+    bool* transactionInProgress(osThreadId_t id) {
+      for (int i = 0; i < 10; i++) {
+        if (id == idClock[i].id) {
+          return &idClock[i].transaction;
+        }
+      }
+    }
     RingBuffer& findThreadRxBuffer(osThreadId_t id) {
       for (int i = 0; i < 10; i++) {
         if (id == idClock[i].id) {
@@ -144,3 +173,5 @@ class WireClassDispatcher : public HardwareI2C {
 };
 
 extern WireClassDispatcher Wire;
+
+#endif

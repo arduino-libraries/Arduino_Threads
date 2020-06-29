@@ -19,17 +19,29 @@ THD_ENTER(ecc_reader)
 #include "ecc_reader.h"
 THD_DONE(ecc_reader)
 
+THD_ENTER(scanner)
+#include "scanner.h"
+THD_DONE(scanner)
+
 void setup() {
   Serial.begin(115200);
   while (!Serial);
   temp_reader_obj.start();
   pf_reader_obj.start();
+  scanner_obj.start();
   ecc_reader_obj.start();
 }
 
 void loop() {
-  Serial.println(temperature);          // blocks until new data is available
+  //Serial.println(temperature);          // blocks until new data is available
   //Serial.println(temperature.peek());   // returns immediately the last known value
+
+  struct i2cScanResults results = scanResults;
+  for (int i = 0; i < 128; i++) {
+    if (results.address[i] == true) {
+      Serial.println("0x" + String(i, HEX));
+    }
+  }
 
   Serial.println("PF1550 ID: " + String(pf1550_id, HEX));
   Serial.println("ECC608 ID: " + String(ecc608_id, HEX));
