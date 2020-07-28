@@ -1,4 +1,5 @@
 void setup() {
+  Serial.begin(115200);
   Wire.begin();
   Wire.setClock(400000);
 }
@@ -10,4 +11,13 @@ void loop() {
   Wire.requestFrom(0x8, 1);
   delay(random() % 60);
   pf1550_id = Wire.read();
+
+  Serial.println("I'm pfreader");
+
+  if (Serial.available()) {
+    Serial.println("Got something");
+    while (Serial.available()) {
+      Serial.write(Serial.read());
+    }
+  }
 }
