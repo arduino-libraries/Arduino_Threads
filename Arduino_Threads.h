@@ -52,3 +52,6 @@ CONCAT(tabname,_class) CONCAT(tabname, _obj);
                            \#include CONCAT(tabname, .h) \
                            THD_DONE(tabname)
 */
+
+#include "Wire.h"
+#include "SerialDispatcher.h"
