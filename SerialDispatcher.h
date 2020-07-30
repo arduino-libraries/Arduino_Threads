@@ -1,3 +1,6 @@
+#ifndef __SERIAL_DISPATCHER_H__
+#define __SERIAL_DISPATCHER_H__
+
 #include "Arduino.h"
 #undef Serial
 #include "api/RingBuffer.h"
@@ -180,3 +183,5 @@ class SerialClassDispatcher : public HardwareSerial {
 };
 
 extern SerialClassDispatcher Serial;
+
+#endif

@@ -1,12 +1,3 @@
-#if 0
-
-#include "Wire.h"
-#define Wire WireReal
-#include "../Wire/Wire.cpp"
-#define Wire Wire1
-
-#else
-
 #include "Wire.h"
 #define Wire WireReal
 #include "../Wire/Wire.cpp"
@@ -15,5 +6,3 @@
 WireClassDispatcher Wire(Wire1);
 //WireClassDispatcher Wire(WireReal);
 //WireClassDispatcher Wire1(Wire1Real);
-
-#endif

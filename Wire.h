@@ -1,11 +1,5 @@
-#if 0
-
-#include "Portenta_System.h" // just a trick to allow including the real Wire.h
-#define Wire WireReal
-#include "../Wire/Wire.h"
-#define Wire Wire1
-
-#else
+#ifndef __WIRE_WRAPPER_H__
+#define __WIRE_WRAPPER_H__
 
 #include "Portenta_System.h" // just a trick to allow including the real Wire.h
 #define Wire WireReal
