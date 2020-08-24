@@ -15,6 +15,8 @@ struct _sinkBuffers {
   uint32_t lastTimestamp;
 };
 
+#define READ_READY_UNBLOCK          (1 << 1)
+
 class SerialClassDispatcher : public HardwareSerial {
   public:
     SerialClassDispatcher(HardwareSerial& _serial) : serial(_serial) {
@@ -66,6 +68,7 @@ class SerialClassDispatcher : public HardwareSerial {
       *findLastTimestamp(rtos::ThisThread::get_id()) = millis();
       findThreadTxBuffer(rtos::ThisThread::get_id()).store_char(data);
       findSemaphore(rtos::ThisThread::get_id())->release();
+      unlock_print.set(READ_READY_UNBLOCK);
     }
 
     size_t write(const uint8_t* data, size_t len) {
@@ -75,6 +78,7 @@ class SerialClassDispatcher : public HardwareSerial {
         findThreadTxBuffer(rtos::ThisThread::get_id()).store_char(data[i]);
       }
       findSemaphore(rtos::ThisThread::get_id())->release();
+      unlock_print.set(READ_READY_UNBLOCK);
     }
 
     void flushReadBuffer() {
@@ -118,6 +122,7 @@ class SerialClassDispatcher : public HardwareSerial {
 
     void timedPrint() {
       while (1) {
+        unlock_print.wait_any(READ_READY_UNBLOCK, osWaitForever, true);
         for (int i = 0; i < users; i++) {
           // Implementation "leak", should be changed at RingBuffer API level
           int c = sinkBuffers[i].txBuffer._iHead == 0 ?
