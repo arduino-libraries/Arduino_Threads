@@ -14,5 +14,5 @@ void loop() {
   // ATTENTION: if we write `delay(randomNumber % 60);`
   // the call becomes blocking and it only gets read in the same thread
   // so we have full starvation (two consumers)
-  delay(randomNumber.peek() % 60);
+  delay(randomNumber.latest() % 60);
 }
