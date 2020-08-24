@@ -8,6 +8,7 @@
 struct _sinkBuffers {
   osThreadId_t id;
   bool reader;
+  bool raw;
   rtos::Semaphore* sem;
   RingBuffer rxBuffer;
   RingBuffer txBuffer;
@@ -27,6 +28,7 @@ class SerialClassDispatcher : public HardwareSerial {
       }
       sinkBuffers[users].id = rtos::ThisThread::get_id();
       sinkBuffers[users].sem = new rtos::Semaphore(1);
+      sinkBuffers[users].raw = false;
       users++;
     }
 
@@ -37,6 +39,7 @@ class SerialClassDispatcher : public HardwareSerial {
       }
       sinkBuffers[users].id = rtos::ThisThread::get_id();
       sinkBuffers[users].sem = new rtos::Semaphore(1);
+      sinkBuffers[users].raw = false;
       users++;
     }
 
@@ -97,6 +100,10 @@ class SerialClassDispatcher : public HardwareSerial {
       return findThreadRxBuffer(rtos::ThisThread::get_id()).peek();
     }
 
+    void raw(bool _raw = true) {
+      *isRaw(rtos::ThisThread::get_id()) = _raw;
+    }
+
     void flush() {
       serial.flush();
     }
@@ -113,8 +120,11 @@ class SerialClassDispatcher : public HardwareSerial {
       while (1) {
         for (int i = 0; i < users; i++) {
           // Implementation "leak", should be changed at RingBuffer API level
-          int c = sinkBuffers[i].txBuffer._aucBuffer[sinkBuffers[i].txBuffer._iHead];
-          if (c == '\n' || /*c == '\r' ||*/ c == '\0' || (millis() - sinkBuffers[i].lastTimestamp > 10)) {
+          int c = sinkBuffers[i].txBuffer._iHead == 0 ?
+            sinkBuffers[i].txBuffer._aucBuffer[sizeof(sinkBuffers[i].txBuffer._aucBuffer) -1] :
+            sinkBuffers[i].txBuffer._aucBuffer[sinkBuffers[i].txBuffer._iHead - 1];
+          if ((!sinkBuffers[i].raw && (c == '\n' /*|| c == '\r' */|| c == '\0')) ||
+              (sinkBuffers[i].raw && (millis() - sinkBuffers[i].lastTimestamp > 10))) {
             sinkBuffers[i].sem->acquire();
             if (sinkBuffers[i].txBuffer.available() && print_tags) {
               serial.print("[");
@@ -134,6 +144,14 @@ class SerialClassDispatcher : public HardwareSerial {
       for (int i = 0; i < 10; i++) {
         if (id == sinkBuffers[i].id) {
           return &sinkBuffers[i].reader;
+        }
+      }
+    }
+
+    bool* isRaw(osThreadId_t id) {
+      for (int i = 0; i < 10; i++) {
+        if (id == sinkBuffers[i].id) {
+          return &sinkBuffers[i].raw;
         }
       }
     }

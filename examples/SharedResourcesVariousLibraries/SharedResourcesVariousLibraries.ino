@@ -5,7 +5,11 @@ void setup() {
 
   // Insert tags before Serial transmission to distinguish 
   // the thread that originated them
-  //Serial.tags(true);
+  Serial.tags(true);
+
+  // By declaring a serial "raw" we ask the dispatcher to flush
+  // every N milliseconds without waiting for EOL (for this thread only)
+  //Serial.raw();
 
   TempReader.begin();
   SerialReader.begin();

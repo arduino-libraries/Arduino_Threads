@@ -19,7 +19,7 @@ struct requiredClocks {
 class WireClassDispatcher : public HardwareI2C {
   public:
     WireClassDispatcher(HardwareI2C& _wire) : wire(_wire) {
-      sem = new rtos::Semaphore(2);
+      sem = new rtos::Semaphore(1);
     }
     void begin() {
       sem->acquire();
