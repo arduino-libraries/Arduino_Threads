@@ -3,8 +3,10 @@
 
 #include "Portenta_System.h" // just a trick to allow including the real Wire.h
 #define Wire WireReal
+#define Wire1 WireReal1
 #include "../Wire/Wire.h"
 #undef Wire
+#undef Wire1
 #include "api/RingBuffer.h"
 
 struct requiredClocks {
@@ -17,9 +19,10 @@ struct requiredClocks {
 class WireClassDispatcher : public HardwareI2C {
   public:
     WireClassDispatcher(HardwareI2C& _wire) : wire(_wire) {
-      sem = new rtos::Semaphore(1);
+      sem = new rtos::Semaphore(2);
     }
     void begin() {
+      sem->acquire();
       if (!begun) {
         wire.begin();
         begun = true;
@@ -27,6 +30,7 @@ class WireClassDispatcher : public HardwareI2C {
       idClock[users].id = rtos::ThisThread::get_id();
       idClock[users].clock = currentClock;
       users++;
+      sem->release();
     }
     void begin(uint8_t) {
       /*doNothing*/
@@ -69,8 +73,8 @@ class WireClassDispatcher : public HardwareI2C {
     uint8_t endTransmission(bool stopBit) {
       uint8_t res = wire.endTransmission(stopBit);
       if (stopBit) {
-        sem->release();
         *transactionInProgress(rtos::ThisThread::get_id()) = false;
+        sem->release();
       } else {
         *transactionInProgress(rtos::ThisThread::get_id()) = true;
       }
@@ -92,8 +96,8 @@ class WireClassDispatcher : public HardwareI2C {
         }
       }
       if (stopBit) {
-        sem->release();
         *transactionInProgress(rtos::ThisThread::get_id()) = false;
+        sem->release();
       } else {
         *transactionInProgress(rtos::ThisThread::get_id()) = true;
       }
@@ -167,5 +171,8 @@ class WireClassDispatcher : public HardwareI2C {
 };
 
 extern WireClassDispatcher Wire;
+extern WireClassDispatcher Wire1;
+
+#define TwoWire WireClassDispatcher
 
 #endif

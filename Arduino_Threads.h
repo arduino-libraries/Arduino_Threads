@@ -19,6 +19,9 @@ class Shared // template definition
     T& peek() {
       return val;
     }
+    T& latest() {
+      return peek();
+    }
   private:
     T val;
     rtos::Queue<Shared<T>, 16> *queue;
@@ -30,7 +33,7 @@ class Shared // template definition
 #define INCF(F) INCF_(F)
 #define INCF_(F) #F
 
-#define THD_ENTER(tabname) class CONCAT(tabname, _class) { \
+#define THD_ENTER(tabname) class CONCAT(tabname, Class) { \
 
 #define THD_DONE(tabname)   private: \
     void execute() {                 \
@@ -42,10 +45,13 @@ class Shared // template definition
     rtos::Thread t;                  \
   public:                            \
     void start() {                   \
-      t.start(mbed::callback(this, &CONCAT(tabname,_class)::execute));  \
+      t.start(mbed::callback(this, &CONCAT(tabname,Class)::execute));  \
+    } \
+    void begin() {                   \
+      start();  \
     } \
 };  \
-CONCAT(tabname,_class) CONCAT(tabname, _obj);
+CONCAT(tabname,Class) tabname;
 
 /*
 #define NEWTHREAD(tabname) THD_ENTER(tabname) \
