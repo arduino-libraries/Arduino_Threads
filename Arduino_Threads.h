@@ -57,9 +57,9 @@ private:
     while (1) {
       for (int i = 0; i < idx; i++) {
         if (millis() - timestamps[i] > 5000) {
-          list[i]->terminate();
+          // list[i]->terminate();
           // TODO: reorder threads and make list[i] == NULL
-          Serial.println(list[i]->get_name() + String(" killed "));
+          // Serial.println(list[i]->get_name() + String(" killed "));
         }
       }
       delay(1000);
