@@ -12,7 +12,6 @@ struct _sinkBuffers {
   rtos::Semaphore* sem;
   RingBuffer rxBuffer;
   RingBuffer txBuffer;
-  uint32_t lastTimestamp;
 };
 
 #define READ_READY_UNBLOCK          (1 << 1)
@@ -65,7 +64,6 @@ class SerialClassDispatcher : public HardwareSerial {
 
     size_t write(uint8_t data) {
       findSemaphore(rtos::ThisThread::get_id())->acquire();
-      *findLastTimestamp(rtos::ThisThread::get_id()) = millis();
       findThreadTxBuffer(rtos::ThisThread::get_id()).store_char(data);
       findSemaphore(rtos::ThisThread::get_id())->release();
       unlock_print.set(READ_READY_UNBLOCK);
@@ -73,7 +71,6 @@ class SerialClassDispatcher : public HardwareSerial {
 
     size_t write(const uint8_t* data, size_t len) {
       findSemaphore(rtos::ThisThread::get_id())->acquire();
-      *findLastTimestamp(rtos::ThisThread::get_id()) = millis();
       for (int i=0; i<len; i++) {
         findThreadTxBuffer(rtos::ThisThread::get_id()).store_char(data[i]);
       }
@@ -124,13 +121,13 @@ class SerialClassDispatcher : public HardwareSerial {
       while (1) {
         unlock_print.wait_any(READ_READY_UNBLOCK, osWaitForever, true);
         for (int i = 0; i < users; i++) {
+          sinkBuffers[i].sem->acquire();
           // Implementation "leak", should be changed at RingBuffer API level
           int c = sinkBuffers[i].txBuffer._iHead == 0 ?
             sinkBuffers[i].txBuffer._aucBuffer[sizeof(sinkBuffers[i].txBuffer._aucBuffer) -1] :
             sinkBuffers[i].txBuffer._aucBuffer[sinkBuffers[i].txBuffer._iHead - 1];
           if ((!sinkBuffers[i].raw && (c == '\n' /*|| c == '\r' */|| c == '\0')) ||
-              (sinkBuffers[i].raw && (millis() - sinkBuffers[i].lastTimestamp > 10))) {
-            sinkBuffers[i].sem->acquire();
+              sinkBuffers[i].raw || !sinkBuffers[i].txBuffer.availableForStore()) {
             if (sinkBuffers[i].txBuffer.available() && print_tags) {
               serial.print("[");
               serial.print(i);
@@ -139,8 +136,8 @@ class SerialClassDispatcher : public HardwareSerial {
             while (sinkBuffers[i].txBuffer.available()) {
               serial.write(sinkBuffers[i].txBuffer.read_char());
             }
-            sinkBuffers[i].sem->release();
           }
+          sinkBuffers[i].sem->release();
         }
       }
     }
@@ -157,14 +154,6 @@ class SerialClassDispatcher : public HardwareSerial {
       for (int i = 0; i < 10; i++) {
         if (id == sinkBuffers[i].id) {
           return &sinkBuffers[i].raw;
-        }
-      }
-    }
-
-    uint32_t* findLastTimestamp(osThreadId_t id) {
-      for (int i = 0; i < 10; i++) {
-        if (id == sinkBuffers[i].id) {
-          return &sinkBuffers[i].lastTimestamp;
         }
       }
     }
