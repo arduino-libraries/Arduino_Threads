@@ -73,10 +73,7 @@ class WireClassDispatcher : public HardwareI2C {
     uint8_t endTransmission(bool stopBit) {
       uint8_t res = wire.endTransmission(stopBit);
       if (stopBit) {
-        osStatus ret = sem->release();
-        if (ret != osOK) {
-          Serial.println("could not release semaphore");
-        }
+        sem->release();
         *transactionInProgress(rtos::ThisThread::get_id()) = false;
       } else {
         *transactionInProgress(rtos::ThisThread::get_id()) = true;
@@ -89,7 +86,7 @@ class WireClassDispatcher : public HardwareI2C {
     }
 
     uint8_t requestFrom(uint8_t address, size_t len, bool stopBit) {
-      if (!transactionInProgress(rtos::ThisThread::get_id())) {
+      if (!*transactionInProgress(rtos::ThisThread::get_id())) {
         sem->acquire();
       }
       uint8_t ret = wire.requestFrom(address, len, stopBit);
@@ -99,11 +96,8 @@ class WireClassDispatcher : public HardwareI2C {
         }
       }
       if (stopBit) {
-        osStatus ret = sem->release();
-        if (ret != osOK) {
-          Serial.println("could not release semaphore");
-        }
         *transactionInProgress(rtos::ThisThread::get_id()) = false;
+        sem->release();
       } else {
         *transactionInProgress(rtos::ThisThread::get_id()) = true;
       }
