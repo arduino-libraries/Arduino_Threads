@@ -6,10 +6,10 @@ void setup() {
   // the thread that originated them
   Serial.tags(true);
 
-  temp_reader_obj.start();
-  pf_reader_obj.start();
-  scanner_obj.start();
-  ecc_reader_obj.start();
+  temp_reader.start();
+  pf_reader.start();
+  scanner.start();
+  ecc_reader.start();
 }
 
 void loop() {
