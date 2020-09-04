@@ -111,7 +111,8 @@ rtos::EventFlags ArduinoThreads::globalEvents;
 
 #define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
 public: \
-  CONCAT(tabname, Class)() { _tabname = _macroToString(tabname); }
+  CONCAT(tabname, Class)() { _tabname = _macroToString(tabname); } \
+private: \
 
 #define THD_DONE(tabname) \
 };  \
