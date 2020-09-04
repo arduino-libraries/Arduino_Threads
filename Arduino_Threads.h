@@ -49,7 +49,9 @@ class ArduinoThreads {
       // if startFlags have been passed then wait until all the flags are set
       // before starting the loop. this is used to synchronize loops from multiple
       // sketches.
-      globalEvents.wait_all(startFlags);      
+      if (startFlags != 0) {
+        globalEvents.wait_all(startFlags);
+      }
 
       // if stopFlags have been passed stop when all the flags are set
       // otherwise loop forever
