@@ -74,15 +74,19 @@ class ArduinoThreads {
       }
     }
     rtos::Thread *t;
+
+  protected:
+    char* _tabname;
+
   public:
     // start this sketch
     void start(int stacksize = 4096, uint32_t startFlags=0, uint32_t stopFlags=0) {
       this->startFlags = startFlags;
       this->stopFlags = stopFlags;
       loopDelay=0;
-      t = new rtos::Thread(osPriorityNormal, stacksize, nullptr, _macroToString(tabname)); 
-      t->start(mbed::callback(this, &ArduinoThreads::execute));  
-    } 
+      t = new rtos::Thread(osPriorityNormal, stacksize, nullptr, _tabname);
+      t->start(mbed::callback(this, &ArduinoThreads::execute));
+    }
     // kill this sketch
     void terminate() {
       t->terminate();
@@ -104,7 +108,8 @@ class ArduinoThreads {
 rtos::EventFlags ArduinoThreads::globalEvents;
 
 #define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
-private:
+public: \
+  CONCAT(tabname, Class)() { _tabname = _macroToString(tabname); }
 
 #define THD_DONE(tabname) \
 };  \
