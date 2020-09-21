@@ -14,9 +14,14 @@ class Shared // template definition
       }
     }
     T& operator= (const T& other) {
+      if (queue->full()) {
+        // invokes operator T()
+        T discard = *this;
+      }
       val = other;
       T* obj = new T(val);
       queue->put(obj);
+      return (*obj);
     }
     T& peek() {
       return val;
