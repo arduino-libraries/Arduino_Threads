@@ -1,0 +1,13 @@
+void setup() {
+  // put your setup code here, to run once:
+
+}
+
+int i = 0;
+
+void loop() {
+  // Continuously pump counter
+  delay(100);
+  i++;
+  counter = i;
+}

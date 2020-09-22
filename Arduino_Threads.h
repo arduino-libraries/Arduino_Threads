@@ -3,18 +3,25 @@ class Shared // template definition
 {
   public:
     Shared() {
-      queue = new rtos::Queue<Shared<T>, 16>;
     }
-    operator T() const {
-      osEvent evt = queue->get();
+    operator T() {
+      osEvent evt = queue.get();
       if (evt.status == osEventMessage) {
-        Shared<T> *x = (Shared<T>*)evt.value.p;
-        return x->val;
+        T x = *((T*)evt.value.p);
+        delete (T*)evt.value.p;
+        return x;
       }
+      return val;
     }
     T& operator= (const T& other) {
+      if (queue.full()) {
+        // invokes operator T() to discard oldest element and free its memory
+        T discard = *this;
+      }
       val = other;
-      queue->put(this);
+      T* obj = new T(val);
+      queue.put(obj);
+      return (*obj);
     }
     T& peek() {
       return val;
@@ -24,7 +31,7 @@ class Shared // template definition
     }
   private:
     T val;
-    rtos::Queue<Shared<T>, 16> *queue;
+    rtos::Queue<T, 16> queue;
 };
 
 #define CONCAT2(x,y) x##y
