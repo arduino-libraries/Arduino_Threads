@@ -42,9 +42,11 @@ class Shared // template definition
       return peek();
     }
   private:
+    static size_t constexpr QUEUE_SIZE = 16;
+
     T val;
-    rtos::MemoryPool<T, 16> memory_pool;
-    rtos::Queue<T, 16> queue;
+    rtos::MemoryPool<T, QUEUE_SIZE> memory_pool;
+    rtos::Queue<T, QUEUE_SIZE> queue;
 };
 
 #define CONCAT2(x,y) x##y
