@@ -1,3 +1,6 @@
+#include <MemoryPool.h>
+
+
 template<class T>
 class Shared // template definition
 {
@@ -7,9 +10,14 @@ class Shared // template definition
     operator T() {
       osEvent evt = queue.get();
       if (evt.status == osEventMessage) {
-        T x = *((T*)evt.value.p);
-        delete (T*)evt.value.p;
-        return x;
+        /* Obtain the oldest inserted element from the queue. */
+        T * val_ptr = reinterpret_cast<T *>(evt.value.p);
+        /* Copy the content of T stored in the memory pool since we'll have to free the memory pool afterwards. */
+        T const tmp_val = *val_ptr;
+        /* Free the allocated memory in the memory pool. */
+        memory_pool.free(val_ptr);
+        /* Return obtained value from queue. */
+        return tmp_val;
       }
       return val;
     }
@@ -19,9 +27,13 @@ class Shared // template definition
         T discard = *this;
       }
       val = other;
-      T* obj = new T(val);
-      queue.put(obj);
-      return (*obj);
+      /* Allocate memory in the memory pool. */
+      T * val_ptr = memory_pool.alloc();
+      /* Copy the content of 'other' into the freshly allocated message. */
+      *val_ptr = other;
+      /* Insert into queue. */
+      queue.put(val_ptr);
+      return (*val_ptr);
     }
     T& peek() {
       return val;
@@ -31,6 +43,7 @@ class Shared // template definition
     }
   private:
     T val;
+    rtos::MemoryPool<T, 16> memory_pool;
     rtos::Queue<T, 16> queue;
 };
 
