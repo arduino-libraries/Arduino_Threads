@@ -1,3 +1,6 @@
+#ifndef ARDUINO_THREADS_H_
+#define ARDUINO_THREADS_H_
+
 #include <MemoryPool.h>
 
 
@@ -142,3 +145,5 @@ CONCAT(tabname,Class) tabname;
 
 #include "Wire.h"
 #include "SerialDispatcher.h"
+
+#endif /* ARDUINO_THREADS_H_ */
