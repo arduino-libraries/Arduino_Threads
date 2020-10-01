@@ -3,8 +3,7 @@
 
 #include <MemoryPool.h>
 
-
-template<class T>
+template<class T, size_t QUEUE_SIZE = 16>
 class Shared // template definition
 {
   public:
@@ -45,7 +44,6 @@ class Shared // template definition
       return peek();
     }
   private:
-    static size_t constexpr QUEUE_SIZE = 16;
 
     T val;
     rtos::MemoryPool<T, QUEUE_SIZE> memory_pool;
