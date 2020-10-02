@@ -12,6 +12,12 @@ Shared	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+start	KEYWORD2
+terminate	KEYWORD2
+broadcastEvent	KEYWORD2
+sendEvent	KEYWORD2
+setLoopDelay	KEYWORD2
+
 #######################################
 # Constants (LITERAL1)
 #######################################
