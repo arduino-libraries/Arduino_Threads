@@ -1,7 +1,7 @@
 void setup() {
   // put your setup code here, to run once:
   pinMode(LEDR, OUTPUT);
-  ledblue_obj.start();
+  ledblue.start();
 }
 
 void loop() {
