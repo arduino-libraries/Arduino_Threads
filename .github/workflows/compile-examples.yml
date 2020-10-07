@@ -1,0 +1,141 @@
+name: Compile Examples
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/compile-examples.yml"
+      - "examples/**"
+      - "src/**"
+  push:
+    paths:
+      - ".github/workflows/compile-examples.yml"
+      - "examples/**"
+      - "src/**"
+
+jobs:
+  compile-test:
+    runs-on: ubuntu-latest
+
+    env:
+      # libraries to install for all boards
+      UNIVERSAL_LIBRARIES: |
+        # Install the ArduinoThreads library from the repository
+        - source-path: ./
+        #- name: Arduino_ConnectionHandler
+        #- name: Arduino_DebugUtils
+        #- name: ArduinoMqttClient
+      # sketch paths to compile (recursive) for all boards
+      UNIVERSAL_SKETCH_PATHS: |
+        - examples
+      ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
+      ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        fqbn:
+          - "arduino:mbed:nano33ble"
+          - "arduino:mbed:envie_m4"
+          - "arduino:mbed:envie_m7"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # it's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
+      - name: Checkout ArduinoCore-mbed
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        #if: matrix.board.type == 'mbed'
+        uses: actions/checkout@v2
+        with:
+          repository: arduino/ArduinoCore-mbed
+          # the arduino/actions/libraries/compile-examples action will install the platform from this path
+          path: ${{ env.ARDUINOCORE_MBED_STAGING_PATH }}
+
+      - name: Remove ArduinoCore-API symlink from Arduino mbed-Enabled Boards platform
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        #if: matrix.board.type == 'mbed'
+        run: rm "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino/api"
+
+      - name: Checkout ArduinoCore-API
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        #if: matrix.board.type == 'mbed'
+        uses: actions/checkout@v2
+        with:
+          repository: arduino/ArduinoCore-API
+          # as specified at https://github.com/arduino/ArduinoCore-mbed/blob/master/README.md#installation
+          #ref: namespace_arduino
+          path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
+
+      - name: Install ArduinoCore-API
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        #if: matrix.board.type == 'mbed'
+        run: |
+          mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
+
+      - name: Compile examples
+        uses: giulcioffi/compile-sketches@CheckAgainstDatabase
+        with:
+          fqbn: ${{ matrix.fqbn }}
+          libraries: |
+            ${{ env.UNIVERSAL_LIBRARIES }}
+          platforms: |
+            # Use Board Manager to install the latest release of Arduino megaAVR Boards to get the toolchain
+            - name: "arduino:mbed"
+            # Overwrite the Board Manager installation with the local platform
+            #- source-path: "./"
+            #  name: "arduino:mbed"
+          sketch-paths: |
+            ${{ env.UNIVERSAL_SKETCH_PATHS }}
+          enable-deltas-report: 'true'
+          allow-failures: 'true'
+          verbose: 'true'
+
+      # - name: Write data to size trends report spreadsheet
+        # Update report on every push to the master branch
+      #  if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      #  uses: arduino/actions/libraries/report-size-trends@master
+      #  with:
+      #    google-key-file: ${{ secrets.GOOGLE_KEY_FILE }}
+      #    spreadsheet-id: 1I6NZkpZpf8KugBkE92adB1Z3_b7ZepOpCdYTOigJpN4
+
+      - name: Save memory usage change report as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sketches-reports
+          path: sketches-reports
+
+  check-database:
+    needs: compile-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Sketches Reports Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sketches-reports
+          path: sketches-reports
+
+      - name: Checkout Repository Containing Database
+        uses: actions/checkout@v2
+        with:
+          repository: giulcioffi/sketches-database
+          #ref: CheckAgainstDatabase
+          path: extras/database
+
+      - name: Move Database Out and Remove not needed folders
+        run: |
+          mv "$GITHUB_WORKSPACE/extras/database/database-reports" "$GITHUB_WORKSPACE"
+          rm -r "$GITHUB_WORKSPACE/extras/database"
+
+      - name: Check against database of expected results
+        uses: giulcioffi/validate-compile-sketches-report@main
+        with:
+          verbose: 'true'
+          sketches-reports-source: $GITHUB_WORKSPACE
+
+      - name: Upload modified artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sketches-reports
+          path: sketches-reports
