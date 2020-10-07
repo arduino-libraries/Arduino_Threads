@@ -85,8 +85,8 @@ jobs:
             # Use Board Manager to install the latest release of Arduino megaAVR Boards to get the toolchain
             - name: "arduino:mbed"
             # Overwrite the Board Manager installation with the local platform
-            #- source-path: "./"
-            #  name: "arduino:mbed"
+            - source-path: "./extras/ArduinoCore-mbed"
+              name: "arduino:mbed"
           sketch-paths: |
             ${{ env.UNIVERSAL_SKETCH_PATHS }}
           enable-deltas-report: 'true'
