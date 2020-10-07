@@ -21,9 +21,9 @@ jobs:
       UNIVERSAL_LIBRARIES: |
         # Install the ArduinoThreads library from the repository
         - source-path: ./
-        #- name: Arduino_ConnectionHandler
-        #- name: Arduino_DebugUtils
-        #- name: ArduinoMqttClient
+        - name: Arduino_LSM9DS1
+        - name: Arduino_APDS9960
+        - name: ArduinoECCX08
       # sketch paths to compile (recursive) for all boards
       UNIVERSAL_SKETCH_PATHS: |
         - examples
@@ -50,6 +50,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-mbed
+          ref: master
           # the arduino/actions/libraries/compile-examples action will install the platform from this path
           path: ${{ env.ARDUINOCORE_MBED_STAGING_PATH }}
 
