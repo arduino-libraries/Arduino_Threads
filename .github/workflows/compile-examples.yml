@@ -71,7 +71,7 @@ jobs:
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
       - name: Compile examples
-        uses: arduino/actions/libraries/compile-examples@master
+        uses: arduino/compile-sketches@main
         with:
           cli-version: 'arduino_threads'
           fqbn: ${{ matrix.fqbn }}
