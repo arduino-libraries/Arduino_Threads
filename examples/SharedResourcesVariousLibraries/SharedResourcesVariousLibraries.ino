@@ -1,4 +1,3 @@
-
 void setup() {
   Serial.begin(115200);
   while (!Serial);
@@ -11,10 +10,10 @@ void setup() {
   // every N milliseconds without waiting for EOL (for this thread only)
   //Serial.raw();
 
-  TempReader.begin();
-  SerialReader.begin();
-  GetRandom.begin();
-  Accelerometer.begin();
+  TempReader.start();
+  SerialReader.start();
+  GetRandom.start();
+  Accelerometer.start();
 }
 
 void loop() {
