@@ -38,7 +38,7 @@ jobs:
       matrix:
         fqbn:
           - "arduino-beta:mbed:nano33ble"
-          - "arduino-beta:mbed:envie_m4"
+          # - "arduino-beta:mbed:envie_m4"
           - "arduino-beta:mbed:envie_m7"
 
     steps:
@@ -48,32 +48,26 @@ jobs:
       # it's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
       - name: Checkout ArduinoCore-mbed
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        #if: matrix.board.type == 'mbed'
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-mbed
-          #ref: master
           # the arduino/actions/libraries/compile-examples action will install the platform from this path
           path: ${{ env.ARDUINOCORE_MBED_STAGING_PATH }}
 
       - name: Remove ArduinoCore-API symlink from Arduino mbed-Enabled Boards platform
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        #if: matrix.board.type == 'mbed'
         run: rm "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino/api"
 
       - name: Checkout ArduinoCore-API
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        #if: matrix.board.type == 'mbed'
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-API
           # as specified at https://github.com/arduino/ArduinoCore-mbed/blob/master/README.md#installation
-          #ref: namespace_arduino
           path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
 
       - name: Install ArduinoCore-API
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        #if: matrix.board.type == 'mbed'
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
       - name: Compile examples
