@@ -3,6 +3,170 @@
 
 #include <MemoryPool.h>
 
+#define SOURCE(name, type) \
+public: \
+  Source<type> name; \
+private:
+
+#define SINK(name, type, size) \
+public: \
+  Sink<type> name{size}; \
+private:
+// we need to call the Sink<T>(int size) non-default constructor using size as parameter.
+// This is done by writing
+//    Sink<type> name{size};
+// instead of:
+//    Sink<type> name(size);
+// otherwise the compiler will read it as a declaration of a method called "name" and we
+// get a syntax error.
+// This is called "C++11 uniform init" (using "{}" instead of "()" without "="... yikes!)
+// https://chromium.googlesource.com/chromium/src/+/master/styleguide/c++/c++-dos-and-donts.md
+
+// Forward declaration of Sink and Source
+template<class T>
+class Sink;
+template<class T>
+class Source;
+
+template<class T>
+class Sink
+{
+  private:
+    rtos::Mutex dataMutex;
+    rtos::ConditionVariable dataAvailable;
+    rtos::ConditionVariable slotAvailable;
+    T latest;
+    Sink *next;
+    const int size;
+    int first, last;
+    bool full;
+    T *queue;
+
+  public:
+    Sink(int s) :
+      dataAvailable(dataMutex),
+      slotAvailable(dataMutex),
+      size(s),
+      queue((size > 0) ? new T[size] : nullptr),
+      first(0), last(0), full(false)
+    {};
+
+    ~Sink() {
+      if (queue != nullptr) { delete queue; }
+    }
+
+
+  //protected: TODO
+    void connectTo(Sink &sink)
+    {
+      if (next == nullptr) {
+        next = &sink;
+      } else {
+        next->connectTo(sink);
+      }
+    }
+
+    T read()
+    {
+      // Non-blocking shared variable
+      if (size == -1) {
+        dataMutex.lock();
+        T res = latest;
+        dataMutex.unlock();
+        return res;
+      }
+
+      // Blocking shared variable
+      if (size == 0) {
+        dataMutex.lock();
+        while (!full) {
+          dataAvailable.wait();
+        }
+        T res = latest;
+        full = false;
+        slotAvailable.notify_all();
+        dataMutex.unlock();
+        return res;
+      }
+
+      // Blocking queue
+      dataMutex.lock();
+      while (first == last && !full) {
+        dataAvailable.wait();
+      }
+      T res = queue[first++];
+      first %= size;
+      if (full) {
+        full = false;
+        slotAvailable.notify_one();
+      }
+      dataMutex.unlock();
+      return res;
+    }
+
+  //protected: TODO
+    void inject(const T &value)
+    {
+      dataMutex.lock();
+
+      // Non-blocking shared variable
+      if (size == -1) {
+        latest = value;
+      }
+
+      // Blocking shared variable
+      else if (size == 0) {
+        while (full) {
+          slotAvailable.wait();
+        }
+        latest = value;
+        full = true;
+        dataAvailable.notify_one();
+        slotAvailable.wait();
+      }
+
+      // Blocking queue
+      else {
+        while (full) {
+          slotAvailable.wait();
+        }
+        if (first == last) {
+          dataAvailable.notify_one();
+        }
+        queue[last++] = value;
+        last %= size;
+        if (first == last) {
+          full = true;
+        }
+      }
+      dataMutex.unlock();
+
+      if (next) next->inject(value);
+    }
+};
+
+template<class T>
+class Source
+{
+  public:
+    Source() {};
+
+    void connectTo(Sink<T> &sink) {
+      if (destination == nullptr) {
+        destination = &sink;
+      } else {
+        destination->connectTo(sink);
+      }
+    }
+
+    void send(const T &value) {
+      if (destination) destination->inject(value);
+    }
+
+  private:
+    Sink<T> *destination;
+};
+
 template<class T, size_t QUEUE_SIZE = 16>
 class Shared // template definition
 {

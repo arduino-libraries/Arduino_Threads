@@ -1,0 +1,21 @@
+
+/*
+ * An 'int' SINK with a size of '0'. This kind of SINK has no buffer so the reading thread
+ * will block until the writing thread has written something, or viceversa.
+ */
+SINK(in, int, 0)
+
+void setup() {
+  pinMode(LEDB, OUTPUT);
+}
+
+void loop() {
+  // Read an 'int' from the SINK and discards it. Since there is basically no delay in the loop
+  // this call will surely block until something comes from the connected SOURCE. In this case
+  // the pace is dictated by the SOURCE that sends data every 100 ms.
+  in.read();
+  digitalWrite(LEDB, HIGH);
+
+  in.read();
+  digitalWrite(LEDB, LOW);
+}
