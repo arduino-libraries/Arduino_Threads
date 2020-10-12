@@ -25,6 +25,7 @@ jobs:
         - name: Arduino_APDS9960
         - name: ArduinoECCX08
         - name: Arduino_HTS221
+        - name: OneWire
       # sketch paths to compile (recursive) for all boards
       UNIVERSAL_SKETCH_PATHS: |
         - examples
