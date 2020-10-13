@@ -90,7 +90,7 @@ jobs:
 
       - name: Save memory usage change report as artifact
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: 'size-deltas-reports'
           path: 'size-deltas-reports'
