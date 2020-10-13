@@ -70,6 +70,7 @@ jobs:
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
+
       - name: Compile examples
         uses: arduino/compile-sketches@main
         with:
