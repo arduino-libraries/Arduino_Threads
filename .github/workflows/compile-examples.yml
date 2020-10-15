@@ -1,0 +1,97 @@
+name: Compile Examples
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/compile-examples.yml"
+      - "examples/**"
+      - "src/**"
+  push:
+    paths:
+      - ".github/workflows/compile-examples.yml"
+      - "examples/**"
+      - "src/**"
+
+jobs:
+  compile-test:
+    runs-on: ubuntu-latest
+
+    env:
+      # libraries to install for all boards
+      UNIVERSAL_LIBRARIES: |
+        # Install the ArduinoThreads library from the repository
+        - source-path: ./
+        - name: Arduino_LSM9DS1
+        - name: Arduino_APDS9960
+        - name: ArduinoECCX08
+        - name: Arduino_HTS221
+        - name: OneWire
+      # sketch paths to compile (recursive) for all boards
+      UNIVERSAL_SKETCH_PATHS: |
+        - examples
+      ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
+      ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        fqbn:
+          - "arduino:mbed:nano33ble"
+          # - "arduino:mbed:envie_m4"
+          - "arduino:mbed:envie_m7"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # it's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
+      - name: Checkout ArduinoCore-mbed
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        uses: actions/checkout@v2
+        with:
+          repository: arduino/ArduinoCore-mbed
+          # the arduino/actions/libraries/compile-examples action will install the platform from this path
+          path: ${{ env.ARDUINOCORE_MBED_STAGING_PATH }}
+
+      - name: Remove ArduinoCore-API symlink from Arduino mbed-Enabled Boards platform
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        run: rm "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino/api"
+
+      - name: Checkout ArduinoCore-API
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        uses: actions/checkout@v2
+        with:
+          repository: arduino/ArduinoCore-API
+          # as specified at https://github.com/arduino/ArduinoCore-mbed/blob/master/README.md#installation
+          path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
+
+      - name: Install ArduinoCore-API
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        run: |
+          mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
+
+      - name: Compile examples
+        uses: arduino/compile-sketches@main
+        with:
+          cli-version: 'arduino_threads'
+          fqbn: ${{ matrix.fqbn }}
+          libraries: |
+            ${{ env.UNIVERSAL_LIBRARIES }}
+          platforms: |
+            # Use Board Manager to install the latest release of Arduino mbed Boards to get the toolchain
+            - name: "arduino:mbed"
+            # Overwrite the Board Manager installation with the local platform
+            - source-path: "extras/ArduinoCore-mbed"
+              name: "arduino:mbed"
+          sketch-paths: |
+            ${{ env.UNIVERSAL_SKETCH_PATHS }}
+          enable-deltas-report: 'true'
+          verbose: 'true'
+
+      - name: Save memory usage change report as artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v2
+        with:
+          name: 'size-deltas-reports'
+          path: 'size-deltas-reports'
