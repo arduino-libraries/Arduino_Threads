@@ -12,6 +12,10 @@ on:
       - "examples/**"
       - "src/**"
 
+env:
+  SKETCHES_REPORTS_PATH: sketches-reports
+  SKETCHES_REPORTS_ARTIFACT_NAME: sketches-reports
+
 jobs:
   compile-test:
     runs-on: ubuntu-latest
@@ -87,11 +91,29 @@ jobs:
           sketch-paths: |
             ${{ env.UNIVERSAL_SKETCH_PATHS }}
           enable-deltas-report: 'true'
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           verbose: 'true'
 
       - name: Save memory usage change report as artifact
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v2
         with:
-          name: 'size-deltas-reports'
-          path: 'size-deltas-reports'
+          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+  report-size-deltas:
+    needs: compile-test
+    # Only run the job when the workflow is triggered by a pull request from this repository (because arduino/report-size-deltas requires write permissions)
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download sketches reports artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+
+      - uses: arduino/report-size-deltas@main
+        with:
+          sketches-reports-source: ${{ env.SKETCHES_REPORTS_PATH }}
