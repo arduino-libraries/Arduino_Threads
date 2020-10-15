@@ -80,10 +80,10 @@ jobs:
             ${{ env.UNIVERSAL_LIBRARIES }}
           platforms: |
             # Use Board Manager to install the latest release of Arduino mbed Boards to get the toolchain
-            - name: "arduino-beta:mbed"
+            - name: "arduino:mbed"
             # Overwrite the Board Manager installation with the local platform
             - source-path: "extras/ArduinoCore-mbed"
-              name: "arduino-beta:mbed"
+              name: "arduino:mbed"
           sketch-paths: |
             ${{ env.UNIVERSAL_SKETCH_PATHS }}
           enable-deltas-report: 'true'
