@@ -85,7 +85,7 @@ class WireClassDispatcher : public HardwareI2C {
       return endTransmission(true);
     }
 
-    uint8_t requestFrom(uint8_t address, size_t len, bool stopBit) {
+    size_t requestFrom(uint8_t address, size_t len, bool stopBit) {
       if (!*transactionInProgress(rtos::ThisThread::get_id())) {
         sem->acquire();
       }
@@ -104,7 +104,7 @@ class WireClassDispatcher : public HardwareI2C {
       return ret;
     }
 
-    uint8_t requestFrom(uint8_t address, size_t len) {
+    size_t requestFrom(uint8_t address, size_t len) {
       return requestFrom(address, len, true);
     }
 
