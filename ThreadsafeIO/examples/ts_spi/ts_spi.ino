@@ -23,13 +23,15 @@ void bmp388_deselect();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
+SpiDispatcher spi_dispatcher;
 
 SpiBusDevice bmp388{"SPI",
-                    SpiBusDeviceConfig{
-                    SPISettings{1000000, MSBFIRST, SPI_MODE0},
-                    bmp388_select,
-                    bmp388_deselect,
-                    0x00}};
+                    SpiBusDeviceConfig {
+                     SPISettings{1000000, MSBFIRST, SPI_MODE0},
+                     /* bmp388_select   or ... */ [](){ digitalWrite(BMP388_CS_PIN, LOW ); },
+                     /* bmp388_deselect or ... */ [](){ digitalWrite(BMP388_CS_PIN, HIGH); }
+                    }
+                   };
 
 /**************************************************************************************
  * SETUP/LOOP
@@ -39,8 +41,10 @@ void setup()
 {
   Serial.begin(9600);
   while (!Serial) { }
-  
-  SPI.begin();
+
+  //SPI.begin();
+  spi_dispatcher.begin();
+  delay(2000); /* Ensure that the SPI dispatcher has been started. */
 
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);
@@ -53,7 +57,9 @@ void setup()
     
     SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, &rx_buf_len);
     
-    bmp388.transfer(req);    
+    bmp388.transfer(req);
+
+    rtos::ThisThread::sleep_for(5000); /* TODO: Wait for results, otherwise the rx/tx buffers go out of range. */
 
     return rx_buf[2];
   };
