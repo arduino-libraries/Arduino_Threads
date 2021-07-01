@@ -25,20 +25,6 @@
  * CLASS DECLARATION
  **************************************************************************************/
 
-class SpiIoRequest : public IoRequest
-{
-public:
-  SpiIoRequest(uint8_t const * const tx_buf, size_t const tx_buf_len, uint8_t * rx_buf, size_t const rx_buf_len, size_t * bytes_read)
-  : IoRequest(IoRequest::Type::SPI, tx_buf, tx_buf_len, rx_buf, rx_buf_len, bytes_read)
-  { }
-
-  void set_config(SpiBusDeviceConfig * config) { _config = config; }
-  SpiBusDeviceConfig & config() { return *_config; }
-
-private:
-  SpiBusDeviceConfig * _config{nullptr};
-};
-
 class SpiBusDevice : public BusDevice
 {
 public:
@@ -48,11 +34,10 @@ public:
   }
   virtual Status transfer(IoRequest & req) override
   {
+    /* Append SPI bus device specific configuration. */
     reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);
-
-    /* Insert into queue. */
+    /* Dispatch the request into the queue. */
     SpiDispatcher::instance().request(&req);
-
     return Status::Ok;
   }
 

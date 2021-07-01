@@ -11,6 +11,7 @@
 
 #include <functional>
 #include <Arduino.h>
+#include <SPI.h>
 
 /**************************************************************************************
  * CLASS DECLARATION
