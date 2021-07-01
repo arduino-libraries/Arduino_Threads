@@ -40,9 +40,6 @@ void setup()
   Serial.begin(9600);
   while (!Serial) { }
 
-  //SPI.begin();
-  SpiDispatcher::instance();
-
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);
 
