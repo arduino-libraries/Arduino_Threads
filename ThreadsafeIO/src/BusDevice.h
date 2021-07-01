@@ -23,7 +23,6 @@ public:
   enum class Status : int
   {
     Ok = 0,
-    ConfigError = -1,
   };
 
   virtual Status transfer(IoRequest & req) = 0;
