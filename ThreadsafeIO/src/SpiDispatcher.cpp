@@ -58,6 +58,7 @@ void SpiDispatcher::destroy()
 
 bool SpiDispatcher::request(IoRequest * req)
 {
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   return _request_queue.try_put(req);
 }
 
