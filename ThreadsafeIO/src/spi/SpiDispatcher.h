@@ -11,7 +11,7 @@
 
 #include <mbed.h>
 
-#include "IoRequest.h"
+#include "../IoRequest.h"
 
 /**************************************************************************************
  * CLASS DECLARATION

@@ -61,7 +61,7 @@ private:
   ReadBuf _read_buf;
 };
 
-#include "SpiBusDeviceConfig.h"
+#include "spi/SpiBusDeviceConfig.h"
 
 class SpiIoRequest : public IoRequest
 {

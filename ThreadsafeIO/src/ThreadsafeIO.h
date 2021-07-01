@@ -9,7 +9,6 @@
  * INCLUDE
  **************************************************************************************/
 
-#include "SpiBusDevice.h"
-#include "SpiDispatcher.h"
+#include "spi/SpiBusDevice.h"
 
 #endif /* THREADSAFE_IO_H_ */
