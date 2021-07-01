@@ -110,13 +110,13 @@ void SpiDispatcher::processIoRequest(IoRequest * io_reqest)
   size_t bytes_received = 0,
          bytes_sent = 0;
   for(;
-      bytes_received < spi_io_request->_rx_buf.len;
+      bytes_received < spi_io_request->_read_buf.len;
       bytes_received++, bytes_sent++)
   {
     uint8_t tx_byte = 0;
 
-    if (bytes_sent < spi_io_request->_tx_buf.len)
-      tx_byte = spi_io_request->_tx_buf.buf[bytes_sent];
+    if (bytes_sent < spi_io_request->_write_buf.len)
+      tx_byte = spi_io_request->_write_buf.buf[bytes_sent];
     else
       tx_byte = spi_io_request->config().fill_symbol();
 
@@ -128,9 +128,9 @@ void SpiDispatcher::processIoRequest(IoRequest * io_reqest)
     Serial.print(rx_byte, HEX);
     Serial.println();
 
-    spi_io_request->_rx_buf.buf[bytes_received] = rx_byte;
+    spi_io_request->_read_buf.buf[bytes_received] = rx_byte;
   }
-  *spi_io_request->_rx_buf.bytes_read = bytes_received;
+  *spi_io_request->_read_buf.bytes_read = bytes_received;
 
   SPI.endTransaction();
 
