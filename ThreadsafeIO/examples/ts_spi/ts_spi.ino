@@ -23,8 +23,6 @@ void bmp388_deselect();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-SpiDispatcher spi_dispatcher;
-
 SpiBusDevice bmp388{"SPI",
                     SpiBusDeviceConfig {
                      SPISettings{1000000, MSBFIRST, SPI_MODE0},
@@ -43,7 +41,8 @@ void setup()
   while (!Serial) { }
 
   //SPI.begin();
-  spi_dispatcher.begin();
+  SpiDispatcher::instance().begin();
+  //spi_dispatcher.begin();
   delay(2000); /* Ensure that the SPI dispatcher has been started. */
 
   pinMode(BMP388_CS_PIN, OUTPUT);

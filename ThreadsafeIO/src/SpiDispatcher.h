@@ -26,8 +26,10 @@ class SpiDispatcher
 {
 public:
 
-   SpiDispatcher() : _thread(osPriorityNormal, 4096, nullptr, "SpiDispatcher") { }
-  ~SpiDispatcher() { end(); }
+  SpiDispatcher(SpiDispatcher &) = delete;
+  void operator = (SpiDispatcher &) = delete;
+
+  static SpiDispatcher & instance();
 
   enum class Status : int
   {
@@ -51,8 +53,15 @@ public:
 
 private:
 
+  static SpiDispatcher * _p_instance;
+  static rtos::Mutex _mutex;
+
   rtos::Thread _thread;
   bool _terminate_thread{false};
+
+   SpiDispatcher() : _thread(osPriorityNormal, 4096, nullptr, "SpiDispatcher") { }
+  ~SpiDispatcher() { end(); }
+
 
   void threadFunc()
   {
