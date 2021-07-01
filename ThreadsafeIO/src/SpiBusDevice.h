@@ -32,13 +32,12 @@ public:
   {
     /* TODO: Select SPI bus based in string. */
   }
-  virtual Status transfer(IoRequest & req) override
+  virtual bool transfer(IoRequest & req) override
   {
     /* Append SPI bus device specific configuration. */
     reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);
     /* Dispatch the request into the queue. */
-    SpiDispatcher::instance().request(&req);
-    return Status::Ok;
+    return SpiDispatcher::instance().request(&req);
   }
 
 private:

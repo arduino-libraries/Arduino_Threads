@@ -20,12 +20,7 @@ class BusDevice
 public:
   virtual ~BusDevice() { }
 
-  enum class Status : int
-  {
-    Ok = 0,
-  };
-
-  virtual Status transfer(IoRequest & req) = 0;
+  virtual bool transfer(IoRequest & req) = 0;
 };
 
 #endif /* BUS_DEVICE_H_ */

@@ -88,21 +88,22 @@ void SpiDispatcher::threadFunc()
 {
   _has_tread_started = true;
 
-  while(!_terminate_thread) {
+  while(!_terminate_thread)
+  {
     IoRequest * io_reqest = nullptr;
-    if (_request_queue.try_get(&io_reqest)) {
-      processIoRequest(io_reqest);
+    if (_request_queue.try_get(&io_reqest))
+    {
+      if (io_reqest->type() == IoRequest::Type::SPI)
+      {
+        SpiIoRequest * spi_io_request = reinterpret_cast<SpiIoRequest *>(io_reqest);
+        processSpiIoRequest(spi_io_request);
+      }
     }
   }
 }
 
-void SpiDispatcher::processIoRequest(IoRequest * io_reqest)
+void SpiDispatcher::processSpiIoRequest(SpiIoRequest * spi_io_request)
 {
-  if (io_reqest->type() != IoRequest::Type::SPI)
-    return;
-
-  SpiIoRequest * spi_io_request = reinterpret_cast<SpiIoRequest *>(io_reqest);
-
   spi_io_request->config().select();
 
   SPI.beginTransaction(spi_io_request->config().settings());
