@@ -47,6 +47,7 @@ private:
   void begin();
   void end();
   void threadFunc();
+  void processIoRequest(IoRequest * io_reqest);
 };
 
 #endif /* SPI_DISPATCHER_H_ */
