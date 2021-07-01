@@ -9,18 +9,13 @@
  * INCLUDE
  **************************************************************************************/
 
-#include <Arduino.h>
 #include <mbed.h>
-#include <SPI.h>
 
 #include "IoRequest.h"
-#include "SpiBusDevice.h"
 
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
-
-extern rtos::Queue<IoRequest, 32> _request_queue;
 
 class SpiDispatcher
 {
@@ -32,6 +27,8 @@ public:
   static SpiDispatcher & instance();
   static void destroy();
 
+  bool request(IoRequest * req);
+
 private:
 
   static SpiDispatcher * _p_instance;
@@ -41,60 +38,15 @@ private:
   bool _has_tread_started;
   bool _terminate_thread;
 
+  static size_t constexpr REQUEST_QUEUE_SIZE = 32;
+  rtos::Queue<IoRequest, REQUEST_QUEUE_SIZE> _request_queue;
+
    SpiDispatcher();
   ~SpiDispatcher();
 
   void begin();
   void end();
-
-  void threadFunc()
-  {
-    _has_tread_started = true;
-
-    while(!_terminate_thread)
-    {
-      //rtos::ThisThread::yield();
-      IoRequest * io_reqest = nullptr;
-      if (_request_queue.try_get(&io_reqest))
-      {
-        if (io_reqest->_type == IoRequest::Type::SPI)
-        {
-          SpiIoRequest * spi_io_request = reinterpret_cast<SpiIoRequest *>(io_reqest);
-
-          spi_io_request->config().select();
-
-          SPI.beginTransaction(spi_io_request->config().settings());
-
-          size_t bytes_received = 0,
-                 bytes_sent = 0;
-          for(; bytes_received < *(spi_io_request->_rx_buf_len); bytes_received++, bytes_sent++)
-          {
-            uint8_t tx_byte = 0;
-
-            if (bytes_sent < spi_io_request->_tx_buf_len)
-                tx_byte = spi_io_request->_tx_buf[bytes_sent];
-            else
-                tx_byte = spi_io_request->config().fill_symbol();
-
-            uint8_t const rx_byte = SPI.transfer(tx_byte);
-
-            Serial.print("TX ");
-            Serial.print(tx_byte, HEX);
-            Serial.print("| RX ");
-            Serial.print(rx_byte, HEX);
-            Serial.println();
-
-            spi_io_request->_rx_buf[bytes_received] = rx_byte;
-          }
-          *spi_io_request->_rx_buf_len = bytes_received;
-
-          SPI.endTransaction();
-
-          spi_io_request->config().deselect();
-        }
-      }
-    }
-  }
+  void threadFunc();
 };
 
 #endif /* SPI_DISPATCHER_H_ */

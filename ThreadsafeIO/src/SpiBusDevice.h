@@ -18,6 +18,8 @@
 #include "IoRequest.h"
 #include "BusDevice.h"
 
+#include "SpiDispatcher.h"
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
@@ -59,8 +61,6 @@ private:
   SpiBusDeviceConfig * _config{nullptr};
 };
 
-extern rtos::Queue<IoRequest, 32> _request_queue;
-
 class SpiBusDevice : public BusDevice
 {
 public:
@@ -76,36 +76,7 @@ public:
     reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);
 
     /* Insert into queue. */
-    _request_queue.try_put(&req);
-
-    /* TODO: Instead of directly processing in here push
-     * the whole request into a queue and hand over processing
-     * to the IO thread.
-     */
-    /*
-    _config.select();
-
-    SPI.beginTransaction(_config.settings());
-
-    size_t bytes_received = 0,
-           bytes_sent = 0;
-    for(; bytes_received < (*req.rx_buf_len()); bytes_received++, bytes_sent++)
-    {
-      uint8_t tx_byte = 0;
-
-      if (bytes_sent < req.tx_buf_len())
-        tx_byte = req.tx_buf()[bytes_sent];
-      else
-        tx_byte = _config.fill_symbol();
-
-      req.rx_buf()[bytes_received] = SPI.transfer(tx_byte);
-    }
-    *req.rx_buf_len() = bytes_received;
-
-    SPI.endTransaction();
-
-    _config.deselect();
-    */
+    SpiDispatcher::instance().request(&req);
 
     return Status::Ok;
   }
