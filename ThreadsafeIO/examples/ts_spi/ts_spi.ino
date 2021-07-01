@@ -41,9 +41,7 @@ void setup()
   while (!Serial) { }
 
   //SPI.begin();
-  SpiDispatcher::instance().begin();
-  //spi_dispatcher.begin();
-  delay(2000); /* Ensure that the SPI dispatcher has been started. */
+  SpiDispatcher::instance();
 
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);

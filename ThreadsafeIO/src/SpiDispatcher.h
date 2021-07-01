@@ -30,26 +30,7 @@ public:
   void operator = (SpiDispatcher &) = delete;
 
   static SpiDispatcher & instance();
-
-  enum class Status : int
-  {
-    Ok = 0
-  };
-
-  Status begin()
-  {
-    SPI.begin();
-    _thread.start(mbed::callback(this, &SpiDispatcher::threadFunc)); /* TODO: Check return code */
-    return Status::Ok;
-  }
-
-  Status end()
-  {
-    _terminate_thread = true;
-    _thread.join(); /* TODO: Check return code */
-    SPI.end();
-    return Status::Ok;
-  }
+  static void destroy();
 
 private:
 
@@ -57,14 +38,19 @@ private:
   static rtos::Mutex _mutex;
 
   rtos::Thread _thread;
-  bool _terminate_thread{false};
+  bool _has_tread_started;
+  bool _terminate_thread;
 
-   SpiDispatcher() : _thread(osPriorityNormal, 4096, nullptr, "SpiDispatcher") { }
-  ~SpiDispatcher() { end(); }
+   SpiDispatcher();
+  ~SpiDispatcher();
 
+  void begin();
+  void end();
 
   void threadFunc()
   {
+    _has_tread_started = true;
+
     while(!_terminate_thread)
     {
       //rtos::ThisThread::yield();
