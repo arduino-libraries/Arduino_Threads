@@ -50,9 +50,9 @@ void setup()
   {
     uint8_t const tx_buf[3] = {static_cast<uint8_t>(0x80 | reg_addr), 0, 0};
     uint8_t rx_buf[3] = {0};
-    size_t rx_buf_len = sizeof(rx_buf);
+    size_t bytes_read = 0;
     
-    SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, &rx_buf_len);
+    SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf), &bytes_read);
     
     bmp388.transfer(req);
 
