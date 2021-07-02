@@ -56,10 +56,17 @@ void SpiDispatcher::destroy()
   _p_instance = nullptr;
 }
 
-bool SpiDispatcher::request(IoRequest * req)
+IoResponse * SpiDispatcher::request(IoRequest * req)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _request_queue.try_put(req);
+  /* ATTENTION!!! MEM LEAK HERE!!! */
+  IoResponse * rsp = new IoResponse{req->read_buf().data, req->read_buf().bytes_read};
+  IoTransaction * io_transaction = new IoTransaction(req, rsp);
+  if (_request_queue.try_put(io_transaction)) {
+    return rsp;
+  } else {
+    return nullptr;
+  }
 }
 
 /**************************************************************************************
@@ -90,13 +97,19 @@ void SpiDispatcher::threadFunc()
 
   while(!_terminate_thread)
   {
-    IoRequest * io_reqest = nullptr;
-    if (_request_queue.try_get(&io_reqest))
+    IoTransaction * io_transaction = nullptr;
+    if (_request_queue.try_get(&io_transaction))
     {
+      IoRequest * io_reqest = io_transaction->req;
+      IoResponse * io_response = io_transaction->rsp;
       if (io_reqest->type() == IoRequest::Type::SPI)
       {
         SpiIoRequest * spi_io_request = reinterpret_cast<SpiIoRequest *>(io_reqest);
+
+        io_response->_mutex.lock();
         processSpiIoRequest(spi_io_request);
+        io_response->_cond.notify_all();
+        io_response->_mutex.unlock();
       }
     }
   }

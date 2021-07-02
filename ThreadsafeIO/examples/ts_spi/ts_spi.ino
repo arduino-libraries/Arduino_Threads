@@ -51,11 +51,17 @@ void setup()
     
     SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf), &bytes_read);
     
-    bmp388.transfer(req);
+    IoResponse * rsp = bmp388.transfer(req);
 
-    rtos::ThisThread::sleep_for(5000); /* TODO: Wait for results, otherwise the rx/tx buffers go out of range. */
+    /* TODO: Compact this in some way. */
+    rsp->_mutex.lock();
+    rsp->_cond.wait();
+    uint8_t const reg_val = rx_buf[2];
+    rsp->_mutex.unlock();
 
-    return rx_buf[2];
+    //rtos::ThisThread::sleep_for(5000); /* TODO: Wait for results, otherwise the rx/tx buffers go out of range. */
+
+    return reg_val;//rx_buf[2];
   };
 
   uint8_t const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);

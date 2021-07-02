@@ -11,6 +11,8 @@
 
 #include <mbed.h>
 
+#include "../IoResponse.h"
+
 #include "SpiIoRequest.h"
 
 /**************************************************************************************
@@ -27,7 +29,7 @@ public:
   static SpiDispatcher & instance();
   static void destroy();
 
-  bool request(IoRequest * req);
+  IoResponse * request(IoRequest * req);
 
 private:
 
@@ -38,8 +40,16 @@ private:
   bool _has_tread_started;
   bool _terminate_thread;
 
+  class IoTransaction
+  {
+  public:
+    IoTransaction(IoRequest * q, IoResponse * p) : req{q}, rsp{p} { }
+    IoRequest  * req{nullptr};
+    IoResponse * rsp{nullptr};
+  };
+  
   static size_t constexpr REQUEST_QUEUE_SIZE = 32;
-  rtos::Queue<IoRequest, REQUEST_QUEUE_SIZE> _request_queue;
+  rtos::Queue<IoTransaction, REQUEST_QUEUE_SIZE> _request_queue;
 
    SpiDispatcher();
   ~SpiDispatcher();

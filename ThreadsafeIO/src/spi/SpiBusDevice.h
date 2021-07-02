@@ -32,7 +32,7 @@ public:
   {
     /* TODO: Select SPI bus based in string. */
   }
-  virtual bool transfer(IoRequest & req) override
+  virtual IoResponse * transfer(IoRequest & req) override
   {
     /* Append SPI bus device specific configuration. */
     reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);
