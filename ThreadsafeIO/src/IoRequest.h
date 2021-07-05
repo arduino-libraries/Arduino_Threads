@@ -19,46 +19,29 @@ class IoRequest
 {
 public:
 
-  enum class Type
-  {
-    None,
-    SPI
-  };
+  enum class Type { None, SPI };
 
-  class WriteBuf
-  {
-  public:
-    WriteBuf(uint8_t const * const d, size_t const b2w) : data{d}, bytes_to_write{b2w} { }
-    uint8_t const * const data{nullptr};
-    size_t const bytes_to_write{0};
-  };
-
-  class ReadBuf
-  {
-  public:
-    ReadBuf(uint8_t * d, size_t const b2r, size_t * br) : data{d}, bytes_to_read{b2r}, bytes_read{br} { }
-    uint8_t * data{nullptr};
-    size_t const bytes_to_read{0};
-    size_t * bytes_read{0};
-  };
-
-
-  IoRequest(Type const type, uint8_t const * const tx_buf, size_t const tx_buf_len, uint8_t * rx_buf, size_t const rx_buf_len, size_t * bytes_read)
-  : _type{type}
-  , _write_buf{tx_buf, tx_buf_len}
-  , _read_buf{rx_buf, rx_buf_len, bytes_read}
+  IoRequest(Type const type, uint8_t const * const write_buf_, size_t const bytes_to_write_, uint8_t * read_buf_, size_t const bytes_to_read_)
+  : write_buf{write_buf_}
+  , bytes_to_write{bytes_to_write_}
+  , read_buf{read_buf_}
+  , bytes_to_read{bytes_to_read_}
+  , _type{type}
   { }
 
 
-  inline Type       type     () const { return _type; }
-  inline WriteBuf & write_buf()       { return _write_buf; }
-  inline ReadBuf  & read_buf ()       { return _read_buf; }
+  inline Type type() const { return _type; }
+
+  uint8_t const * const write_buf{nullptr};
+  size_t const bytes_to_write{0};
+  uint8_t * read_buf{nullptr};
+  size_t const bytes_to_read{0};
+
 
 private:
 
   Type _type{Type::None};
-  WriteBuf _write_buf;
-  ReadBuf _read_buf;
+
 };
 
 #endif /* IO_REQUEST_H_ */

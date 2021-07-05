@@ -59,7 +59,7 @@ void SpiDispatcher::destroy()
 TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  TSharedIoResponse rsp(new IoResponse{req->read_buf().data, req->read_buf().bytes_read});
+  TSharedIoResponse rsp(new IoResponse{req->read_buf});
   /* ATTENTION!!! MEM LEAK HERE!!! */
   /* Turn Queue into Mailbox for IO transactions. */
   IoTransaction * io_transaction = new IoTransaction(req, rsp.get());
@@ -125,13 +125,13 @@ void SpiDispatcher::processSpiIoRequest(SpiIoRequest * spi_io_request)
   size_t bytes_received = 0,
          bytes_sent = 0;
   for(;
-      bytes_received < spi_io_request->read_buf().bytes_to_read;
+      bytes_received < spi_io_request->bytes_to_read;
       bytes_received++, bytes_sent++)
   {
     uint8_t tx_byte = 0;
 
-    if (bytes_sent < spi_io_request->write_buf().bytes_to_write)
-      tx_byte = spi_io_request->write_buf().data[bytes_sent];
+    if (bytes_sent < spi_io_request->bytes_to_write)
+      tx_byte = spi_io_request->write_buf[bytes_sent];
     else
       tx_byte = spi_io_request->config().fill_symbol();
 
@@ -143,9 +143,9 @@ void SpiDispatcher::processSpiIoRequest(SpiIoRequest * spi_io_request)
     Serial.print(rx_byte, HEX);
     Serial.println();
 
-    spi_io_request->read_buf().data[bytes_received] = rx_byte;
+    spi_io_request->read_buf[bytes_received] = rx_byte;
   }
-  *spi_io_request->read_buf().bytes_read = bytes_received;
+  //*spi_io_request->read_buf().bytes_read = bytes_received;
 
   SPI.endTransaction();
 

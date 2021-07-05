@@ -22,28 +22,18 @@ class IoResponse
 {
 public:
 
-  class ReadBuf
-  {
-  public:
-    ReadBuf(uint8_t * d, size_t * br) : data{d}, bytes_read{br} { }
-    uint8_t * data{nullptr};
-    size_t * bytes_read{0};
-  };
-
-
-  IoResponse(uint8_t * rx_buf, size_t * bytes_read)
-  : _read_buf{rx_buf, bytes_read}
-  , _cond{_mutex}
+  IoResponse(uint8_t * read_buf_)
+  : _cond{_mutex}
+  , read_buf{read_buf_}
+  , bytes_written{0}
+  , bytes_read{0}
   { }
-
-  inline ReadBuf  & read_buf ()       { return _read_buf; }
 
   rtos::Mutex _mutex;
   rtos::ConditionVariable _cond;
-
-private:
-
-  ReadBuf _read_buf;
+  uint8_t * read_buf{nullptr};
+  size_t bytes_written{0};
+  size_t bytes_read{0};
 
 };
 
