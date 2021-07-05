@@ -56,7 +56,7 @@ void SpiDispatcher::destroy()
   _p_instance = nullptr;
 }
 
-TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req, SpiBusDeviceConfig * config)
+IoResponse SpiDispatcher::dispatch(IoRequest * req, SpiBusDeviceConfig * config)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
 
@@ -64,10 +64,10 @@ TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req, SpiBusDeviceConfig * 
   if (!spi_io_transaction)
     return nullptr;
 
-  TSharedIoResponse rsp(new IoResponse{req->read_buf});
+  IoResponse rsp(new impl::IoResponse{req->read_buf});
 
   spi_io_transaction->req = req;
-  spi_io_transaction->rsp = rsp.get();
+  spi_io_transaction->rsp = rsp;
   spi_io_transaction->config = config;
 
   _spi_io_transaction_mailbox.put(spi_io_transaction);
@@ -125,7 +125,7 @@ void SpiDispatcher::threadFunc()
 void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
 {
   IoRequest          * io_request  = spi_io_transaction->req;
-  IoResponse         * io_response = spi_io_transaction->rsp;
+  IoResponse           io_response = spi_io_transaction->rsp;
   SpiBusDeviceConfig * config      = spi_io_transaction->config;
 
   io_response->_mutex.lock();

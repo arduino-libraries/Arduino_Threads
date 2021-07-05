@@ -31,7 +31,7 @@ public:
   {
     /* TODO: Select SPI bus based in string. */
   }
-  virtual TSharedIoResponse transfer(IoRequest & req) override
+  virtual IoResponse transfer(IoRequest & req) override
   {
     return SpiDispatcher::instance().dispatch(&req, &_config);
   }

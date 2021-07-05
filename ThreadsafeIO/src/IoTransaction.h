@@ -45,6 +45,9 @@ public:
  * IoResponse
  **************************************************************************************/
 
+namespace impl
+{
+
 class IoResponse
 {
 public:
@@ -71,7 +74,9 @@ public:
 
 };
 
-typedef mbed::SharedPtr<IoResponse> TSharedIoResponse;
+} /* namespace impl */
+
+typedef mbed::SharedPtr<impl::IoResponse> IoResponse;
 
 /**************************************************************************************
  * IoTransaction

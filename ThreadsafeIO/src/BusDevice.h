@@ -20,7 +20,7 @@ class BusDevice
 public:
   virtual ~BusDevice() { }
 
-  virtual TSharedIoResponse transfer(IoRequest & req) = 0;
+  virtual IoResponse transfer(IoRequest & req) = 0;
 };
 
 #endif /* BUS_DEVICE_H_ */

@@ -29,7 +29,7 @@ public:
   static SpiDispatcher & instance();
   static void destroy();
 
-  TSharedIoResponse dispatch(IoRequest * req, SpiBusDeviceConfig * config);
+  IoResponse dispatch(IoRequest * req, SpiBusDeviceConfig * config);
 
 private:
 
@@ -43,7 +43,7 @@ private:
   typedef struct
   {
     IoRequest  * req;
-    IoResponse * rsp;
+    IoResponse rsp;
     SpiBusDeviceConfig * config;
   } SpiIoTransaction;
 
