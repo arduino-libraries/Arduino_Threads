@@ -138,11 +138,12 @@ void SpiDispatcher::processSpiIoRequest(IoTransaction * io_transaction)
 
     io_request->read_buf[bytes_received] = rx_byte;
   }
-  //*io_request->read_buf().bytes_read = bytes_received;
-
   SPI.endTransaction();
 
   io_request->config().deselect();
+
+  io_response->bytes_written = bytes_sent;
+  io_response->bytes_read = bytes_received;
 
   io_response->_cond.notify_all();
   io_response->_mutex.unlock();

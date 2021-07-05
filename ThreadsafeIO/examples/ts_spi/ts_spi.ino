@@ -50,8 +50,6 @@ void setup()
     
     SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf));
 
-    /* NOTE!!! TURN THIS INTO AN IoTransaction and return in IoResponse bytes_written as well as bytes_read */
-    
     TSharedIoResponse rsp = bmp388.transfer(req);
 
     /* TODO: Compact this in some way. */
@@ -60,9 +58,12 @@ void setup()
     uint8_t const reg_val = rsp->read_buf[2];
     rsp->_mutex.unlock();
 
-    //rtos::ThisThread::sleep_for(5000); /* TODO: Wait for results, otherwise the rx/tx buffers go out of range. */
+    Serial.print(rsp->bytes_written);
+    Serial.print("  bytes written, ");
+    Serial.print(rsp->bytes_read);
+    Serial.println(" bytes read");
 
-    return reg_val;//rx_buf[2];
+    return reg_val;
   };
 
   uint8_t const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
