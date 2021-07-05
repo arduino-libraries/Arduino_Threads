@@ -41,7 +41,7 @@ private:
   bool _terminate_thread;
 
   static size_t constexpr REQUEST_QUEUE_SIZE = 32;
-  rtos::Queue<IoTransaction, REQUEST_QUEUE_SIZE> _request_queue;
+  rtos::Mail<IoTransaction, REQUEST_QUEUE_SIZE> _spi_io_transaction_mailbox;
 
    SpiDispatcher();
   ~SpiDispatcher();

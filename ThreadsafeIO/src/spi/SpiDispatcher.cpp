@@ -62,12 +62,16 @@ TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req)
   TSharedIoResponse rsp(new IoResponse{req->read_buf});
   /* ATTENTION!!! MEM LEAK HERE!!! */
   /* Turn Queue into Mailbox for IO transactions. */
-  IoTransaction * io_transaction = new IoTransaction(req, rsp.get());
-  if (_request_queue.try_put(io_transaction)) {
-    return rsp;
-  } else {
+  IoTransaction * io_transaction = _spi_io_transaction_mailbox.try_alloc();
+  if (!io_transaction)
     return nullptr;
-  }
+
+  io_transaction->req = req;
+  io_transaction->rsp = rsp.get();
+
+  _spi_io_transaction_mailbox.put(io_transaction);
+
+  return rsp;
 }
 
 /**************************************************************************************
@@ -98,9 +102,22 @@ void SpiDispatcher::threadFunc()
 
   while(!_terminate_thread)
   {
-    IoTransaction * io_transaction = nullptr;
-    if (_request_queue.try_get(&io_transaction))
-     processSpiIoRequest(io_transaction);
+    /* Wait blocking for the next IO transaction
+     * request to be posted to the mailbox.
+     */
+    osEvent evt = _spi_io_transaction_mailbox.get();
+    if (evt.status == osEventMail)
+    {
+      /* Fetch the IO transaction request and
+       * process it.
+       */
+      IoTransaction * io_transaction = reinterpret_cast<IoTransaction *>(evt.value.p);
+      processSpiIoRequest(io_transaction);
+      /* Free the allocated memory (memory allocated
+       * during dispatch(...)
+       */
+      _spi_io_transaction_mailbox.free(io_transaction);
+    }
   }
 }
 
