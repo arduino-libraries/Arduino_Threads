@@ -100,40 +100,33 @@ void SpiDispatcher::threadFunc()
   {
     IoTransaction * io_transaction = nullptr;
     if (_request_queue.try_get(&io_transaction))
-    {
-      IoRequest * io_reqest = io_transaction->req;
-      IoResponse * io_response = io_transaction->rsp;
-      if (io_reqest->type() == IoRequest::Type::SPI)
-      {
-        SpiIoRequest * spi_io_request = reinterpret_cast<SpiIoRequest *>(io_reqest);
-
-        io_response->_mutex.lock();
-        processSpiIoRequest(spi_io_request);
-        io_response->_cond.notify_all();
-        io_response->_mutex.unlock();
-      }
-    }
+     processSpiIoRequest(io_transaction);
   }
 }
 
-void SpiDispatcher::processSpiIoRequest(SpiIoRequest * spi_io_request)
+void SpiDispatcher::processSpiIoRequest(IoTransaction * io_transaction)
 {
-  spi_io_request->config().select();
+  IoResponse * io_response = io_transaction->rsp;
+  SpiIoRequest * io_request = reinterpret_cast<SpiIoRequest *>(io_transaction->req);
 
-  SPI.beginTransaction(spi_io_request->config().settings());
+  io_response->_mutex.lock();
+
+  io_request->config().select();
+
+  SPI.beginTransaction(io_request->config().settings());
 
   size_t bytes_received = 0,
          bytes_sent = 0;
   for(;
-      bytes_received < spi_io_request->bytes_to_read;
+      bytes_received < io_request->bytes_to_read;
       bytes_received++, bytes_sent++)
   {
     uint8_t tx_byte = 0;
 
-    if (bytes_sent < spi_io_request->bytes_to_write)
-      tx_byte = spi_io_request->write_buf[bytes_sent];
+    if (bytes_sent < io_request->bytes_to_write)
+      tx_byte = io_request->write_buf[bytes_sent];
     else
-      tx_byte = spi_io_request->config().fill_symbol();
+      tx_byte = io_request->config().fill_symbol();
 
     uint8_t const rx_byte = SPI.transfer(tx_byte);
 
@@ -143,11 +136,14 @@ void SpiDispatcher::processSpiIoRequest(SpiIoRequest * spi_io_request)
     Serial.print(rx_byte, HEX);
     Serial.println();
 
-    spi_io_request->read_buf[bytes_received] = rx_byte;
+    io_request->read_buf[bytes_received] = rx_byte;
   }
-  //*spi_io_request->read_buf().bytes_read = bytes_received;
+  //*io_request->read_buf().bytes_read = bytes_received;
 
   SPI.endTransaction();
 
-  spi_io_request->config().deselect();
+  io_request->config().deselect();
+
+  io_response->_cond.notify_all();
+  io_response->_mutex.unlock();
 }
