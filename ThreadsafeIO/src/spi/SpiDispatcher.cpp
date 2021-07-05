@@ -56,20 +56,21 @@ void SpiDispatcher::destroy()
   _p_instance = nullptr;
 }
 
-TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req)
+TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req, SpiBusDeviceConfig * config)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  TSharedIoResponse rsp(new IoResponse{req->read_buf});
-  /* ATTENTION!!! MEM LEAK HERE!!! */
-  /* Turn Queue into Mailbox for IO transactions. */
-  IoTransaction * io_transaction = _spi_io_transaction_mailbox.try_alloc();
-  if (!io_transaction)
+
+  SpiIoTransaction * spi_io_transaction = _spi_io_transaction_mailbox.try_alloc();
+  if (!spi_io_transaction)
     return nullptr;
 
-  io_transaction->req = req;
-  io_transaction->rsp = rsp.get();
+  TSharedIoResponse rsp(new IoResponse{req->read_buf});
 
-  _spi_io_transaction_mailbox.put(io_transaction);
+  spi_io_transaction->req = req;
+  spi_io_transaction->rsp = rsp.get();
+  spi_io_transaction->config = config;
+
+  _spi_io_transaction_mailbox.put(spi_io_transaction);
 
   return rsp;
 }
@@ -111,26 +112,27 @@ void SpiDispatcher::threadFunc()
       /* Fetch the IO transaction request and
        * process it.
        */
-      IoTransaction * io_transaction = reinterpret_cast<IoTransaction *>(evt.value.p);
-      processSpiIoRequest(io_transaction);
+      SpiIoTransaction * spi_io_transaction = reinterpret_cast<SpiIoTransaction *>(evt.value.p);
+      processSpiIoRequest(spi_io_transaction);
       /* Free the allocated memory (memory allocated
        * during dispatch(...)
        */
-      _spi_io_transaction_mailbox.free(io_transaction);
+      _spi_io_transaction_mailbox.free(spi_io_transaction);
     }
   }
 }
 
-void SpiDispatcher::processSpiIoRequest(IoTransaction * io_transaction)
+void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
 {
-  IoResponse * io_response = io_transaction->rsp;
-  SpiIoRequest * io_request = reinterpret_cast<SpiIoRequest *>(io_transaction->req);
+  IoRequest          * io_request  = spi_io_transaction->req;
+  IoResponse         * io_response = spi_io_transaction->rsp;
+  SpiBusDeviceConfig * config      = spi_io_transaction->config;
 
   io_response->_mutex.lock();
 
-  io_request->config().select();
+  config->select();
 
-  SPI.beginTransaction(io_request->config().settings());
+  SPI.beginTransaction(config->settings());
 
   size_t bytes_received = 0,
          bytes_sent = 0;
@@ -143,7 +145,7 @@ void SpiDispatcher::processSpiIoRequest(IoTransaction * io_transaction)
     if (bytes_sent < io_request->bytes_to_write)
       tx_byte = io_request->write_buf[bytes_sent];
     else
-      tx_byte = io_request->config().fill_symbol();
+      tx_byte = config->fill_symbol();
 
     uint8_t const rx_byte = SPI.transfer(tx_byte);
 /*
@@ -157,7 +159,7 @@ void SpiDispatcher::processSpiIoRequest(IoTransaction * io_transaction)
   }
   SPI.endTransaction();
 
-  io_request->config().deselect();
+  config->deselect();
 
   io_response->bytes_written = bytes_sent;
   io_response->bytes_read = bytes_received;

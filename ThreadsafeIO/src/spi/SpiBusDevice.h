@@ -33,10 +33,7 @@ public:
   }
   virtual TSharedIoResponse transfer(IoRequest & req) override
   {
-    /* Append SPI bus device specific configuration. */
-    reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);
-    /* Dispatch the request into the queue. */
-    return SpiDispatcher::instance().dispatch(&req);
+    return SpiDispatcher::instance().dispatch(&req, &_config);
   }
 
 private:

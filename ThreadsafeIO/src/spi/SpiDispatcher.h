@@ -29,7 +29,7 @@ public:
   static SpiDispatcher & instance();
   static void destroy();
 
-  TSharedIoResponse dispatch(IoRequest * req);
+  TSharedIoResponse dispatch(IoRequest * req, SpiBusDeviceConfig * config);
 
 private:
 
@@ -40,8 +40,15 @@ private:
   bool _has_tread_started;
   bool _terminate_thread;
 
+  typedef struct
+  {
+    IoRequest  * req;
+    IoResponse * rsp;
+    SpiBusDeviceConfig * config;
+  } SpiIoTransaction;
+
   static size_t constexpr REQUEST_QUEUE_SIZE = 32;
-  rtos::Mail<IoTransaction, REQUEST_QUEUE_SIZE> _spi_io_transaction_mailbox;
+  rtos::Mail<SpiIoTransaction, REQUEST_QUEUE_SIZE> _spi_io_transaction_mailbox;
 
    SpiDispatcher();
   ~SpiDispatcher();
@@ -49,7 +56,7 @@ private:
   void begin();
   void end();
   void threadFunc();
-  void processSpiIoRequest(IoTransaction * io_transaction);
+  void processSpiIoRequest(SpiIoTransaction * spi_io_transaction);
 };
 
 #endif /* SPI_DISPATCHER_H_ */

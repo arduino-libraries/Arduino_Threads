@@ -87,7 +87,7 @@ byte bmp388_read_reg(byte const reg_addr)
   };
   byte read_buf[3] = {0};
 
-  SpiIoRequest req(write_buf, sizeof(write_buf), read_buf, sizeof(read_buf));
+  IoRequest req(write_buf, sizeof(write_buf), read_buf, sizeof(read_buf));
 
   TSharedIoResponse rsp = bmp388.transfer(req);
 
