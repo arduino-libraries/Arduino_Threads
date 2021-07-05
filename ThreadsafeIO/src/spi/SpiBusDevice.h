@@ -36,7 +36,7 @@ public:
     /* Append SPI bus device specific configuration. */
     reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);
     /* Dispatch the request into the queue. */
-    return SpiDispatcher::instance().request(&req);
+    return SpiDispatcher::instance().dispatch(&req);
   }
 
 private:

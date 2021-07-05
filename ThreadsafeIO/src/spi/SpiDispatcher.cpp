@@ -56,7 +56,7 @@ void SpiDispatcher::destroy()
   _p_instance = nullptr;
 }
 
-TSharedIoResponse SpiDispatcher::request(IoRequest * req)
+TSharedIoResponse SpiDispatcher::dispatch(IoRequest * req)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   TSharedIoResponse rsp(new IoResponse{req->read_buf().data, req->read_buf().bytes_read});

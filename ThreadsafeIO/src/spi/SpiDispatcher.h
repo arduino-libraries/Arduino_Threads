@@ -29,7 +29,7 @@ public:
   static SpiDispatcher & instance();
   static void destroy();
 
-  TSharedIoResponse request(IoRequest * req);
+  TSharedIoResponse dispatch(IoRequest * req);
 
 private:
 
