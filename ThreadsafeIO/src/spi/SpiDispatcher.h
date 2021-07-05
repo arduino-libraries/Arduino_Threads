@@ -11,7 +11,7 @@
 
 #include <mbed.h>
 
-#include "../IoResponse.h"
+#include "../IoTransaction.h"
 
 #include "SpiIoRequest.h"
 
@@ -40,14 +40,6 @@ private:
   bool _has_tread_started;
   bool _terminate_thread;
 
-  class IoTransaction
-  {
-  public:
-    IoTransaction(IoRequest * q, IoResponse * p) : req{q}, rsp{p} { }
-    IoRequest  * req{nullptr};
-    IoResponse * rsp{nullptr};
-  };
-  
   static size_t constexpr REQUEST_QUEUE_SIZE = 32;
   rtos::Queue<IoTransaction, REQUEST_QUEUE_SIZE> _request_queue;
 

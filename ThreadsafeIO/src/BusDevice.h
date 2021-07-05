@@ -9,10 +9,7 @@
  * INCLUDE
  **************************************************************************************/
 
-#include "IoRequest.h"
-#include "IoResponse.h"
-
-#include <SharedPtr.h>
+#include "IoTransaction.h"
 
 /**************************************************************************************
  * CLASS DECLARATION

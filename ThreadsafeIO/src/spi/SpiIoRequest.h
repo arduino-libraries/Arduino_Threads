@@ -9,7 +9,7 @@
  * INCLUDE
  **************************************************************************************/
 
-#include "../IoRequest.h"
+#include "../IoTransaction.h"
 
 #include "SpiBusDeviceConfig.h"
 
