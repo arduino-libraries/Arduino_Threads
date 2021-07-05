@@ -79,17 +79,22 @@ void bmp388_deselect()
 
 byte bmp388_read_reg(byte const reg_addr)
 {
-  uint8_t const tx_buf[3] = {static_cast<uint8_t>(0x80 | reg_addr), 0, 0};
-  uint8_t rx_buf[3] = {0};
+  byte const write_buf[3] =
+  {
+    static_cast<uint8_t>(0x80 | reg_addr), /* REG_ADDR, if MSBit is set -> READ access */
+    0,                                     /* Dummy byte.                              */
+    0                                      /* REG_VAL is output on SDO                 */
+  };
+  byte read_buf[3] = {0};
 
-  SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf));
+  SpiIoRequest req(write_buf, sizeof(write_buf), read_buf, sizeof(read_buf));
 
   TSharedIoResponse rsp = bmp388.transfer(req);
 
   /* Do other stuff */
 
   rsp->wait();
-  uint8_t const reg_val = rsp->read_buf[2];
+  byte const reg_val = rsp->read_buf[2];
 /*
   Serial.print(rsp->bytes_written);
   Serial.print("  bytes written, ");
