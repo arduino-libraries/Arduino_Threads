@@ -13,7 +13,7 @@
 
 #include "../IoTransaction.h"
 
-#include "SpiIoRequest.h"
+#include "SpiBusDeviceConfig.h"
 
 /**************************************************************************************
  * CLASS DECLARATION
