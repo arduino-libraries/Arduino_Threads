@@ -18,6 +18,8 @@ static uint8_t const BMP388_CHIP_ID_REG_ADDR = 0x00;
 
 void bmp388_select();
 void bmp388_deselect();
+byte bmp388_read_reg(byte const reg_addr);
+void bmp388_thread_func();
 
 /**************************************************************************************
  * GLOBAL VARIABLES
@@ -43,31 +45,17 @@ void setup()
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);
 
-  auto bmp388_read_reg = [](uint8_t const reg_addr) -> uint8_t
-  {
-    uint8_t const tx_buf[3] = {static_cast<uint8_t>(0x80 | reg_addr), 0, 0};
-    uint8_t rx_buf[3] = {0};
-    
-    SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf));
-
-    TSharedIoResponse rsp = bmp388.transfer(req);
-
-    /* Do other stuff */
-
-    rsp->wait();
-    uint8_t const reg_val = rsp->read_buf[2];
-
-    Serial.print(rsp->bytes_written);
-    Serial.print("  bytes written, ");
-    Serial.print(rsp->bytes_read);
-    Serial.println(" bytes read");
-
-    return reg_val;
-  };
-
+/*
   uint8_t const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
   Serial.print("BMP388 CHIP ID = 0x");
   Serial.println(chip_id, HEX);
+ */
+
+  for(size_t i = 0; i < 20; i++)
+  {
+    rtos::Thread * t = new rtos::Thread();
+    t->start(bmp388_thread_func);
+  }
 }
 
 void loop()
@@ -87,4 +75,41 @@ void bmp388_select()
 void bmp388_deselect()
 {
   digitalWrite(BMP388_CS_PIN, HIGH);
+}
+
+byte bmp388_read_reg(byte const reg_addr)
+{
+  uint8_t const tx_buf[3] = {static_cast<uint8_t>(0x80 | reg_addr), 0, 0};
+  uint8_t rx_buf[3] = {0};
+
+  SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf));
+
+  TSharedIoResponse rsp = bmp388.transfer(req);
+
+  /* Do other stuff */
+
+  rsp->wait();
+  uint8_t const reg_val = rsp->read_buf[2];
+/*
+  Serial.print(rsp->bytes_written);
+  Serial.print("  bytes written, ");
+  Serial.print(rsp->bytes_read);
+  Serial.println(" bytes read");
+*/
+  return reg_val;
+}
+
+void bmp388_thread_func()
+{
+  for(;;)
+  {
+    /* Sleep between 5 and 500 ms */
+    rtos::ThisThread::sleep_for(random(5,500));
+    /* Try to read some data from the BMP3888. */
+    byte const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
+    /* Print thread id and chip id value to serial. */
+    char msg[64] = {0};
+    snprintf(msg, sizeof(msg), "Thread %d: Chip ID = 0x%X", rtos::ThisThread::get_id(), chip_id);
+    Serial.println(msg);
+  }
 }

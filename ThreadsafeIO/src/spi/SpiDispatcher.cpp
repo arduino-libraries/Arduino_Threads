@@ -146,13 +146,13 @@ void SpiDispatcher::processSpiIoRequest(IoTransaction * io_transaction)
       tx_byte = io_request->config().fill_symbol();
 
     uint8_t const rx_byte = SPI.transfer(tx_byte);
-
+/*
     Serial.print("TX ");
     Serial.print(tx_byte, HEX);
     Serial.print("| RX ");
     Serial.print(rx_byte, HEX);
     Serial.println();
-
+*/
     io_request->read_buf[bytes_received] = rx_byte;
   }
   SPI.endTransaction();
