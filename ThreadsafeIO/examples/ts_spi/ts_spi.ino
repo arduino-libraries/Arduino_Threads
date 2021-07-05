@@ -50,13 +50,15 @@ void setup()
     size_t bytes_read = 0;
     
     SpiIoRequest req(tx_buf, sizeof(tx_buf), rx_buf, sizeof(rx_buf), &bytes_read);
+
+    /* NOTE!!! TURN THIS INTO AN IoTransaction and return in IoResponse bytes_written as well as bytes_read */
     
-    IoResponse * rsp = bmp388.transfer(req);
+    TSharedIoResponse rsp = bmp388.transfer(req);
 
     /* TODO: Compact this in some way. */
     rsp->_mutex.lock();
     rsp->_cond.wait();
-    uint8_t const reg_val = rx_buf[2];
+    uint8_t const reg_val = rsp->read_buf().data[2];
     rsp->_mutex.unlock();
 
     //rtos::ThisThread::sleep_for(5000); /* TODO: Wait for results, otherwise the rx/tx buffers go out of range. */

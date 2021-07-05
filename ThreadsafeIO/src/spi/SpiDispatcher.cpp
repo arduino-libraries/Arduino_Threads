@@ -56,12 +56,13 @@ void SpiDispatcher::destroy()
   _p_instance = nullptr;
 }
 
-IoResponse * SpiDispatcher::request(IoRequest * req)
+TSharedIoResponse SpiDispatcher::request(IoRequest * req)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  TSharedIoResponse rsp(new IoResponse{req->read_buf().data, req->read_buf().bytes_read});
   /* ATTENTION!!! MEM LEAK HERE!!! */
-  IoResponse * rsp = new IoResponse{req->read_buf().data, req->read_buf().bytes_read};
-  IoTransaction * io_transaction = new IoTransaction(req, rsp);
+  /* Turn Queue into Mailbox for IO transactions. */
+  IoTransaction * io_transaction = new IoTransaction(req, rsp.get());
   if (_request_queue.try_put(io_transaction)) {
     return rsp;
   } else {

@@ -15,7 +15,6 @@
 #include <mbed.h>
 #include <SPI.h>
 
-#include "IoRequest.h"
 #include "BusDevice.h"
 
 #include "SpiDispatcher.h"
@@ -32,7 +31,7 @@ public:
   {
     /* TODO: Select SPI bus based in string. */
   }
-  virtual IoResponse * transfer(IoRequest & req) override
+  virtual TSharedIoResponse transfer(IoRequest & req) override
   {
     /* Append SPI bus device specific configuration. */
     reinterpret_cast<SpiIoRequest*>(&req)->set_config(&_config);

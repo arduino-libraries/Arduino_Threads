@@ -12,6 +12,7 @@
 #include <stdint.h>
 
 #include <mbed.h>
+#include <SharedPtr.h>
 
 /**************************************************************************************
  * CLASS DECLARATION
@@ -45,5 +46,7 @@ private:
   ReadBuf _read_buf;
 
 };
+
+typedef mbed::SharedPtr<IoResponse> TSharedIoResponse;
 
 #endif /* IO_RESPONSE_H_ */
