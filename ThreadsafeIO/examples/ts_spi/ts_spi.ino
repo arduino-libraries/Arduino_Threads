@@ -52,11 +52,10 @@ void setup()
 
     TSharedIoResponse rsp = bmp388.transfer(req);
 
-    /* TODO: Compact this in some way. */
-    rsp->_mutex.lock();
-    rsp->_cond.wait();
+    /* Do other stuff */
+
+    rsp->wait();
     uint8_t const reg_val = rsp->read_buf[2];
-    rsp->_mutex.unlock();
 
     Serial.print(rsp->bytes_written);
     Serial.print("  bytes written, ");

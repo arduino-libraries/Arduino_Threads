@@ -35,6 +35,13 @@ public:
   size_t bytes_written{0};
   size_t bytes_read{0};
 
+  void wait()
+  {
+    _mutex.lock(); /* Do we really need to lock/unlock the mutex? */
+    _cond.wait();
+    _mutex.unlock();
+  }
+
 };
 
 typedef mbed::SharedPtr<IoResponse> TSharedIoResponse;
