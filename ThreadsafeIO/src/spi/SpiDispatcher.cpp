@@ -22,7 +22,7 @@ rtos::Mutex SpiDispatcher::_mutex;
  **************************************************************************************/
 
 SpiDispatcher::SpiDispatcher()
-: _thread(osPriorityNormal, 4096, nullptr, "SpiDispatcher")
+: _thread(osPriorityRealtime, 4096, nullptr, "SpiDispatcher")
 , _has_tread_started{false}
 , _terminate_thread{false}
 {
@@ -146,13 +146,7 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
       tx_byte = config->fill_symbol();
 
     uint8_t const rx_byte = SPI.transfer(tx_byte);
-/*
-    Serial.print("TX ");
-    Serial.print(tx_byte, HEX);
-    Serial.print("| RX ");
-    Serial.print(rx_byte, HEX);
-    Serial.println();
-*/
+
     io_request->read_buf[bytes_received] = rx_byte;
   }
   SPI.endTransaction();
@@ -162,6 +156,7 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
   io_response->bytes_written = bytes_sent;
   io_response->bytes_read = bytes_received;
 
+  io_response->is_done = true;
   io_response->_cond.notify_all();
   io_response->_mutex.unlock();
 }

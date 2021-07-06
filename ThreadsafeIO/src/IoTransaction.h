@@ -57,6 +57,7 @@ public:
   , read_buf{read_buf_}
   , bytes_written{0}
   , bytes_read{0}
+  , is_done{false}
   { }
 
   rtos::Mutex _mutex;
@@ -64,11 +65,14 @@ public:
   uint8_t * read_buf{nullptr};
   size_t bytes_written{0};
   size_t bytes_read{0};
+  bool is_done{false};
 
   void wait()
   {
-    _mutex.lock(); /* Do we really need to lock/unlock the mutex? */
-    _cond.wait();
+    _mutex.lock();
+    while (!is_done) {
+      _cond.wait();
+    }
     _mutex.unlock();
   }
 

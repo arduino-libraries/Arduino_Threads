@@ -22,7 +22,7 @@ rtos::Mutex WireDispatcher::_mutex;
  **************************************************************************************/
 
 WireDispatcher::WireDispatcher()
-: _thread(osPriorityNormal, 4096, nullptr, "WireDispatcher")
+: _thread(osPriorityRealtime, 4096, nullptr, "WireDispatcher")
 , _has_tread_started{false}
 , _terminate_thread{false}
 {
@@ -159,6 +159,7 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
     io_response->bytes_read = bytes_read;
   }
 
+  io_response->is_done = true;
   io_response->_cond.notify_all();
   io_response->_mutex.unlock();
 }

@@ -12,6 +12,8 @@ static int     const BMP388_CS_PIN  = 2;
 static int     const BMP388_INT_PIN = 6;
 static uint8_t const BMP388_CHIP_ID_REG_ADDR = 0x00;
 
+static size_t constexpr NUM_THREADS = 20;
+
 /**************************************************************************************
  * FUNCTION DECLARATION
  **************************************************************************************/
@@ -33,6 +35,9 @@ SpiBusDevice bmp388{"SPI",
                     }
                    };
 
+
+static char thread_name[NUM_THREADS][32];
+
 /**************************************************************************************
  * SETUP/LOOP
  **************************************************************************************/
@@ -45,15 +50,10 @@ void setup()
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);
 
-/*
-  uint8_t const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
-  Serial.print("BMP388 CHIP ID = 0x");
-  Serial.println(chip_id, HEX);
- */
-
   for(size_t i = 0; i < 20; i++)
   {
-    rtos::Thread * t = new rtos::Thread();
+    snprintf(thread_name[i], sizeof(thread_name[i]), "Thread #%02d", i);
+    rtos::Thread * t = new rtos::Thread(osPriorityNormal, OS_STACK_SIZE, nullptr, thread_name[i]);
     t->start(bmp388_thread_func);
   }
 }
@@ -93,14 +93,8 @@ byte bmp388_read_reg(byte const reg_addr)
   /* Do other stuff */
 
   rsp->wait();
-  byte const reg_val = rsp->read_buf[2];
-/*
-  Serial.print(rsp->bytes_written);
-  Serial.print("  bytes written, ");
-  Serial.print(rsp->bytes_read);
-  Serial.println(" bytes read");
-*/
-  return reg_val;
+
+  return rsp->read_buf[2];
 }
 
 void bmp388_thread_func()
@@ -113,7 +107,7 @@ void bmp388_thread_func()
     byte const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
     /* Print thread id and chip id value to serial. */
     char msg[64] = {0};
-    snprintf(msg, sizeof(msg), "Thread %d: Chip ID = 0x%X", rtos::ThisThread::get_id(), chip_id);
+    snprintf(msg, sizeof(msg), "%s: Chip ID = 0x%X", rtos::ThisThread::get_name(), chip_id);
     Serial.println(msg);
   }
 }
