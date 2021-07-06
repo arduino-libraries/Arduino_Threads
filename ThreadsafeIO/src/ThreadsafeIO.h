@@ -10,5 +10,6 @@
  **************************************************************************************/
 
 #include "spi/SpiBusDevice.h"
+#include "wire/WireBusDevice.h"
 
 #endif /* THREADSAFE_IO_H_ */

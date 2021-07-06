@@ -6,10 +6,12 @@
 # Class (KEYWORD1)
 #######################################
 
-SpiBusDevice	KEYWORD1
-SpiBusDeviceConfig	KEYWORD1
 IoRequest	KEYWORD1
 IoResponse	KEYWORD1
+SpiBusDevice	KEYWORD1
+SpiBusDeviceConfig	KEYWORD1
+WireBusDevice	KEYWORD1
+WireBusDeviceConfig	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -20,5 +22,3 @@ transfer	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-
-MKRCAN_MCP2515_CS_PIN	LITERAL1

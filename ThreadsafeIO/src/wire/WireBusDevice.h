@@ -2,8 +2,8 @@
  * A deeply magical library providing threadsafe IO via pipes.
  */
 
-#ifndef SPI_BUS_DEVICE_H_
-#define SPI_BUS_DEVICE_H_
+#ifndef WIRE_BUS_DEVICE_H_
+#define WIRE_BUS_DEVICE_H_
 
 /**************************************************************************************
  * INCLUDE
@@ -14,32 +14,32 @@
 
 #include "../BusDevice.h"
 
-#include "SpiDispatcher.h"
-#include "SpiBusDeviceConfig.h"
+#include "WireDispatcher.h"
+#include "WireBusDeviceConfig.h"
 
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
 
-class SpiBusDevice : public BusDevice
+class WireBusDevice : public BusDevice
 {
 public:
 
-  SpiBusDevice(std::string const & spi_bus, SpiBusDeviceConfig const & config)
+  WireBusDevice(std::string const & spi_bus, WireBusDeviceConfig const & config)
   : _config{config}
-  { /* TODO: Select SPI bus based in string. */ }
+  { /* TODO: Select Wire bus based in string. */ }
 
 
   virtual IoResponse transfer(IoRequest & req) override
   {
-    return SpiDispatcher::instance().dispatch(&req, &_config);
+    return WireDispatcher::instance().dispatch(&req, &_config);
   }
 
 
 private:
 
-  SpiBusDeviceConfig _config;
+  WireBusDeviceConfig _config;
 
 };
 
-#endif /* SPI_BUS_DEVICE_H_ */
+#endif /* WIRE_BUS_DEVICE_H_ */
