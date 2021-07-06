@@ -50,7 +50,7 @@ void setup()
 
 void loop()
 {
-  rtos::ThisThread::sleep_for(10);
+
 }
 
 /**************************************************************************************
@@ -72,7 +72,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
 
   rsp->wait();
   
-  return rsp->read_buf[0];
+  return read_buf;
 }
 
 

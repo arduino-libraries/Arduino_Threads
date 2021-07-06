@@ -94,7 +94,7 @@ byte bmp388_read_reg(byte const reg_addr)
 
   rsp->wait();
 
-  return rsp->read_buf[2];
+  return read_buf[2];
 }
 
 void bmp388_thread_func()

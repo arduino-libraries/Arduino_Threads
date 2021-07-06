@@ -62,7 +62,7 @@ IoResponse SpiDispatcher::dispatch(IoRequest * req, SpiBusDeviceConfig * config)
   if (!spi_io_transaction)
     return nullptr;
 
-  IoResponse rsp(new impl::IoResponse{req->read_buf});
+  IoResponse rsp(new impl::IoResponse());
 
   spi_io_transaction->req = req;
   spi_io_transaction->rsp = rsp;

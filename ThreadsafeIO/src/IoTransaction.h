@@ -52,15 +52,13 @@ class IoResponse
 {
 public:
 
-  IoResponse(uint8_t * read_buf_)
-  : read_buf{read_buf_}
-  , bytes_written{0}
+  IoResponse()
+  : bytes_written{0}
   , bytes_read{0}
   , _cond{_mutex}
   , _is_done{false}
   { }
 
-  uint8_t * read_buf{nullptr};
   size_t bytes_written{0};
   size_t bytes_read{0};
 

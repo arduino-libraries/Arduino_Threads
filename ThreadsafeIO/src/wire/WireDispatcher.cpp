@@ -62,7 +62,7 @@ IoResponse WireDispatcher::dispatch(IoRequest * req, WireBusDeviceConfig * confi
   if (!wire_io_transaction)
     return nullptr;
 
-  IoResponse rsp(new impl::IoResponse{req->read_buf});
+  IoResponse rsp(new impl::IoResponse());
 
   wire_io_transaction->req = req;
   wire_io_transaction->rsp = rsp;
@@ -152,7 +152,7 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
     size_t bytes_read = 0;
     for (; bytes_read < io_request->bytes_to_read; bytes_read++)
     {
-      io_response->read_buf[bytes_read] = Wire.read();
+      io_request->read_buf[bytes_read] = Wire.read();
     }
     io_response->bytes_read = bytes_read;
   }
