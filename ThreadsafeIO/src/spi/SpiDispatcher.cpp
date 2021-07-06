@@ -126,8 +126,6 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
   IoResponse           io_response = spi_io_transaction->rsp;
   SpiBusDeviceConfig * config      = spi_io_transaction->config;
 
-  io_response->_mutex.lock();
-
   config->select();
 
   SPI.beginTransaction(config->settings());
@@ -156,7 +154,5 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
   io_response->bytes_written = bytes_sent;
   io_response->bytes_read = bytes_received;
 
-  io_response->is_done = true;
-  io_response->_cond.notify_all();
-  io_response->_mutex.unlock();
+  io_response->done();
 }

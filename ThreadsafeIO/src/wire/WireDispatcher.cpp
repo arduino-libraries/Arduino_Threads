@@ -126,8 +126,6 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
   IoResponse            io_response = wire_io_transaction->rsp;
   WireBusDeviceConfig * config      = wire_io_transaction->config;
 
-  io_response->_mutex.lock();
-
   Wire.beginTransmission(config->slave_addr());
 
   size_t bytes_written = 0;
@@ -159,7 +157,5 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
     io_response->bytes_read = bytes_read;
   }
 
-  io_response->is_done = true;
-  io_response->_cond.notify_all();
-  io_response->_mutex.unlock();
+  io_response->done();
 }

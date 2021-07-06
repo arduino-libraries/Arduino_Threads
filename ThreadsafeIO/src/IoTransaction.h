@@ -53,28 +53,39 @@ class IoResponse
 public:
 
   IoResponse(uint8_t * read_buf_)
-  : _cond{_mutex}
-  , read_buf{read_buf_}
+  : read_buf{read_buf_}
   , bytes_written{0}
   , bytes_read{0}
-  , is_done{false}
+  , _cond{_mutex}
+  , _is_done{false}
   { }
 
-  rtos::Mutex _mutex;
-  rtos::ConditionVariable _cond;
   uint8_t * read_buf{nullptr};
   size_t bytes_written{0};
   size_t bytes_read{0};
-  bool is_done{false};
+
+  void done()
+  {
+    _mutex.lock();
+    _is_done = true;
+    _cond.notify_all();
+    _mutex.unlock();
+  }
 
   void wait()
   {
     _mutex.lock();
-    while (!is_done) {
+    while (!_is_done) {
       _cond.wait();
     }
     _mutex.unlock();
   }
+
+private:
+
+  rtos::Mutex _mutex;
+  rtos::ConditionVariable _cond;
+  bool _is_done{false};
 
 };
 
