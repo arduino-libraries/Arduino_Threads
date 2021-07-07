@@ -8,8 +8,8 @@
  * CONSTANTS
  **************************************************************************************/
 
-static int     const BMP388_CS_PIN  = 2;
-static int     const BMP388_INT_PIN = 6;
+static int  const BMP388_CS_PIN  = 2;
+static int  const BMP388_INT_PIN = 6;
 static byte const BMP388_CHIP_ID_REG_ADDR = 0x00;
 
 static size_t constexpr NUM_THREADS = 20;
@@ -82,8 +82,8 @@ byte bmp388_read_reg(byte const reg_addr)
   byte const write_buf[3] =
   {
     static_cast<byte>(0x80 | reg_addr), /* REG_ADDR, if MSBit is set -> READ access */
-    0,                                     /* Dummy byte.                              */
-    0                                      /* REG_VAL is output on SDO                 */
+    0,                                  /* Dummy byte.                              */
+    0                                   /* REG_VAL is output on SDO                 */
   };
   byte read_buf[3] = {0};
 
@@ -102,7 +102,7 @@ void bmp388_thread_func()
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
-    rtos::ThisThread::sleep_for(random(5,500));
+    rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
     /* Try to read some data from the BMP3888. */
     byte const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
     /* Print thread id and chip id value to serial. */

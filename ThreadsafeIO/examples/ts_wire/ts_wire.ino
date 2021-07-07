@@ -81,7 +81,7 @@ void lsm6dsox_thread_func()
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
-    rtos::ThisThread::sleep_for(random(5,500));
+    rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
     /* Try to read some data from the BMP3888. */
     byte const who_am_i = lsm6dsox_read_reg(LSM6DSOX_WHO_AM_I_REG);
     /* Print thread id and chip id value to serial. */
