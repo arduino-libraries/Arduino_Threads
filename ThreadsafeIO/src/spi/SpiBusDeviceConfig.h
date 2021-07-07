@@ -9,9 +9,11 @@
  * INCLUDE
  **************************************************************************************/
 
-#include <functional>
 #include <Arduino.h>
+
 #include <SPI.h>
+
+#include <functional>
 
 /**************************************************************************************
  * CLASS DECLARATION
@@ -25,7 +27,7 @@ public:
   typedef std::function<void(void)> SpiDeselectFunc;
 
 
-  SpiBusDeviceConfig(SPISettings const & spi_settings, SpiSelectFunc spi_select, SpiDeselectFunc spi_deselect, uint8_t const fill_symbol = 0xFF)
+  SpiBusDeviceConfig(SPISettings const & spi_settings, SpiSelectFunc spi_select, SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF)
   : _spi_settings{spi_settings}
   , _spi_select{spi_select}
   , _spi_deselect{spi_deselect}
@@ -36,7 +38,7 @@ public:
   SPISettings settings   () const { return _spi_settings; }
   void        select     () const { if (_spi_select) _spi_select(); }
   void        deselect   () const { if (_spi_deselect) _spi_deselect(); }
-  uint8_t     fill_symbol() const { return _fill_symbol; }
+  byte        fill_symbol() const { return _fill_symbol; }
 
 
 private:
@@ -44,7 +46,7 @@ private:
   SPISettings _spi_settings;
   SpiSelectFunc _spi_select{nullptr};
   SpiDeselectFunc _spi_deselect{nullptr};
-  uint8_t _fill_symbol{0xFF};
+  byte _fill_symbol{0xFF};
 
 };
 

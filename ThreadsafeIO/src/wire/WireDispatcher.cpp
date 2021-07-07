@@ -144,7 +144,7 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
   {
     Wire.requestFrom(config->slave_addr(), io_request->bytes_to_read, config->stop());
 
-    while(Wire.available() != io_request->bytes_to_read)
+    while(Wire.available() != static_cast<int>(io_request->bytes_to_read))
     {
       /* TODO: Insert a timeout. */
     }
