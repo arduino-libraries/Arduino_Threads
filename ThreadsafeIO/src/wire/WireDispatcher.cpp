@@ -104,13 +104,9 @@ void WireDispatcher::threadFunc()
     /* Wait blocking for the next IO transaction
      * request to be posted to the mailbox.
      */
-    osEvent evt = _wire_io_transaction_mailbox.get();
-    if (evt.status == osEventMail)
+    WireIoTransaction * wire_io_transaction = _wire_io_transaction_mailbox.try_get_for(rtos::Kernel::wait_for_u32_forever);
+    if (wire_io_transaction)
     {
-      /* Fetch the IO transaction request and
-       * process it.
-       */
-      WireIoTransaction * wire_io_transaction = reinterpret_cast<WireIoTransaction *>(evt.value.p);
       processWireIoRequest(wire_io_transaction);
       /* Free the allocated memory (memory allocated
        * during dispatch(...)

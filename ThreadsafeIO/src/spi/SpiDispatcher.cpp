@@ -104,13 +104,9 @@ void SpiDispatcher::threadFunc()
     /* Wait blocking for the next IO transaction
      * request to be posted to the mailbox.
      */
-    osEvent evt = _spi_io_transaction_mailbox.get();
-    if (evt.status == osEventMail)
+    SpiIoTransaction * spi_io_transaction = _spi_io_transaction_mailbox.try_get_for(rtos::Kernel::wait_for_u32_forever);
+    if (spi_io_transaction)
     {
-      /* Fetch the IO transaction request and
-       * process it.
-       */
-      SpiIoTransaction * spi_io_transaction = reinterpret_cast<SpiIoTransaction *>(evt.value.p);
       processSpiIoRequest(spi_io_transaction);
       /* Free the allocated memory (memory allocated
        * during dispatch(...)
