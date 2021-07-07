@@ -33,6 +33,9 @@ public:
   , bytes_to_read{bytes_to_read_}
   { }
 
+  IoRequest(uint8_t const & write_buf_, uint8_t & read_buf_)
+  : IoRequest{&write_buf_, 1, &read_buf_, 1}
+  { }
 
   uint8_t const * const write_buf{nullptr};
   size_t const bytes_to_write{0};

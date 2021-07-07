@@ -65,7 +65,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
   byte write_buf = reg_addr;
   byte read_buf  = 0;
   
-  IoRequest  req(&write_buf, sizeof(write_buf), &read_buf, sizeof(read_buf));
+  IoRequest  req(write_buf, read_buf);
   IoResponse rsp = lsm6dsox.transfer(req);
   
   /* Optionally do other stuff */
