@@ -81,7 +81,7 @@ void WireDispatcher::begin()
 {
   Wire.begin();
   _thread.start(mbed::callback(this, &WireDispatcher::threadFunc)); /* TODO: Check return code */
-  /* Is is necessary to wait until the WireDispatcher::threadFunc()
+  /* It is necessary to wait until the WireDispatcher::threadFunc()
    * has started, otherwise other threads might trigger IO requests
    * before this thread is actually running.
    */
