@@ -1,5 +1,5 @@
 #######################################
-# Syntax Coloring Map for ThreadsafeIO
+# Syntax Coloring Map for Arduino_ThreadsafeIO
 #######################################
 
 #######################################
