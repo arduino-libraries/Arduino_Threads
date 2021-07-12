@@ -50,7 +50,7 @@ void setup()
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);
 
-  for(size_t i = 0; i < 20; i++)
+  for(size_t i = 0; i < NUM_THREADS; i++)
   {
     snprintf(thread_name[i], sizeof(thread_name[i]), "Thread #%02d", i);
     rtos::Thread * t = new rtos::Thread(osPriorityNormal, OS_STACK_SIZE, nullptr, thread_name[i]);
