@@ -43,6 +43,21 @@ SpiBusDevice BusDeviceCreator::create(std::string const & spi_bus, SPISettings c
   return SpiBusDevice(spi_bus, SpiBusDeviceConfig{spi_settings, cs_pin, fill_symbol});
 }
 
+WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr, bool const restart, bool const stop)
+{
+  return WireBusDevice(wire_bus, WireBusDeviceConfig{slave_addr, restart, stop});
+}
+
+WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr, bool const restart)
+{
+  return create(wire_bus, slave_addr, restart, true);
+}
+
+WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr)
+{
+  return create(wire_bus, slave_addr, true, true);
+}
+
 /**************************************************************************************
  * NAMESPACE
  **************************************************************************************/

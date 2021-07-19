@@ -33,7 +33,7 @@ class WireBusDeviceConfig
 {
 public:
 
-  WireBusDeviceConfig(byte const slave_addr, bool const restart = true, bool const stop = true)
+  WireBusDeviceConfig(byte const slave_addr, bool const restart, bool const stop)
   : _slave_addr{slave_addr}
   , _restart{restart}
   , _stop{stop}
