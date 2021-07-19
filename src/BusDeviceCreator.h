@@ -16,15 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ARDUINO_THREADSAFE_IO_H_
-#define ARDUINO_THREADSAFE_IO_H_
+#ifndef BUS_DEVICE_CREATOR_H_
+#define BUS_DEVICE_CREATOR_H_
 
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
 
-#include "BusDeviceCreator.h"
 #include "spi/SpiBusDevice.h"
 #include "wire/WireBusDevice.h"
 
-#endif /* ARDUINO_THREADSAFE_IO_H_ */
+/**************************************************************************************
+ * CLASS DECLARATION
+ **************************************************************************************/
+
+namespace impl
+{
+
+class BusDeviceCreator
+{
+public:
+
+  SpiBusDevice create(std::string const & spi_bus, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF);
+  SpiBusDevice create(std::string const & spi_bus, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF);
+
+};
+
+} /* namespace impl */
+
+/**************************************************************************************
+ * EXTERN DECLARATION
+ **************************************************************************************/
+
+extern impl::BusDeviceCreator BusDeviceCreator;
+
+#endif /* BUS_DEVICE_CREATOR_H_ */

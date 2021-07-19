@@ -12,12 +12,14 @@ SpiBusDevice	KEYWORD1
 SpiBusDeviceConfig	KEYWORD1
 WireBusDevice	KEYWORD1
 WireBusDeviceConfig	KEYWORD1
+BusDeviceCreator	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
 transfer	KEYWORD2
+create	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
