@@ -37,8 +37,9 @@ class BusDeviceCreator
 {
 public:
 
-  SpiBusDevice create(arduino::SPIClass & spi, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF);
-  SpiBusDevice create(arduino::SPIClass & spi, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF);
+  SpiBusDevice  create(arduino::SPIClass & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol = 0xFF);
+  SpiBusDevice  create(arduino::SPIClass & spi, int const cs_pin, uint32_t const spi_clock, BitOrder const spi_bit_order, SPIMode const spi_bit_mode, byte const fill_symbol = 0xFF);
+  SpiBusDevice  create(arduino::SPIClass & spi, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, SPISettings const & spi_settings, byte const fill_symbol = 0xFF);
 
   WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr);
   WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart);
