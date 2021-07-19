@@ -27,14 +27,7 @@ void bmp388_thread_func();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-SpiBusDevice bmp388{"SPI",
-                    SpiBusDeviceConfig {
-                     SPISettings{1000000, MSBFIRST, SPI_MODE0},
-                     /* bmp388_select   or ... */ [](){ digitalWrite(BMP388_CS_PIN, LOW ); },
-                     /* bmp388_deselect or ... */ [](){ digitalWrite(BMP388_CS_PIN, HIGH); }
-                    }
-                   };
-
+SpiBusDevice bmp388{"SPI", SpiBusDeviceConfig {SPISettings{1000000, MSBFIRST, SPI_MODE0}, BMP388_CS_PIN}};
 
 static char thread_name[NUM_THREADS][32];
 

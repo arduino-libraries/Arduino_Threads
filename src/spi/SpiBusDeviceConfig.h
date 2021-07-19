@@ -48,6 +48,15 @@ public:
   , _fill_symbol{fill_symbol}
   { }
 
+  SpiBusDeviceConfig(SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF)
+  : SpiBusDeviceConfig
+    {spi_settings,
+     [cs_pin](){ digitalWrite(cs_pin, LOW); },
+     [cs_pin](){ digitalWrite(cs_pin, HIGH); },
+     fill_symbol
+    }
+  { }
+
 
   SPISettings settings   () const { return _spi_settings; }
   void        select     () const { if (_spi_select) _spi_select(); }
