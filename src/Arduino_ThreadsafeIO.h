@@ -23,6 +23,7 @@
  * INCLUDE
  **************************************************************************************/
 
+#include "BusDeviceCreator.h"
 #include "spi/SpiBusDevice.h"
 #include "wire/WireBusDevice.h"
 

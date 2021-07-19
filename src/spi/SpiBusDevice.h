@@ -39,9 +39,9 @@ class SpiBusDevice : public BusDevice
 {
 public:
 
-  SpiBusDevice(std::string const & spi_bus, SpiBusDeviceConfig const & config)
+  SpiBusDevice(SpiBusDeviceConfig const & config)
   : _config{config}
-  { /* TODO: Select SPI bus based in string. */ }
+  { }
 
 
   virtual IoResponse transfer(IoRequest & req) override

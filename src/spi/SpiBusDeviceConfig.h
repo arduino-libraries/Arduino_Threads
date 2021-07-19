@@ -41,16 +41,18 @@ public:
   typedef std::function<void(void)> SpiDeselectFunc;
 
 
-  SpiBusDeviceConfig(SPISettings const & spi_settings, SpiSelectFunc spi_select, SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF)
-  : _spi_settings{spi_settings}
+  SpiBusDeviceConfig(arduino::SPIClass & spi, SPISettings const & spi_settings, SpiSelectFunc spi_select, SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF)
+  : _spi{spi}
+  , _spi_settings{spi_settings}
   , _spi_select{spi_select}
   , _spi_deselect{spi_deselect}
   , _fill_symbol{fill_symbol}
   { }
 
-  SpiBusDeviceConfig(SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF)
+  SpiBusDeviceConfig(arduino::SPIClass & spi, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF)
   : SpiBusDeviceConfig
-    {spi_settings,
+    {spi,
+     spi_settings,
      [cs_pin](){ digitalWrite(cs_pin, LOW); },
      [cs_pin](){ digitalWrite(cs_pin, HIGH); },
      fill_symbol
@@ -58,6 +60,7 @@ public:
   { }
 
 
+  arduino::SPIClass & spi() { return _spi; }
   SPISettings settings   () const { return _spi_settings; }
   void        select     () const { if (_spi_select) _spi_select(); }
   void        deselect   () const { if (_spi_deselect) _spi_deselect(); }
@@ -66,6 +69,7 @@ public:
 
 private:
 
+  arduino::SPIClass & _spi;
   SPISettings _spi_settings;
   SpiSelectFunc _spi_select{nullptr};
   SpiDeselectFunc _spi_deselect{nullptr};

@@ -24,7 +24,7 @@ void lsm6dsox_thread_func();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-WireBusDevice lsm6dsox{"Wire", WireBusDeviceConfig{LSM6DSOX_ADDRESS}};
+WireBusDevice lsm6dsox = BusDeviceCreator.create(Wire, LSM6DSOX_ADDRESS);
 
 static char thread_name[NUM_THREADS][32];
 

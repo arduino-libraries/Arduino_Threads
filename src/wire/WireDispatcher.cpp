@@ -136,25 +136,25 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
   IoResponse            io_response = wire_io_transaction->rsp;
   WireBusDeviceConfig * config      = wire_io_transaction->config;
 
-  Wire.beginTransmission(config->slave_addr());
+  config->wire().beginTransmission(config->slave_addr());
 
   size_t bytes_written = 0;
   for (; bytes_written < io_request->bytes_to_write; bytes_written++)
   {
-    Wire.write(io_request->write_buf[bytes_written]);
+    config->wire().write(io_request->write_buf[bytes_written]);
   }
   io_response->bytes_written = bytes_written;
 
   if (config->restart() && (io_request->bytes_to_read > 0))
-    Wire.endTransmission(false /* stop */);
+    config->wire().endTransmission(false /* stop */);
   else
-    Wire.endTransmission(true /* stop */);
+    config->wire().endTransmission(true /* stop */);
 
   if (io_request->bytes_to_read > 0)
   {
-    Wire.requestFrom(config->slave_addr(), io_request->bytes_to_read, config->stop());
+    config->wire().requestFrom(config->slave_addr(), io_request->bytes_to_read, config->stop());
 
-    while(Wire.available() != static_cast<int>(io_request->bytes_to_read))
+    while(config->wire().available() != static_cast<int>(io_request->bytes_to_read))
     {
       /* TODO: Insert a timeout. */
     }
@@ -162,7 +162,7 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
     size_t bytes_read = 0;
     for (; bytes_read < io_request->bytes_to_read; bytes_read++)
     {
-      io_request->read_buf[bytes_read] = Wire.read();
+      io_request->read_buf[bytes_read] = config->wire().read();
     }
     io_response->bytes_read = bytes_read;
   }
