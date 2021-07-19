@@ -39,9 +39,9 @@ class WireBusDevice : public BusDevice
 {
 public:
 
-  WireBusDevice(std::string const & spi_bus, WireBusDeviceConfig const & config)
+  WireBusDevice(WireBusDeviceConfig const & config)
   : _config{config}
-  { /* TODO: Select Wire bus based in string. */ }
+  { }
 
 
   virtual IoResponse transfer(IoRequest & req) override

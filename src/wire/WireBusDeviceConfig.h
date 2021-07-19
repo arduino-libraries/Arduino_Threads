@@ -25,6 +25,8 @@
 
 #include <Arduino.h>
 
+#include <Wire.h>
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
@@ -33,13 +35,15 @@ class WireBusDeviceConfig
 {
 public:
 
-  WireBusDeviceConfig(byte const slave_addr, bool const restart, bool const stop)
-  : _slave_addr{slave_addr}
+  WireBusDeviceConfig(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop)
+  : _wire{wire}
+  , _slave_addr{slave_addr}
   , _restart{restart}
   , _stop{stop}
   { }
 
 
+  inline arduino::HardwareI2C & wire() { return _wire; }
   inline byte slave_addr() const { return _slave_addr; }
   inline bool restart()    const { return _restart; }
   inline bool stop()       const { return _stop; }
@@ -47,6 +51,7 @@ public:
 
 private:
 
+  arduino::HardwareI2C & _wire;
   byte _slave_addr{0x00};
   bool _restart{true}, _stop{true};
 

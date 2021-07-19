@@ -43,19 +43,19 @@ SpiBusDevice BusDeviceCreator::create(arduino::SPIClass & spi, SPISettings const
   return SpiBusDevice(SpiBusDeviceConfig{spi, spi_settings, cs_pin, fill_symbol});
 }
 
-WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr, bool const restart, bool const stop)
+WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop)
 {
-  return WireBusDevice(wire_bus, WireBusDeviceConfig{slave_addr, restart, stop});
+  return WireBusDevice(WireBusDeviceConfig{wire, slave_addr, restart, stop});
 }
 
-WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr, bool const restart)
+WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart)
 {
-  return create(wire_bus, slave_addr, restart, true);
+  return create(wire, slave_addr, restart, true);
 }
 
-WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr)
+WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr)
 {
-  return create(wire_bus, slave_addr, true, true);
+  return create(wire, slave_addr, true, true);
 }
 
 /**************************************************************************************
