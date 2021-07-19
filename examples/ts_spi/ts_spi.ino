@@ -18,8 +18,6 @@ static size_t constexpr NUM_THREADS = 20;
  * FUNCTION DECLARATION
  **************************************************************************************/
 
-void bmp388_select();
-void bmp388_deselect();
 byte bmp388_read_reg(byte const reg_addr);
 void bmp388_thread_func();
 
@@ -59,16 +57,6 @@ void loop()
 /**************************************************************************************
  * FUNCTION DEFINITION
  **************************************************************************************/
-
-void bmp388_select()
-{
-  digitalWrite(BMP388_CS_PIN, LOW);
-}
-
-void bmp388_deselect()
-{
-  digitalWrite(BMP388_CS_PIN, HIGH);
-}
 
 byte bmp388_read_reg(byte const reg_addr)
 {
