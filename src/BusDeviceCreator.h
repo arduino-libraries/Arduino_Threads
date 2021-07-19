@@ -40,9 +40,9 @@ public:
   SpiBusDevice create(arduino::SPIClass & spi, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF);
   SpiBusDevice create(arduino::SPIClass & spi, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF);
 
-  WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop);
-  WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart);
   WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr);
+  WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart);
+  WireBusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop);
 
 };
 

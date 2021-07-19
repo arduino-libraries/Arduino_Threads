@@ -43,9 +43,9 @@ SpiBusDevice BusDeviceCreator::create(arduino::SPIClass & spi, SPISettings const
   return SpiBusDevice(SpiBusDeviceConfig{spi, spi_settings, cs_pin, fill_symbol});
 }
 
-WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop)
+WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr)
 {
-  return WireBusDevice(WireBusDeviceConfig{wire, slave_addr, restart, stop});
+  return create(wire, slave_addr, true, true);
 }
 
 WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart)
@@ -53,9 +53,9 @@ WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const s
   return create(wire, slave_addr, restart, true);
 }
 
-WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr)
+WireBusDevice BusDeviceCreator::create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop)
 {
-  return create(wire, slave_addr, true, true);
+  return WireBusDevice(WireBusDeviceConfig{wire, slave_addr, restart, stop});
 }
 
 /**************************************************************************************
