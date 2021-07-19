@@ -33,14 +33,14 @@ namespace impl
  * PUBLIC MEMBER FUNCTIONS
  **************************************************************************************/
 
-SpiBusDevice BusDeviceCreator::create(std::string const & spi_bus, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol)
+SpiBusDevice BusDeviceCreator::create(arduino::SPIClass & spi, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol)
 {
-  return SpiBusDevice(spi_bus, SpiBusDeviceConfig{spi_settings, spi_select, spi_deselect, fill_symbol});
+  return SpiBusDevice(SpiBusDeviceConfig{spi, spi_settings, spi_select, spi_deselect, fill_symbol});
 }
 
-SpiBusDevice BusDeviceCreator::create(std::string const & spi_bus, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol)
+SpiBusDevice BusDeviceCreator::create(arduino::SPIClass & spi, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol)
 {
-  return SpiBusDevice(spi_bus, SpiBusDeviceConfig{spi_settings, cs_pin, fill_symbol});
+  return SpiBusDevice(SpiBusDeviceConfig{spi, spi_settings, cs_pin, fill_symbol});
 }
 
 WireBusDevice BusDeviceCreator::create(std::string const & wire_bus, byte const slave_addr, bool const restart, bool const stop)

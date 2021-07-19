@@ -138,7 +138,7 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
 
   config->select();
 
-  SPI.beginTransaction(config->settings());
+  config->spi().beginTransaction(config->settings());
 
   size_t bytes_received = 0,
          bytes_sent = 0;
@@ -153,11 +153,11 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
     else
       tx_byte = config->fill_symbol();
 
-    byte const rx_byte = SPI.transfer(tx_byte);
+    byte const rx_byte = config->spi().transfer(tx_byte);
 
     io_request->read_buf[bytes_received] = rx_byte;
   }
-  SPI.endTransaction();
+  config->spi().endTransaction();
 
   config->deselect();
 

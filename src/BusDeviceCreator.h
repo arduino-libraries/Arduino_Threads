@@ -37,8 +37,8 @@ class BusDeviceCreator
 {
 public:
 
-  SpiBusDevice create(std::string const & spi_bus, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF);
-  SpiBusDevice create(std::string const & spi_bus, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF);
+  SpiBusDevice create(arduino::SPIClass & spi, SPISettings const & spi_settings, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, byte const fill_symbol = 0xFF);
+  SpiBusDevice create(arduino::SPIClass & spi, SPISettings const & spi_settings, int const cs_pin, byte const fill_symbol = 0xFF);
 
   WireBusDevice create(std::string const & wire_bus, byte const slave_addr, bool const restart, bool const stop);
   WireBusDevice create(std::string const & wire_bus, byte const slave_addr, bool const restart);

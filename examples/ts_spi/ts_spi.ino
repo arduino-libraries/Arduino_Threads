@@ -27,7 +27,7 @@ void bmp388_thread_func();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-SpiBusDevice bmp388 = BusDeviceCreator.create("SPI", SPISettings{1000000, MSBFIRST, SPI_MODE0}, BMP388_CS_PIN);
+SpiBusDevice bmp388 = BusDeviceCreator.create(SPI, SPISettings{1000000, MSBFIRST, SPI_MODE0}, BMP388_CS_PIN);
 
 static char thread_name[NUM_THREADS][32];
 
