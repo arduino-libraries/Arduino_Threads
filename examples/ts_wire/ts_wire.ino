@@ -24,7 +24,7 @@ void lsm6dsox_thread_func();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-WireBusDevice lsm6dsox = BusDeviceCreator.create(Wire, LSM6DSOX_ADDRESS);
+BusDevice lsm6dsox = BusDeviceBase::create(Wire, LSM6DSOX_ADDRESS);
 
 static char thread_name[NUM_THREADS][32];
 
@@ -64,7 +64,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
   byte read_buf  = 0;
   
   IoRequest  req(write_buf, read_buf);
-  IoResponse rsp = lsm6dsox.transfer(req);
+  IoResponse rsp = lsm6dsox->transfer(req);
   
   /* Optionally do other stuff */
 

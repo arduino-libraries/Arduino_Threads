@@ -25,16 +25,47 @@
 
 #include "IoTransaction.h"
 
+#include "spi/SpiBusDeviceConfig.h"
+
+/**************************************************************************************
+ * FORWARD DECLARATION
+ **************************************************************************************/
+
+namespace arduino
+{
+  class HardwareSPI;
+  class HardwareI2C;
+}
+
+class BusDeviceBase;
+
+/**************************************************************************************
+ * TYPEDEF
+ **************************************************************************************/
+
+typedef mbed::SharedPtr<BusDeviceBase> BusDevice;
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
 
-class BusDevice
+class BusDeviceBase
 {
 public:
-  virtual ~BusDevice() { }
+
+  virtual ~BusDeviceBase() { }
 
   virtual IoResponse transfer(IoRequest & req) = 0;
+
+
+  static BusDevice create(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol = 0xFF);
+  static BusDevice create(arduino::HardwareSPI & spi, int const cs_pin, uint32_t const spi_clock, BitOrder const spi_bit_order, SPIMode const spi_bit_mode, byte const fill_symbol = 0xFF);
+  static BusDevice create(arduino::HardwareSPI & spi, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, SPISettings const & spi_settings, byte const fill_symbol = 0xFF);
+
+  static BusDevice create(arduino::HardwareI2C & wire, byte const slave_addr);
+  static BusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart);
+  static BusDevice create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop);
+
 };
 
 #endif /* BUS_DEVICE_H_ */
