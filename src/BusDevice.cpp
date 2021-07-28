@@ -29,7 +29,7 @@
  * PUBLIC MEMBER FUNCTIONS
  **************************************************************************************/
 
-BusDevice BusDeviceBase(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol)
+BusDevice BusDeviceBase::create(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol)
 {
   return BusDevice(new SpiBusDevice(SpiBusDeviceConfig{spi,
                                                        spi_settings,
