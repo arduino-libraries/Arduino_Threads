@@ -25,7 +25,7 @@ void bmp388_thread_func();
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-BusDevice bmp388 = BusDeviceBase::create(SPI, BMP388_CS_PIN, 1000000, MSBFIRST, SPI_MODE0);
+BusDevice bmp388(SPI, BMP388_CS_PIN, 1000000, MSBFIRST, SPI_MODE0);
 
 static char thread_name[NUM_THREADS][32];
 
@@ -69,7 +69,7 @@ byte bmp388_read_reg(byte const reg_addr)
   byte read_buf[3] = {0};
 
   IoRequest req(write_buf, sizeof(write_buf), read_buf, sizeof(read_buf));
-  IoResponse rsp = bmp388->transfer(req);
+  IoResponse rsp = bmp388.transfer(req);
 
   /* Do other stuff */
 

@@ -40,10 +40,6 @@ namespace arduino
 class BusDevice;
 
 /**************************************************************************************
- * TYPEDEF
- **************************************************************************************/
-
-/**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
 
@@ -69,28 +65,24 @@ public:
 class BusDevice
 {
 public:
-  BusDevice(BusDeviceBase* dev) : instance(dev) {};
-  /*
-  BusDevice(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol = 0xFF) {
-    this = BusDeviceBase::create(spi, cs_pin, spi_settings, fill_symbol);
-  }
+
+  BusDevice(BusDeviceBase * dev);
+
+  BusDevice(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol = 0xFF);
   BusDevice(arduino::HardwareSPI & spi, int const cs_pin, uint32_t const spi_clock, BitOrder const spi_bit_order, SPIMode const spi_bit_mode, byte const fill_symbol = 0xFF);
   BusDevice(arduino::HardwareSPI & spi, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, SPISettings const & spi_settings, byte const fill_symbol = 0xFF);
-  */
-  //BusDevice(BusDevice&&) = default;
-  BusDevice(arduino::HardwareI2C & wire, byte const slave_addr) {
-    *this = BusDeviceBase::create(wire, slave_addr);
-  }
-  /*
+
+  BusDevice(arduino::HardwareI2C & wire, byte const slave_addr);
   BusDevice(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart);
   BusDevice(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop);
-  */
-  IoResponse transfer(IoRequest & req) {
-    return instance->transfer(req);
-  };
+
+  IoResponse transfer(IoRequest & req);
+
 
 private:
-  mbed::SharedPtr<BusDeviceBase> instance;
+
+  mbed::SharedPtr<BusDeviceBase> _dev;
+
 };
 
 #endif /* BUS_DEVICE_H_ */

@@ -26,7 +26,7 @@
 #include "wire/WireBusDevice.h"
 
 /**************************************************************************************
- * PUBLIC MEMBER FUNCTIONS
+ * BusDeviceBase PUBLIC MEMBER FUNCTIONS
  **************************************************************************************/
 
 BusDevice BusDeviceBase::create(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol)
@@ -65,4 +65,47 @@ BusDevice BusDeviceBase::create(arduino::HardwareI2C & wire, byte const slave_ad
 BusDevice BusDeviceBase::create(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop)
 {
   return BusDevice(new WireBusDevice(WireBusDeviceConfig{wire, slave_addr, restart, stop}));
+}
+
+/**************************************************************************************
+ * BusDevice CTOR/DTOR
+ **************************************************************************************/
+
+BusDevice::BusDevice(BusDeviceBase * dev)
+: _dev{dev}
+{ }
+
+BusDevice::BusDevice(arduino::HardwareSPI & spi, int const cs_pin, SPISettings const & spi_settings, byte const fill_symbol)
+{
+  *this = BusDeviceBase::create(spi, cs_pin, spi_settings, fill_symbol);
+}
+
+BusDevice::BusDevice(arduino::HardwareSPI & spi, int const cs_pin, uint32_t const spi_clock, BitOrder const spi_bit_order, SPIMode const spi_bit_mode, byte const fill_symbol)
+{
+  *this = BusDeviceBase::create(spi, cs_pin, spi_clock, spi_bit_order, spi_bit_mode, fill_symbol);
+}
+
+BusDevice::BusDevice(arduino::HardwareSPI & spi, SpiBusDeviceConfig::SpiSelectFunc spi_select, SpiBusDeviceConfig::SpiDeselectFunc spi_deselect, SPISettings const & spi_settings, byte const fill_symbol)
+{
+  *this = BusDeviceBase::create(spi, spi_select, spi_deselect, spi_settings, fill_symbol);
+}
+
+BusDevice::BusDevice(arduino::HardwareI2C & wire, byte const slave_addr)
+{
+  *this = BusDeviceBase::create(wire, slave_addr);
+}
+
+BusDevice::BusDevice(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart)
+{
+  *this = BusDeviceBase::create(wire, slave_addr, restart);
+}
+
+BusDevice::BusDevice(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop)
+{
+  *this = BusDeviceBase::create(wire, slave_addr, restart, stop);
+}
+
+IoResponse BusDevice::transfer(IoRequest & req)
+{
+  return _dev->transfer(req);
 }
