@@ -35,7 +35,7 @@
  * CLASS DECLARATION
  **************************************************************************************/
 
-class WireBusDevice : public BusDevice
+class WireBusDevice : public BusDeviceBase
 {
 public:
 

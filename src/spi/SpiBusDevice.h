@@ -35,7 +35,7 @@
  * CLASS DECLARATION
  **************************************************************************************/
 
-class SpiBusDevice : public BusDevice
+class SpiBusDevice : public BusDeviceBase
 {
 public:
 
