@@ -26,5 +26,6 @@
 #include "BusDevice.h"
 #include "spi/SpiBusDevice.h"
 #include "wire/WireBusDevice.h"
+#include "serial/SerialDispatcher.h"
 
 #endif /* ARDUINO_THREADSAFE_IO_H_ */
