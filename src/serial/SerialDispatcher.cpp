@@ -85,7 +85,7 @@ void SerialDispatcher::end()
                  [current_thread_id](ThreadCustomerData const d) -> bool { return (d.thread_id == current_thread_id); });
 
   /* If no thread consumers are left also end
-   * the serial device alltogether.
+   * the serial device altogether.
    */
   if (_thread_customer_list.size() == 0)
   {
