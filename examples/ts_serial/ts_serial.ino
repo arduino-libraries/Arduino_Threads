@@ -22,7 +22,11 @@ void serial_thread_func();
 
 static char thread_name[NUM_THREADS][32];
 #undef Serial
-SerialDispatcher Serial(SerialUSB);
+#ifdef ARDUINO_PORTENTA_H7_M4
+  SerialDispatcher Serial(Serial1); /* No SerialUSB for Portenta H7 / M4 Core */
+#else
+  SerialDispatcher Serial(SerialUSB);
+#endif
 
 /**************************************************************************************
  * SETUP/LOOP
