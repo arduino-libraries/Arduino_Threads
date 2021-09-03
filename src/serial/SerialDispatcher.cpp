@@ -122,25 +122,7 @@ void SerialDispatcher::flush()
 
 size_t SerialDispatcher::write(uint8_t const b)
 {
-  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-
-  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-
-  /* If this thread hasn't registered yet
-   * with the SerialDispatcher via 'begin'.
-   */
-  if (iter == std::end(_thread_customer_list))
-    return 0;
-
-  if (iter->tx_buffer.availableForStore())
-    iter->tx_buffer.store_char(b);
-
-  /* Inform the worker thread that new data has
-   * been written to a Serial transmit buffer.
-   */
-  _cond.notify_one();
-
-  return 1;
+  return write(&b, 1);
 }
 
 size_t SerialDispatcher::write(const uint8_t * data, size_t len)
