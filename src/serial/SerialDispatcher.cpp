@@ -49,6 +49,8 @@ void SerialDispatcher::begin(unsigned long baudrate)
 
 void SerialDispatcher::begin(unsigned long baudrate, uint16_t config)
 {
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+
   if (!_is_initialized)
   {
     _serial.begin(baudrate, config);
@@ -56,8 +58,6 @@ void SerialDispatcher::begin(unsigned long baudrate, uint16_t config)
     _thread.start(mbed::callback(this, &SerialDispatcher::threadFunc)); /* TODO: Check return code */
     while (!_has_tread_started) { }
   }
-
-  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
 
   /* Check if the thread calling begin is already in the list. */
   osThreadId_t const current_thread_id = rtos::ThisThread::get_id();
