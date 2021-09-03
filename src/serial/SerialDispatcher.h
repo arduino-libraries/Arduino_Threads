@@ -53,6 +53,8 @@ public:
   using Print::write;
   virtual operator bool() override { return _serial; }
 
+  void block();
+  void unblock();
 
 private:
 
@@ -69,6 +71,7 @@ private:
   {
     osThreadId_t thread_id;
     arduino::RingBuffer tx_buffer;
+    bool block_tx_buffer;
   } ThreadCustomerData;
 
   std::list<ThreadCustomerData> _thread_customer_list;

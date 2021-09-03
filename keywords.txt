@@ -20,6 +20,8 @@ BusDevice	KEYWORD1
 
 transfer	KEYWORD2
 create	KEYWORD2
+block	KEYWORD2
+unblock	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

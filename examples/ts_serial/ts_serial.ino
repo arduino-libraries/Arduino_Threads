@@ -63,6 +63,12 @@ void serial_thread_func()
     /* Print thread id and chip id value to serial. */
     char msg[64] = {0};
     snprintf(msg, sizeof(msg), "[%05lu] %s: Lorem ipsum ...", millis(), rtos::ThisThread::get_name());
+    /* Every Serial.print/println() encapsulated between
+     * block/unblock statements will only be printed after
+     * a block statement has occurred.
+     */
+    Serial.block();
     Serial.println(msg);
+    Serial.unblock();
   }
 }

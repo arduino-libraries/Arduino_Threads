@@ -68,6 +68,7 @@ void SerialDispatcher::begin(unsigned long baudrate, uint16_t config)
      */
     ThreadCustomerData data;
     data.thread_id = current_thread_id;
+    data.block_tx_buffer = false;
     _thread_customer_list.push_back(data);
   }
 }
@@ -166,6 +167,21 @@ size_t SerialDispatcher::write(const uint8_t * data, size_t len)
   return bytes_written;
 }
 
+void SerialDispatcher::block()
+{
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  iter->block_tx_buffer = true;
+}
+
+void SerialDispatcher::unblock()
+{
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  iter->block_tx_buffer = false;
+  _cond.notify_one();
+}
+
 /**************************************************************************************
  * PRIVATE MEMBER FUNCTIONS
  **************************************************************************************/
@@ -187,9 +203,12 @@ void SerialDispatcher::threadFunc()
                     std::end  (_thread_customer_list),
                     [this](ThreadCustomerData & d)
                     {
-                      while(d.tx_buffer.available())
+                      if (!d.block_tx_buffer)
                       {
-                        _serial.write(d.tx_buffer.read_char());
+                        while(d.tx_buffer.available())
+                        {
+                          _serial.write(d.tx_buffer.read_char());
+                        }
                       }
                     });
   }
