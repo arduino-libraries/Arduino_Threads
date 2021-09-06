@@ -153,6 +153,7 @@ void SerialDispatcher::block()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return;
   iter->block_tx_buffer = true;
 }
 
@@ -160,6 +161,7 @@ void SerialDispatcher::unblock()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return;
   iter->block_tx_buffer = false;
   _cond.notify_one();
 }
