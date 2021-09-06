@@ -187,12 +187,12 @@ void SerialDispatcher::threadFunc()
                     std::end  (_thread_customer_list),
                     [this](ThreadCustomerData & d)
                     {
-                      if (!d.block_tx_buffer)
+                      if (d.block_tx_buffer)
+                        return;
+
+                      while(d.tx_buffer.available())
                       {
-                        while(d.tx_buffer.available())
-                        {
-                          _serial.write(d.tx_buffer.read_char());
-                        }
+                        _serial.write(d.tx_buffer.read_char());
                       }
                     });
   }
