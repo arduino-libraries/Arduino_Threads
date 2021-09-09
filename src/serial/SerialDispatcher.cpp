@@ -99,19 +99,37 @@ void SerialDispatcher::end()
 int SerialDispatcher::available()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _serial.available();
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return 0;
+
+  prepareSerialReader(iter);
+  handleSerialReader();
+
+  return iter->rx_buffer->available();
 }
 
 int SerialDispatcher::peek()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _serial.peek();
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return 0;
+
+  prepareSerialReader(iter);
+  handleSerialReader();
+
+  return iter->rx_buffer->peek();
 }
 
 int SerialDispatcher::read()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _serial.read();
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return 0;
+
+  prepareSerialReader(iter);
+  handleSerialReader();
+
+  return iter->rx_buffer->read_char();
 }
 
 void SerialDispatcher::flush()
@@ -203,4 +221,32 @@ std::list<SerialDispatcher::ThreadCustomerData>::iterator SerialDispatcher::find
   return std::find_if(std::begin(_thread_customer_list), 
                       std::end  (_thread_customer_list),
                       [thread_id](ThreadCustomerData const d) -> bool { return (d.thread_id == thread_id); });
+}
+
+void SerialDispatcher::prepareSerialReader(std::list<ThreadCustomerData>::iterator & iter)
+{
+  iter->is_reader = true;
+  if (!iter->rx_buffer)
+    iter->rx_buffer.reset(new arduino::RingBuffer());
+}
+
+void SerialDispatcher::handleSerialReader()
+{
+  while (_serial.available())
+  {
+    int const c = _serial.read();
+
+    std::for_each(std::begin(_thread_customer_list),
+                  std::end  (_thread_customer_list),
+                  [c](ThreadCustomerData & d)
+                  {
+                    if (!d.is_reader)
+                      return;
+
+                    if (!d.rx_buffer->availableForStore())
+                      return;
+
+                    d.rx_buffer->store_char(c);
+                  });
+  }
 }

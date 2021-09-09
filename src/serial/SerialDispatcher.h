@@ -29,6 +29,8 @@
 
 #include <list>
 
+#include <SharedPtr.h>
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
@@ -72,13 +74,16 @@ private:
     osThreadId_t thread_id;
     arduino::RingBuffer tx_buffer;
     bool block_tx_buffer;
+    bool is_reader;                                 /* This thread has expressed interest to read from Serial via a call to either read() or available(). */
+    mbed::SharedPtr<arduino::RingBuffer> rx_buffer; /* Only when a thread has expressed interested to read from serial a receive ringbuffer is allocated. */
   } ThreadCustomerData;
 
   std::list<ThreadCustomerData> _thread_customer_list;
 
   void threadFunc();
   std::list<ThreadCustomerData>::iterator findThreadCustomerDataById(osThreadId_t const thread_id);
-
+  void prepareSerialReader(std::list<ThreadCustomerData>::iterator & iter);
+  void handleSerialReader();
 };
 
 #endif /* SERIAL_DISPATCHER_H_ */
