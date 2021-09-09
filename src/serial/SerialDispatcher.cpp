@@ -225,7 +225,6 @@ std::list<SerialDispatcher::ThreadCustomerData>::iterator SerialDispatcher::find
 
 void SerialDispatcher::prepareSerialReader(std::list<ThreadCustomerData>::iterator & iter)
 {
-  iter->is_reader = true;
   if (!iter->rx_buffer)
     iter->rx_buffer.reset(new arduino::RingBuffer());
 }
@@ -240,7 +239,7 @@ void SerialDispatcher::handleSerialReader()
                   std::end  (_thread_customer_list),
                   [c](ThreadCustomerData & d)
                   {
-                    if (!d.is_reader)
+                    if (!d.rx_buffer)
                       return;
 
                     if (!d.rx_buffer->availableForStore())

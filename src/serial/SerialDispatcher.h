@@ -74,7 +74,6 @@ private:
     osThreadId_t thread_id;
     arduino::RingBuffer tx_buffer;
     bool block_tx_buffer;
-    bool is_reader;                                 /* This thread has expressed interest to read from Serial via a call to either read() or available(). */
     mbed::SharedPtr<arduino::RingBuffer> rx_buffer; /* Only when a thread has expressed interested to read from serial a receive ringbuffer is allocated. */
   } ThreadCustomerData;
 
