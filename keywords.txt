@@ -22,6 +22,8 @@ transfer	KEYWORD2
 create	KEYWORD2
 block	KEYWORD2
 unblock	KEYWORD2
+prefix	KEYWORD2
+suffix	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
