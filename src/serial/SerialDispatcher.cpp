@@ -69,6 +69,8 @@ void SerialDispatcher::begin(unsigned long baudrate, uint16_t config)
     ThreadCustomerData data;
     data.thread_id = current_thread_id;
     data.block_tx_buffer = false;
+    data.prefix_func = nullptr;
+    data.suffix_func = nullptr;
     _thread_customer_list.push_back(data);
   }
 }
@@ -99,19 +101,37 @@ void SerialDispatcher::end()
 int SerialDispatcher::available()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _serial.available();
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return 0;
+
+  prepareSerialReader(iter);
+  handleSerialReader();
+
+  return iter->rx_buffer->available();
 }
 
 int SerialDispatcher::peek()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _serial.peek();
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return 0;
+
+  prepareSerialReader(iter);
+  handleSerialReader();
+
+  return iter->rx_buffer->peek();
 }
 
 int SerialDispatcher::read()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-  return _serial.read();
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return 0;
+
+  prepareSerialReader(iter);
+  handleSerialReader();
+
+  return iter->rx_buffer->read_char();
 }
 
 void SerialDispatcher::flush()
@@ -166,6 +186,22 @@ void SerialDispatcher::unblock()
   _cond.notify_one();
 }
 
+void SerialDispatcher::prefix(PrefixInjectorCallbackFunc func)
+{
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return;
+  iter->prefix_func = func;
+}
+
+void SerialDispatcher::suffix(SuffixInjectorCallbackFunc func)
+{
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
+  if (iter == std::end(_thread_customer_list)) return;
+  iter->suffix_func = func;
+}
+
 /**************************************************************************************
  * PRIVATE MEMBER FUNCTIONS
  **************************************************************************************/
@@ -190,9 +226,45 @@ void SerialDispatcher::threadFunc()
                       if (d.block_tx_buffer)
                         return;
 
+                      /* Return if there's no data to be written to the
+                       * serial interface. This statement is necessary
+                       * because otherwise the prefix/suffix functions
+                       * will be invoked and will be printing something,
+                       * even though no data is actually to be printed for
+                       * most threads.
+                       */
+                      if (!d.tx_buffer.available())
+                        return;
+
+                      /* The prefix callback function allows the
+                       * user to insert a custom message before
+                       * a new message is written to the serial
+                       * driver. This is useful e.g. for wrapping
+                       * protocol (e.g. the 'AT' protocol) or providing
+                       * a timestamp, a log level, ...
+                       */
+                      if (d.prefix_func)
+                      {
+                        String const prefix_str = d.prefix_func();
+                        _serial.write(prefix_str.c_str());
+                      }
+
+                      /* Now it's time to actually write the message
+                       * conveyed by the user via Serial.print/println.
+                       */
                       while(d.tx_buffer.available())
                       {
                         _serial.write(d.tx_buffer.read_char());
+                      }
+
+                      /* Similar to the prefix function this callback
+                       * allows the user to specify a specific message
+                       * to be appended to each message, e.g. '\r\n'.
+                       */
+                      if (d.suffix_func)
+                      {
+                        String const suffix_str = d.suffix_func();
+                        _serial.write(suffix_str.c_str());
                       }
                     });
   }
@@ -203,4 +275,31 @@ std::list<SerialDispatcher::ThreadCustomerData>::iterator SerialDispatcher::find
   return std::find_if(std::begin(_thread_customer_list), 
                       std::end  (_thread_customer_list),
                       [thread_id](ThreadCustomerData const d) -> bool { return (d.thread_id == thread_id); });
+}
+
+void SerialDispatcher::prepareSerialReader(std::list<ThreadCustomerData>::iterator & iter)
+{
+  if (!iter->rx_buffer)
+    iter->rx_buffer.reset(new arduino::RingBuffer());
+}
+
+void SerialDispatcher::handleSerialReader()
+{
+  while (_serial.available())
+  {
+    int const c = _serial.read();
+
+    std::for_each(std::begin(_thread_customer_list),
+                  std::end  (_thread_customer_list),
+                  [c](ThreadCustomerData & d)
+                  {
+                    if (!d.rx_buffer)
+                      return;
+
+                    if (!d.rx_buffer->availableForStore())
+                      return;
+
+                    d.rx_buffer->store_char(c);
+                  });
+  }
 }

@@ -28,6 +28,9 @@
 #include <mbed.h>
 
 #include <list>
+#include <functional>
+
+#include <SharedPtr.h>
 
 /**************************************************************************************
  * CLASS DECLARATION
@@ -56,6 +59,12 @@ public:
   void block();
   void unblock();
 
+  typedef std::function<String(void)> PrefixInjectorCallbackFunc;
+  typedef PrefixInjectorCallbackFunc  SuffixInjectorCallbackFunc;
+  void prefix(PrefixInjectorCallbackFunc func);
+  void suffix(SuffixInjectorCallbackFunc func);
+
+
 private:
 
   bool _is_initialized;
@@ -72,13 +81,17 @@ private:
     osThreadId_t thread_id;
     arduino::RingBuffer tx_buffer;
     bool block_tx_buffer;
+    mbed::SharedPtr<arduino::RingBuffer> rx_buffer; /* Only when a thread has expressed interested to read from serial a receive ringbuffer is allocated. */
+    PrefixInjectorCallbackFunc prefix_func;
+    SuffixInjectorCallbackFunc suffix_func;
   } ThreadCustomerData;
 
   std::list<ThreadCustomerData> _thread_customer_list;
 
   void threadFunc();
   std::list<ThreadCustomerData>::iterator findThreadCustomerDataById(osThreadId_t const thread_id);
-
+  void prepareSerialReader(std::list<ThreadCustomerData>::iterator & iter);
+  void handleSerialReader();
 };
 
 #endif /* SERIAL_DISPATCHER_H_ */
