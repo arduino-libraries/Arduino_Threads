@@ -57,13 +57,13 @@ void serial_thread_func()
   Serial.begin(9600);
 
   char const * thread_name = rtos::ThisThread::get_name();
-  Serial.prefix([thread_name]() -> String
+  Serial.prefix([thread_name](String const & /* msg */) -> String
                 {
                   char msg[64] = {0};
                   snprintf(msg, sizeof(msg), "[%05lu] %s ", millis(), thread_name);
                   return String(msg);
                 });
-  Serial.suffix([]() -> String
+  Serial.suffix([](String const & /* prefix */, String const & /* msg */) -> String
                 {
                   return String("\r\n");
                 });

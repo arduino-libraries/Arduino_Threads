@@ -59,8 +59,8 @@ public:
   void block();
   void unblock();
 
-  typedef std::function<String(void)> PrefixInjectorCallbackFunc;
-  typedef PrefixInjectorCallbackFunc  SuffixInjectorCallbackFunc;
+  typedef std::function<String(String const &)> PrefixInjectorCallbackFunc;
+  typedef std::function<String(String const &, String const &)>  SuffixInjectorCallbackFunc;
   void prefix(PrefixInjectorCallbackFunc func);
   void suffix(SuffixInjectorCallbackFunc func);
 
