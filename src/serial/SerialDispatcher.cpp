@@ -236,6 +236,14 @@ void SerialDispatcher::threadFunc()
                       if (!d.tx_buffer.available())
                         return;
 
+                      /* Retrieve all data stored in the transmit ringbuffer
+                       * and store it into a String for usage by both suffix
+                       * prefix callback functions.
+                       */
+                      String msg;
+                      while(d.tx_buffer.available())
+                        msg += static_cast<char>(d.tx_buffer.read_char());
+
                       /* The prefix callback function allows the
                        * user to insert a custom message before
                        * a new message is written to the serial
@@ -243,29 +251,24 @@ void SerialDispatcher::threadFunc()
                        * protocol (e.g. the 'AT' protocol) or providing
                        * a timestamp, a log level, ...
                        */
+                      String prefix;
                       if (d.prefix_func)
-                      {
-                        String const prefix_str = d.prefix_func();
-                        _serial.write(prefix_str.c_str());
-                      }
-
-                      /* Now it's time to actually write the message
-                       * conveyed by the user via Serial.print/println.
-                       */
-                      while(d.tx_buffer.available())
-                      {
-                        _serial.write(d.tx_buffer.read_char());
-                      }
+                        prefix = d.prefix_func(msg);
 
                       /* Similar to the prefix function this callback
                        * allows the user to specify a specific message
                        * to be appended to each message, e.g. '\r\n'.
                        */
+                      String suffix;
                       if (d.suffix_func)
-                      {
-                        String const suffix_str = d.suffix_func();
-                        _serial.write(suffix_str.c_str());
-                      }
+                        suffix = d.suffix_func(prefix, msg);
+
+                      /* Now it's time to actually write the message
+                       * conveyed by the user via Serial.print/println.
+                       */
+                      _serial.write(prefix.c_str());
+                      _serial.write(msg.c_str());
+                      _serial.write(suffix.c_str());
                     });
   }
 }

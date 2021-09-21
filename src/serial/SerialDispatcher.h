@@ -59,8 +59,8 @@ public:
   void block();
   void unblock();
 
-  typedef std::function<String(void)> PrefixInjectorCallbackFunc;
-  typedef PrefixInjectorCallbackFunc  SuffixInjectorCallbackFunc;
+  typedef std::function<String(String const &)> PrefixInjectorCallbackFunc;
+  typedef std::function<String(String const &, String const &)>  SuffixInjectorCallbackFunc;
   void prefix(PrefixInjectorCallbackFunc func);
   void suffix(SuffixInjectorCallbackFunc func);
 
@@ -76,10 +76,13 @@ private:
   bool _has_tread_started;
   bool _terminate_thread;
 
+  static int constexpr THREADSAFE_SERIAL_TRANSMIT_RINGBUFFER_SIZE = 128;
+  typedef arduino::RingBufferN<THREADSAFE_SERIAL_TRANSMIT_RINGBUFFER_SIZE> SerialTransmitRingbuffer;
+
   typedef struct
   {
     osThreadId_t thread_id;
-    arduino::RingBuffer tx_buffer;
+    SerialTransmitRingbuffer tx_buffer;
     bool block_tx_buffer;
     mbed::SharedPtr<arduino::RingBuffer> rx_buffer; /* Only when a thread has expressed interested to read from serial a receive ringbuffer is allocated. */
     PrefixInjectorCallbackFunc prefix_func;
