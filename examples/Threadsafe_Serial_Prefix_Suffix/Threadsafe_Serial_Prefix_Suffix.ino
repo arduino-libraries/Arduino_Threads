@@ -52,36 +52,41 @@ void loop()
  * FUNCTION DEFINITION
  **************************************************************************************/
 
+String nmea_message_prefix(String const & /* msg */)
+{
+  return String("$");
+}
+
+String nmea_message_suffix(String const & prefix, String const & msg)
+{
+  /* NMEA checksum is calculated over the complete message
+   * starting with '$' and ending with the end of the message.
+   */
+  byte checksum = 0;
+  std::for_each(msg.c_str(),
+                msg.c_str() + msg.length(),
+                [&checksum](char const c)
+                {
+                  checksum ^= static_cast<uint8_t>(c);
+                });
+  /* Assemble the footer of the NMEA message. */
+  char footer[16] = {0};
+  snprintf(footer, sizeof(footer), "*%02X\r\n", checksum);
+  return String(footer);
+}
+
 void serial_thread_func()
 {
   Serial.begin(9600);
 
-  Serial.prefix([](String const & /* msg */) -> String
-                {
-                  return String("$");
-                });
-  Serial.suffix([](String const & prefix, String const & msg) -> String
-                {
-                  /* NMEA checksum is calculated over the complete message
-                   * starting with '$' and ending with the end of the message.
-                   */
-                  byte checksum = 0;
-                  std::for_each(msg.c_str(),
-                                msg.c_str() + msg.length(),
-                                [&checksum](char const c)
-                                {
-                                  checksum ^= static_cast<uint8_t>(c);
-                                });
-                  /* Assemble the footer of the NMEA message. */
-                  char footer[16] = {0};
-                  snprintf(footer, sizeof(footer), "*%02X\r\n", checksum);
-                  return String(footer);
-                });
+  Serial.prefix(nmea_message_prefix);
+  Serial.suffix(nmea_message_suffix);
 
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
     rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
+
     /* Print a fake NMEA GPRMC message:
      * $GPRMC,062101.714,A,5001.869,N,01912.114,E,955535.7,116.2,290520,000.0,W*45\r\n
      */
