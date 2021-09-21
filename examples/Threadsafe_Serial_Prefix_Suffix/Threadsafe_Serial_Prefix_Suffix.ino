@@ -56,28 +56,50 @@ void serial_thread_func()
 {
   Serial.begin(9600);
 
-  char const * thread_name = rtos::ThisThread::get_name();
-  Serial.prefix([thread_name](String const & /* msg */) -> String
+  Serial.prefix([](String const & /* msg */) -> String
                 {
-                  char msg[64] = {0};
-                  snprintf(msg, sizeof(msg), "[%05lu] %s ", millis(), thread_name);
-                  return String(msg);
+                  return String("$");
                 });
-  Serial.suffix([](String const & /* prefix */, String const & /* msg */) -> String
+  Serial.suffix([](String const & prefix, String const & msg) -> String
                 {
-                  return String("\r\n");
+                  /* NMEA checksum is calculated over the complete message
+                   * starting with '$' and ending with the end of the message.
+                   */
+                  byte checksum = 0;
+                  std::for_each(msg.c_str(),
+                                msg.c_str() + msg.length(),
+                                [&checksum](char const c)
+                                {
+                                  checksum ^= static_cast<uint8_t>(c);
+                                });
+                  /* Assemble the footer of the NMEA message. */
+                  char footer[16] = {0};
+                  snprintf(footer, sizeof(footer), "*%02X\r\n", checksum);
+                  return String(footer);
                 });
 
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
     rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
-    /* Print a unbroken log message including thread name and timestamp as a prefix. */
+    /* Print a fake NMEA GPRMC message:
+     * $GPRMC,062101.714,A,5001.869,N,01912.114,E,955535.7,116.2,290520,000.0,W*45\r\n
+     */
     Serial.block();
-    Serial.print("My ");
-    Serial.print("unbroken ");
-    Serial.print("thread-safe ");
-    Serial.print("message!");
+
+    Serial.print("GPRMC,");
+    Serial.print(millis());
+    Serial.print(",A,");
+    Serial.print("5001.869,");
+    Serial.print("N,");
+    Serial.print("01912.114,");
+    Serial.print("E,");
+    Serial.print("955535.7,");
+    Serial.print("116.2,");
+    Serial.print("290520,");
+    Serial.print("000.0,");
+    Serial.print("W");
+
     Serial.unblock();
   }
 }
