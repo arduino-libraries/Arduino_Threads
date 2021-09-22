@@ -63,6 +63,8 @@ public:
   typedef std::function<String(String const &, String const &)>  SuffixInjectorCallbackFunc;
   void prefix(PrefixInjectorCallbackFunc func);
   void suffix(SuffixInjectorCallbackFunc func);
+  void global_prefix(PrefixInjectorCallbackFunc func);
+  void global_suffix(SuffixInjectorCallbackFunc func);
 
 
 private:
@@ -75,6 +77,9 @@ private:
   rtos::Thread _thread;
   bool _has_tread_started;
   bool _terminate_thread;
+
+  PrefixInjectorCallbackFunc _global_prefix_callback;
+  SuffixInjectorCallbackFunc _global_suffix_callback;
 
   static int constexpr THREADSAFE_SERIAL_TRANSMIT_RINGBUFFER_SIZE = 128;
   typedef arduino::RingBufferN<THREADSAFE_SERIAL_TRANSMIT_RINGBUFFER_SIZE> SerialTransmitRingbuffer;
