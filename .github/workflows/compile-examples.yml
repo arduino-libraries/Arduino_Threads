@@ -17,6 +17,8 @@ on:
   schedule:
     # Run every Tuesday at 8 AM UTC to catch breakage caused by changes to external resources (libraries, platforms).
     - cron: "0 8 * * TUE"
+  workflow_dispatch:
+  repository_dispatch:
 
 env:
   SKETCHES_REPORTS_PATH: sketches-reports
