@@ -120,7 +120,7 @@ jobs:
           name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
           path: ${{ env.SKETCHES_REPORTS_PATH }}
 
-      - uses: arduino/report-size-deltas@main
+      - uses: arduino/report-size-deltas@v1
         # If actions/download-artifact failed, there are no artifacts to report from.
         if: steps.download-artifact.outcome == 'success'
         with:
