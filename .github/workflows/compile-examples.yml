@@ -100,7 +100,6 @@ jobs:
           verbose: 'true'
 
       - name: Save memory usage change report as artifact
-        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
