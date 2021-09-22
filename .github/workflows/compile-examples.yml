@@ -72,7 +72,9 @@ jobs:
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
 
       - name: Compile examples
-        uses: arduino/compile-sketches@main
+        # Due to using obsolete JSON output keys and a non-semver version, the modified "arduino_threads" version of
+        # Arduino CLI is not compatible with any version of `arduino/compile-sketches` after this ref, thus the pin:
+        uses: arduino/compile-sketches@15d79dc244a7a19b8129a83d4d34c6ba44859f01
         with:
           cli-version: 'arduino_threads'
           fqbn: ${{ matrix.fqbn }}
