@@ -269,7 +269,7 @@ void SerialDispatcher::threadFunc()
                       if (d.prefix_func)
                         prefix = d.prefix_func(msg);
                       /* A prefix callback function defined per thread
-                       * takes precendence over a globally defined prefix
+                       * takes precedence over a globally defined prefix
                        * callback function.
                        */
                       else if (_global_prefix_callback)
@@ -283,7 +283,7 @@ void SerialDispatcher::threadFunc()
                       if (d.suffix_func)
                         suffix = d.suffix_func(prefix, msg);
                       /* A suffix callback function defined per thread
-                       * takes precendence over a globally defined suffix
+                       * takes precedence over a globally defined suffix
                        * callback function.
                        */
                       else if (_global_suffix_callback)
