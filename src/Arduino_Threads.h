@@ -305,7 +305,4 @@ private: \
 };  \
 CONCAT(tabname,Class) tabname;
 
-#include "Wire.h"
-#include "SerialDispatcher.h"
-
 #endif /* ARDUINO_THREADS_H_ */
