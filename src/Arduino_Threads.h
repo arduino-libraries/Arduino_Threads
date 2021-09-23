@@ -1,6 +1,7 @@
 #ifndef ARDUINO_THREADS_H_
 #define ARDUINO_THREADS_H_
 
+#include <Arduino.h>
 #include <mbed.h>
 #include <MemoryPool.h>
 
