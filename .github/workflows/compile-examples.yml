@@ -1,16 +1,24 @@
 name: Compile Examples
 
+# See: https://docs.github.com/en/actions/reference/events-that-trigger-workflows
 on:
   pull_request:
     paths:
       - ".github/workflows/compile-examples.yml"
+      - "library.properties"
       - "examples/**"
       - "src/**"
   push:
     paths:
       - ".github/workflows/compile-examples.yml"
+      - "library.properties"
       - "examples/**"
       - "src/**"
+  schedule:
+    # Run every Tuesday at 8 AM UTC to catch breakage caused by changes to external resources (libraries, platforms).
+    - cron: "0 8 * * TUE"
+  workflow_dispatch:
+  repository_dispatch:
 
 env:
   SKETCHES_REPORTS_PATH: sketches-reports
@@ -18,6 +26,7 @@ env:
 
 jobs:
   compile-test:
+    name: compile for ${{ matrix.fqbn }}
     runs-on: ubuntu-latest
 
     env:
@@ -63,7 +72,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-API
-          # as specified at https://github.com/arduino/ArduinoCore-mbed/blob/master/README.md#installation
           path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
 
       - name: Install ArduinoCore-API
@@ -94,24 +102,29 @@ jobs:
           verbose: 'true'
 
       - name: Save memory usage change report as artifact
-        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          if-no-files-found: error
           path: ${{ env.SKETCHES_REPORTS_PATH }}
 
   report-size-deltas:
     needs: compile-test
-    # Only run the job when the workflow is triggered by a pull request from this repository (because arduino/report-size-deltas requires write permissions)
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    # Run even if some compilations failed.
+    if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Download sketches reports artifact
+        id: download-artifact
+        continue-on-error: true # If compilation failed for all boards then there are no artifacts
         uses: actions/download-artifact@v2
         with:
           name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
           path: ${{ env.SKETCHES_REPORTS_PATH }}
 
-      - uses: arduino/report-size-deltas@main
+      - name: Comment size deltas report to PR
+        uses: arduino/report-size-deltas@v1
+        # If actions/download-artifact failed, there are no artifacts to report from.
+        if: steps.download-artifact.outcome == 'success'
         with:
           sketches-reports-source: ${{ env.SKETCHES_REPORTS_PATH }}

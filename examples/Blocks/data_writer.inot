@@ -1,7 +1,7 @@
 
 /*
  * An 'int' SINK with a size of '0'. This kind of SINK has no buffer so the reading thread
- * will block until the writing thread has written something, or viceversa.
+ * will block until the writing thread has written something, or vice versa.
  */
 SINK(in, int, 0)
 
@@ -10,7 +10,7 @@ void setup() {
 }
 
 void loop() {
-  // Read an 'int' from the SINK and discards it. Since there is basically no delay in the loop
+  // Read an 'int' from the SINK and discard it. Since there is basically no delay in the loop
   // this call will surely block until something comes from the connected SOURCE. In this case
   // the pace is dictated by the SOURCE that sends data every 100 ms.
   in.read();
