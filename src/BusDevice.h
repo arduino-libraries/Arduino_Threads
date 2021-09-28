@@ -38,6 +38,7 @@ namespace arduino
 }
 
 class BusDevice;
+class SpiBusDevice;
 class WireBusDevice;
 
 /**************************************************************************************
@@ -80,6 +81,7 @@ public:
   IoResponse transfer(IoRequest & req);
 
 
+  SpiBusDevice  & spi();
   WireBusDevice & wire();
 
 

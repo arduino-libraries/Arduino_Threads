@@ -42,3 +42,12 @@ IoResponse SpiBusDevice::transfer(IoRequest & req)
 {
   return SpiDispatcher::instance().dispatch(&req, &_config);
 }
+
+bool SpiBusDevice::write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue)
+{
+  SpiBusDeviceConfig config(_config.spi(), _config.settings(), _config.select_func(), _config.deselect_func(), sendvalue);
+  IoRequest req(write_buffer, write_len, read_buffer, read_len);
+  IoResponse rsp = SpiDispatcher::instance().dispatch(&req, &config);
+  rsp->wait();
+  return true;
+}

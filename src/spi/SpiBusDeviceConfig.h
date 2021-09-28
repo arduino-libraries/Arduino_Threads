@@ -66,6 +66,8 @@ public:
   void        deselect   () const { if (_spi_deselect) _spi_deselect(); }
   byte        fill_symbol() const { return _fill_symbol; }
 
+  SpiSelectFunc   select_func  () const { return _spi_select;  }
+  SpiDeselectFunc deselect_func() const { return _spi_deselect;  }
 
 private:
 

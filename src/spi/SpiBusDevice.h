@@ -35,11 +35,14 @@ class SpiBusDevice : public BusDeviceBase
 {
 public:
 
-  SpiBusDevice(SpiBusDeviceConfig const & config);
+           SpiBusDevice(SpiBusDeviceConfig const & config);
   virtual ~SpiBusDevice() { }
 
 
   virtual IoResponse transfer(IoRequest & req) override;
+
+
+  bool write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue = 0xFF);
 
 
 private:

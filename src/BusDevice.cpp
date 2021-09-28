@@ -110,6 +110,11 @@ IoResponse BusDevice::transfer(IoRequest & req)
   return _dev->transfer(req);
 }
 
+SpiBusDevice & BusDevice::spi()
+{
+  return *reinterpret_cast<SpiBusDevice *>(_dev.get());
+}
+
 WireBusDevice & BusDevice::wire()
 {
   return *reinterpret_cast<WireBusDevice *>(_dev.get());
