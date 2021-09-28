@@ -143,20 +143,21 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
   size_t bytes_received = 0,
          bytes_sent = 0;
   for(;
-      bytes_received < io_request->bytes_to_read;
+      bytes_received < std::max(io_request->bytes_to_read, io_request->bytes_to_write);
       bytes_received++, bytes_sent++)
   {
     byte tx_byte = 0;
 
-    if (bytes_sent < io_request->bytes_to_write)
+    if (io_request->write_buf && (bytes_sent < io_request->bytes_to_write))
       tx_byte = io_request->write_buf[bytes_sent];
     else
       tx_byte = config->fill_symbol();
 
     byte const rx_byte = config->spi().transfer(tx_byte);
 
-    io_request->read_buf[bytes_received] = rx_byte;
-  }
+    if (io_request->read_buf && (bytes_received < io_request->bytes_to_read))
+      io_request->read_buf[bytes_received] = rx_byte;
+   }
   config->spi().endTransaction();
 
   config->deselect();
