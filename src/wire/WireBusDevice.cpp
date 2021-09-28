@@ -16,40 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WIRE_BUS_DEVICE_H_
-#define WIRE_BUS_DEVICE_H_
-
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
 
-#include <Arduino.h>
-#include <mbed.h>
-
-#include "../BusDevice.h"
-
-#include "WireDispatcher.h"
-#include "WireBusDeviceConfig.h"
+#include "WireBusDevice.h"
 
 /**************************************************************************************
- * CLASS DECLARATION
+ * CTOR/DTOR
  **************************************************************************************/
 
-class WireBusDevice : public BusDeviceBase
+WireBusDevice::WireBusDevice(WireBusDeviceConfig const & config)
+: _config{config}
 {
-public:
 
-           WireBusDevice(WireBusDeviceConfig const & config);
-  virtual ~WireBusDevice() { }
+}
 
-  virtual IoResponse transfer(IoRequest & req) override;
+/**************************************************************************************
+ * PUBLIC MEMBER FUNCTIONS
+ **************************************************************************************/
 
-  bool write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop = false);
+IoResponse WireBusDevice::transfer(IoRequest & req)
+{
+  return WireDispatcher::instance().dispatch(&req, &_config);
+}
 
-private:
-
-  WireBusDeviceConfig _config;
-
-};
-
-#endif /* WIRE_BUS_DEVICE_H_ */
+bool WireBusDevice::write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop)
+{
+  /* Copy the Wire parameters from the device and modify only those
+   * which can be modified via the parameters of this function.
+   */
+  bool const restart = !stop;
+  WireBusDeviceConfig config(_config.wire(), _config.slave_addr(), restart, _config.stop());
+  /* Fire off the IO request and await its response. */
+  IoRequest req(write_buffer, write_len, read_buffer, read_len);
+  IoResponse rsp = WireDispatcher::instance().dispatch(&req, &config);
+  rsp->wait();
+  /* TODO: Introduce error codes within the IoResponse and evaluate
+   * them here.
+   */
+  return true;
+}
