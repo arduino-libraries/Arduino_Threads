@@ -23,12 +23,8 @@
  * INCLUDE
  **************************************************************************************/
 
-#include <Arduino.h>
-#include <mbed.h>
-
 #include "../BusDevice.h"
 
-#include "WireDispatcher.h"
 #include "WireBusDeviceConfig.h"
 
 /**************************************************************************************

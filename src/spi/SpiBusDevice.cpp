@@ -16,36 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef SPI_BUS_DEVICE_H_
-#define SPI_BUS_DEVICE_H_
-
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
 
-#include "../BusDevice.h"
+#include "SpiBusDevice.h"
 
-#include "SpiBusDeviceConfig.h"
+#include "SpiDispatcher.h"
 
 /**************************************************************************************
- * CLASS DECLARATION
+ * CTOR/DTOR
  **************************************************************************************/
 
-class SpiBusDevice : public BusDeviceBase
+SpiBusDevice::SpiBusDevice(SpiBusDeviceConfig const & config)
+: _config{config}
 {
-public:
 
-  SpiBusDevice(SpiBusDeviceConfig const & config);
-  virtual ~SpiBusDevice() { }
+}
 
+/**************************************************************************************
+ * PUBLIC MEMBER FUNCTIONS
+ **************************************************************************************/
 
-  virtual IoResponse transfer(IoRequest & req) override;
-
-
-private:
-
-  SpiBusDeviceConfig _config;
-
-};
-
-#endif /* SPI_BUS_DEVICE_H_ */
+IoResponse SpiBusDevice::transfer(IoRequest & req)
+{
+  return SpiDispatcher::instance().dispatch(&req, &_config);
+}
