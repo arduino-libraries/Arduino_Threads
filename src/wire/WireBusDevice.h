@@ -50,6 +50,23 @@ public:
   }
 
 
+  bool write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop = false)
+  {
+    /* Copy the Wire parameters from the device and modify only those
+     * which can be modified via the parameters of this function.
+     */
+    bool const restart = !stop;
+    WireBusDeviceConfig config(_config.wire(), _config.slave_addr(), restart, _config.stop());
+    /* Fire off the IO request and await its response. */
+    IoRequest req(write_buffer, write_len, read_buffer, read_len);
+    IoResponse rsp = WireDispatcher::instance().dispatch(&req, &config);
+    rsp->wait();
+    /* TODO: Introduce error codes within the IoResponse and evaluate
+     * them here.
+     */
+    return true;
+  }
+
 private:
 
   WireBusDeviceConfig _config;

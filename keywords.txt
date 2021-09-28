@@ -24,6 +24,8 @@ block	KEYWORD2
 unblock	KEYWORD2
 prefix	KEYWORD2
 suffix	KEYWORD2
+wire	KEYWORD2
+write_then_read	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
