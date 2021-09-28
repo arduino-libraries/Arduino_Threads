@@ -44,6 +44,8 @@ public:
 
   virtual IoResponse transfer(IoRequest & req) override;
 
+  bool read(uint8_t * buffer, size_t len, bool stop = true);
+  bool write(const uint8_t * buffer, size_t len, bool stop = true);
   bool write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop = false);
 
 private:
