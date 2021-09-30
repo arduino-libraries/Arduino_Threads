@@ -140,24 +140,30 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
 
   config->spi().beginTransaction(config->settings());
 
-  size_t bytes_received = 0,
-         bytes_sent = 0;
-  for(;
-      bytes_received < std::max(io_request->bytes_to_read, io_request->bytes_to_write);
-      bytes_received++, bytes_sent++)
+  /* In a first step transmit the complete write buffer and
+   * write back the receive data directly into the write buffer  
+   */
+  size_t bytes_sent = 0;
+  for(; bytes_sent < io_request->bytes_to_write; bytes_sent++)
   {
-    byte tx_byte = 0;
+    uint8_t const tx_byte = io_request->write_buf[bytes_sent];
+    uint8_t const rx_byte = config->spi().transfer(tx_byte);
 
-    if (io_request->write_buf && (bytes_sent < io_request->bytes_to_write))
-      tx_byte = io_request->write_buf[bytes_sent];
-    else
-      tx_byte = config->fill_symbol();
+    io_request->write_buf[bytes_sent] = rx_byte;
+  }
 
-    byte const rx_byte = config->spi().transfer(tx_byte);
+  /* In a second step, transmit the fill symbol and write the
+   * received data into the read buffer.
+   */
+  size_t bytes_received = 0;
+  for(; bytes_received < io_request->bytes_to_read; bytes_received++)
+  {
+    uint8_t const tx_byte = config->fill_symbol();
+    uint8_t const rx_byte = config->spi().transfer(tx_byte);
 
-    if (io_request->read_buf && (bytes_received < io_request->bytes_to_read))
-      io_request->read_buf[bytes_received] = rx_byte;
-   }
+    io_request->read_buf[bytes_received] = rx_byte;
+  }
+
   config->spi().endTransaction();
 
   config->deselect();

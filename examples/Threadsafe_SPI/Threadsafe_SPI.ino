@@ -60,22 +60,17 @@ void loop()
 
 byte bmp388_read_reg(byte const reg_addr)
 {
-  byte const write_buf[3] =
-  {
-    static_cast<byte>(0x80 | reg_addr), /* REG_ADDR, if MSBit is set -> READ access */
-    0,                                  /* Dummy byte.                              */
-    0                                   /* REG_VAL is output on SDO                 */
-  };
-  byte read_buf[3] = {0};
+  /* REG_ADDR | DUMMY_BYTE | REG_VAL is on SDO */
+  byte read_write_buf[] = {static_cast<byte>(0x80 | reg_addr), 0, 0};
 
-  IoRequest req(write_buf, sizeof(write_buf), read_buf, sizeof(read_buf));
+  IoRequest req(read_write_buf, sizeof(read_write_buf), nullptr, 0);
   IoResponse rsp = bmp388.transfer(req);
 
   /* Do other stuff */
 
   rsp->wait();
 
-  return read_buf[2];
+  return read_write_buf[2];
 }
 
 void bmp388_thread_func()

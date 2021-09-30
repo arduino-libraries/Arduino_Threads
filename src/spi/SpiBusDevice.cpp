@@ -52,7 +52,7 @@ bool SpiBusDevice::read(uint8_t * buffer, size_t len, uint8_t sendvalue)
   return true;
 }
 
-bool SpiBusDevice::write(const uint8_t * buffer, size_t len)
+bool SpiBusDevice::write(uint8_t * buffer, size_t len)
 {
   IoRequest req(buffer, len, nullptr, 0);
   IoResponse rsp = SpiDispatcher::instance().dispatch(&req, &_config);
@@ -60,7 +60,7 @@ bool SpiBusDevice::write(const uint8_t * buffer, size_t len)
   return true;
 }
 
-bool SpiBusDevice::write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue)
+bool SpiBusDevice::write_then_read(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue)
 {
   SpiBusDeviceConfig config(_config.spi(), _config.settings(), _config.select_func(), _config.deselect_func(), sendvalue);
   IoRequest req(write_buffer, write_len, read_buffer, read_len);

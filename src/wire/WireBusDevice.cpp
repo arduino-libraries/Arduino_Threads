@@ -52,7 +52,7 @@ bool WireBusDevice::read(uint8_t * buffer, size_t len, bool stop)
   return true;
 }
 
-bool WireBusDevice::write(const uint8_t * buffer, size_t len, bool stop)
+bool WireBusDevice::write(uint8_t * buffer, size_t len, bool stop)
 {
   bool const restart = !stop;
   WireBusDeviceConfig config(_config.wire(), _config.slave_addr(), restart, _config.stop());
@@ -62,7 +62,7 @@ bool WireBusDevice::write(const uint8_t * buffer, size_t len, bool stop)
   return true;
 }
 
-bool WireBusDevice::write_then_read(const uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop)
+bool WireBusDevice::write_then_read(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop)
 {
   /* Copy the Wire parameters from the device and modify only those
    * which can be modified via the parameters of this function.

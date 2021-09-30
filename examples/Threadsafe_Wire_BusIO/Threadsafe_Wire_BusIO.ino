@@ -55,7 +55,7 @@ void loop()
  * FUNCTION DEFINITION
  **************************************************************************************/
 
-byte lsm6dsox_read_reg(byte const reg_addr)
+byte lsm6dsox_read_reg(byte reg_addr)
 {
   byte read_buf = 0;
   lsm6dsox.wire().write_then_read(&reg_addr, 1, &read_buf, 1);

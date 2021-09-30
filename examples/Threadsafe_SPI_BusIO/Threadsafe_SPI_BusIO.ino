@@ -60,17 +60,12 @@ void loop()
 
 byte bmp388_read_reg(byte const reg_addr)
 {
-  byte const write_buf[3] =
-  {
-    static_cast<byte>(0x80 | reg_addr), /* REG_ADDR, if MSBit is set -> READ access */
-    0,                                  /* Dummy byte.                              */
-    0                                   /* REG_VAL is output on SDO                 */
-  };
-  byte read_buf[3] = {0};
+  /* REG_ADDR | DUMMY_BYTE | REG_VAL is on SDO */
+  byte write_buf[2] = {static_cast<byte>(0x80 | reg_addr), 0};
+  byte read_buf = 0;
 
-  bmp388.spi().write_then_read(write_buf, sizeof(write_buf), read_buf, sizeof(read_buf));
-
-  return read_buf[2];
+  bmp388.spi().write_then_read(write_buf, sizeof(write_buf), &read_buf, sizeof(read_buf));
+  return read_buf;
 }
 
 void bmp388_thread_func()
