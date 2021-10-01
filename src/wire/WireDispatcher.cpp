@@ -136,19 +136,22 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
   IoResponse            io_response = wire_io_transaction->rsp;
   WireBusDeviceConfig * config      = wire_io_transaction->config;
 
-  config->wire().beginTransmission(config->slave_addr());
-
-  size_t bytes_written = 0;
-  for (; bytes_written < io_request->bytes_to_write; bytes_written++)
+  if (io_request->bytes_to_write > 0)
   {
-    config->wire().write(io_request->write_buf[bytes_written]);
-  }
-  io_response->bytes_written = bytes_written;
+    config->wire().beginTransmission(config->slave_addr());
 
-  if (config->restart() && (io_request->bytes_to_read > 0))
-    config->wire().endTransmission(false /* stop */);
-  else
-    config->wire().endTransmission(true /* stop */);
+    size_t bytes_written = 0;
+    for (; bytes_written < io_request->bytes_to_write; bytes_written++)
+    {
+      config->wire().write(io_request->write_buf[bytes_written]);
+    }
+    io_response->bytes_written = bytes_written;
+
+    if (config->restart() && (io_request->bytes_to_read > 0))
+      config->wire().endTransmission(false /* stop */);
+    else
+      config->wire().endTransmission(true /* stop */);
+  }
 
   if (io_request->bytes_to_read > 0)
   {

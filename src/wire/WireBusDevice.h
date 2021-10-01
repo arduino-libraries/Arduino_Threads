@@ -23,12 +23,8 @@
  * INCLUDE
  **************************************************************************************/
 
-#include <Arduino.h>
-#include <mbed.h>
-
 #include "../BusDevice.h"
 
-#include "WireDispatcher.h"
 #include "WireBusDeviceConfig.h"
 
 /**************************************************************************************
@@ -39,15 +35,16 @@ class WireBusDevice : public BusDeviceBase
 {
 public:
 
-  WireBusDevice(WireBusDeviceConfig const & config)
-  : _config{config}
-  { }
+           WireBusDevice(WireBusDeviceConfig const & config);
+  virtual ~WireBusDevice() { }
 
 
-  virtual IoResponse transfer(IoRequest & req) override
-  {
-    return WireDispatcher::instance().dispatch(&req, &_config);
-  }
+  virtual IoResponse transfer(IoRequest & req) override;
+
+
+  bool read(uint8_t * buffer, size_t len, bool stop = true);
+  bool write(uint8_t * buffer, size_t len, bool stop = true);
+  bool write_then_read(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop = false);
 
 
 private:

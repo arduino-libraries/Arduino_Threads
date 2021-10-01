@@ -38,6 +38,8 @@ namespace arduino
 }
 
 class BusDevice;
+class SpiBusDevice;
+class WireBusDevice;
 
 /**************************************************************************************
  * CLASS DECLARATION
@@ -77,6 +79,10 @@ public:
   BusDevice(arduino::HardwareI2C & wire, byte const slave_addr, bool const restart, bool const stop);
 
   IoResponse transfer(IoRequest & req);
+
+
+  SpiBusDevice  & spi();
+  WireBusDevice & wire();
 
 
 private:
