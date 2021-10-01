@@ -24,6 +24,11 @@ block	KEYWORD2
 unblock	KEYWORD2
 prefix	KEYWORD2
 suffix	KEYWORD2
+spi	KEYWORD2
+wire	KEYWORD2
+read	KEYWORD2
+write	KEYWORD2
+write_then_read	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

@@ -61,16 +61,11 @@ void loop()
 byte bmp388_read_reg(byte const reg_addr)
 {
   /* REG_ADDR | DUMMY_BYTE | REG_VAL is on SDO */
-  byte read_write_buf[] = {static_cast<byte>(0x80 | reg_addr), 0, 0};
+  byte write_buf[2] = {static_cast<byte>(0x80 | reg_addr), 0};
+  byte read_buf = 0;
 
-  IoRequest req(read_write_buf, sizeof(read_write_buf), nullptr, 0);
-  IoResponse rsp = bmp388.transfer(req);
-
-  /* Do other stuff */
-
-  rsp->wait();
-
-  return read_write_buf[2];
+  bmp388.spi().write_then_read(write_buf, sizeof(write_buf), &read_buf, sizeof(read_buf));
+  return read_buf;
 }
 
 void bmp388_thread_func()

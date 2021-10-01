@@ -43,7 +43,9 @@ public:
   static WireDispatcher & instance();
   static void destroy();
 
+
   IoResponse dispatch(IoRequest * req, WireBusDeviceConfig * config);
+
 
 private:
 

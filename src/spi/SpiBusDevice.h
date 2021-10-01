@@ -23,12 +23,8 @@
  * INCLUDE
  **************************************************************************************/
 
-#include <Arduino.h>
-#include <mbed.h>
-
 #include "../BusDevice.h"
 
-#include "SpiDispatcher.h"
 #include "SpiBusDeviceConfig.h"
 
 /**************************************************************************************
@@ -39,15 +35,16 @@ class SpiBusDevice : public BusDeviceBase
 {
 public:
 
-  SpiBusDevice(SpiBusDeviceConfig const & config)
-  : _config{config}
-  { }
+           SpiBusDevice(SpiBusDeviceConfig const & config);
+  virtual ~SpiBusDevice() { }
 
 
-  virtual IoResponse transfer(IoRequest & req) override
-  {
-    return SpiDispatcher::instance().dispatch(&req, &_config);
-  }
+  virtual IoResponse transfer(IoRequest & req) override;
+
+
+  bool read(uint8_t * buffer, size_t len, uint8_t sendvalue = 0xFF);
+  bool write(uint8_t * buffer, size_t len);
+  bool write_then_read(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue = 0xFF);
 
 
 private:

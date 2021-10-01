@@ -1,4 +1,4 @@
-/**************************************************************************************
+ /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
 
@@ -8,9 +8,8 @@
  * CONSTANTS
  **************************************************************************************/
 
-static int  const BMP388_CS_PIN  = 2;
-static int  const BMP388_INT_PIN = 6;
-static byte const BMP388_CHIP_ID_REG_ADDR = 0x00;
+static byte constexpr LSM6DSOX_ADDRESS      = 0x6A;
+static byte constexpr LSM6DSOX_WHO_AM_I_REG = 0x0F;
 
 static size_t constexpr NUM_THREADS = 20;
 
@@ -18,14 +17,14 @@ static size_t constexpr NUM_THREADS = 20;
  * FUNCTION DECLARATION
  **************************************************************************************/
 
-byte bmp388_read_reg(byte const reg_addr);
-void bmp388_thread_func();
+byte lsm6dsox_read_reg(byte const reg_addr);
+void lsm6dsox_thread_func();
 
 /**************************************************************************************
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-BusDevice bmp388(SPI, BMP388_CS_PIN, 1000000, MSBFIRST, SPI_MODE0);
+BusDevice lsm6dsox(Wire, LSM6DSOX_ADDRESS);
 
 static char thread_name[NUM_THREADS][32];
 
@@ -38,14 +37,12 @@ void setup()
   Serial.begin(9600);
   while (!Serial) { }
 
-  pinMode(BMP388_CS_PIN, OUTPUT);
-  digitalWrite(BMP388_CS_PIN, HIGH);
-
+  /* Fire up some threads all accessing the LSM6DSOX */
   for(size_t i = 0; i < NUM_THREADS; i++)
   {
     snprintf(thread_name[i], sizeof(thread_name[i]), "Thread #%02d", i);
     rtos::Thread * t = new rtos::Thread(osPriorityNormal, OS_STACK_SIZE, nullptr, thread_name[i]);
-    t->start(bmp388_thread_func);
+    t->start(lsm6dsox_thread_func);
   }
 }
 
@@ -58,32 +55,24 @@ void loop()
  * FUNCTION DEFINITION
  **************************************************************************************/
 
-byte bmp388_read_reg(byte const reg_addr)
+byte lsm6dsox_read_reg(byte reg_addr)
 {
-  /* REG_ADDR | DUMMY_BYTE | REG_VAL is on SDO */
-  byte read_write_buf[] = {static_cast<byte>(0x80 | reg_addr), 0, 0};
-
-  IoRequest req(read_write_buf, sizeof(read_write_buf), nullptr, 0);
-  IoResponse rsp = bmp388.transfer(req);
-
-  /* Do other stuff */
-
-  rsp->wait();
-
-  return read_write_buf[2];
+  byte read_buf = 0;
+  lsm6dsox.wire().write_then_read(&reg_addr, 1, &read_buf, 1);
+  return read_buf;
 }
 
-void bmp388_thread_func()
+void lsm6dsox_thread_func()
 {
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
     rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
-    /* Try to read some data from the BMP3888. */
-    byte const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
+    /* Try to read some data from the LSM6DSOX. */
+    byte const who_am_i = lsm6dsox_read_reg(LSM6DSOX_WHO_AM_I_REG);
     /* Print thread id and chip id value to serial. */
     char msg[64] = {0};
-    snprintf(msg, sizeof(msg), "%s: Chip ID = 0x%X", rtos::ThisThread::get_name(), chip_id);
+    snprintf(msg, sizeof(msg), "%s: LSM6DSOX[WHO_AM_I] = 0x%X", rtos::ThisThread::get_name(), who_am_i);
     Serial.println(msg);
   }
 }
