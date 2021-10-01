@@ -34,6 +34,8 @@ SerialDispatcher::SerialDispatcher(arduino::HardwareSerial & serial)
 , _thread(osPriorityRealtime, 4096, nullptr, "SerialDispatcher")
 , _has_tread_started{false}
 , _terminate_thread{false}
+, _global_prefix_callback{nullptr}
+, _global_suffix_callback{nullptr}
 {
 
 }
@@ -202,6 +204,18 @@ void SerialDispatcher::suffix(SuffixInjectorCallbackFunc func)
   iter->suffix_func = func;
 }
 
+void SerialDispatcher::global_prefix(PrefixInjectorCallbackFunc func)
+{
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  _global_prefix_callback = func;
+}
+
+void SerialDispatcher::global_suffix(SuffixInjectorCallbackFunc func)
+{
+  mbed::ScopedLock<rtos::Mutex> lock(_mutex);
+  _global_suffix_callback = func;
+}
+
 /**************************************************************************************
  * PRIVATE MEMBER FUNCTIONS
  **************************************************************************************/
@@ -254,6 +268,12 @@ void SerialDispatcher::threadFunc()
                       String prefix;
                       if (d.prefix_func)
                         prefix = d.prefix_func(msg);
+                      /* A prefix callback function defined per thread
+                       * takes precedence over a globally defined prefix
+                       * callback function.
+                       */
+                      else if (_global_prefix_callback)
+                        prefix = _global_prefix_callback(msg);
 
                       /* Similar to the prefix function this callback
                        * allows the user to specify a specific message
@@ -262,6 +282,12 @@ void SerialDispatcher::threadFunc()
                       String suffix;
                       if (d.suffix_func)
                         suffix = d.suffix_func(prefix, msg);
+                      /* A suffix callback function defined per thread
+                       * takes precedence over a globally defined suffix
+                       * callback function.
+                       */
+                      else if (_global_suffix_callback)
+                        suffix = _global_suffix_callback(prefix, msg);
 
                       /* Now it's time to actually write the message
                        * conveyed by the user via Serial.print/println.
