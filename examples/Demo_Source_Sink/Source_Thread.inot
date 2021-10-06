@@ -1,0 +1,15 @@
+/* The output SOURCE, it sends 'bool' values. */
+SOURCE(led, bool)
+
+void setup()
+{
+
+}
+
+void loop()
+{
+  led.send(true);
+  delay(100);
+  led.send(false);
+  delay(100);
+}

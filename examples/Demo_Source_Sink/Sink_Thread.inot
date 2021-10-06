@@ -1,0 +1,21 @@
+
+/*
+ * An 'bool' SINK with a size of '0'. This kind of SINK has no buffer so the reading thread
+ * will block until the writing thread has written something, or vice versa.
+ */
+SINK(led, bool, 0)
+
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop()
+{
+  /* Read a 'bool' from the SINK and discard it. Since there is basically no delay in the loop
+   * this call will surely block until something comes from the connected SOURCE. In this case
+   * the pace is dictated by the SOURCE that sends data every 100 ms.
+   */
+  bool led_on = led.read();
+  digitalWrite(LED_BUILTIN, led_on);
+}
