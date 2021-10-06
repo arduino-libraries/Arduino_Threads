@@ -1,6 +1,7 @@
 #ifndef ARDUINO_THREADS_H_
 #define ARDUINO_THREADS_H_
 
+#include <mbed.h>
 #include <MemoryPool.h>
 
 #define SOURCE(name, type) \
@@ -304,8 +305,5 @@ private: \
 #define THD_DONE(tabname) \
 };  \
 CONCAT(tabname,Class) tabname;
-
-#include "Wire.h"
-#include "SerialDispatcher.h"
 
 #endif /* ARDUINO_THREADS_H_ */
