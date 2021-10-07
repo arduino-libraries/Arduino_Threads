@@ -9,6 +9,7 @@
 #include <MemoryPool.h>
 
 #include "Sink.hpp"
+#include "Source.hpp"
 
 /**************************************************************************************
  * DEFINE
@@ -34,39 +35,8 @@ private:
 // https://chromium.googlesource.com/chromium/src/+/master/styleguide/c++/c++-dos-and-donts.md
 
 /**************************************************************************************
- * FORWARD DECLARATION
- **************************************************************************************/
-
-template<class T>
-class Sink;
-template<class T>
-class Source;
-
-/**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
-
-template<class T>
-class Source
-{
-  public:
-    Source() {};
-
-    void connectTo(Sink<T> &sink) {
-      if (destination == nullptr) {
-        destination = &sink;
-      } else {
-        destination->connectTo(sink);
-      }
-    }
-
-    void send(const T &value) {
-      if (destination) destination->inject(value);
-    }
-
-  private:
-    Sink<T> *destination;
-};
 
 template<class T, size_t QUEUE_SIZE = 16>
 class Shared // template definition
