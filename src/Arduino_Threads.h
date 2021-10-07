@@ -62,6 +62,8 @@ protected:
 
   char * _tabname;
 
+  virtual void setup() = 0;
+  virtual void loop () = 0;
 
 private:
 
@@ -69,9 +71,6 @@ private:
   rtos::Thread *t;
   uint32_t _start_flags, _stop_flags;
   uint32_t _loop_delay;
-
-  virtual void setup(void) {};
-  virtual void loop(void) {};
 
   void execute();
 };
