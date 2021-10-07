@@ -35,6 +35,7 @@ void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uin
 void ArduinoThreads::terminate()
 {
   t->terminate();
+  t->join();
 }
 
 void ArduinoThreads::sendEvent(uint32_t const event)
