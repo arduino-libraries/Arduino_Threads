@@ -35,19 +35,19 @@ void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uin
 {
   _start_flags = start_flags;
   _stop_flags  = stop_flags;
-  t = new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname);
-  t->start(mbed::callback(this, &ArduinoThreads::threadFunc));
+  _thread = new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname);
+  _thread->start(mbed::callback(this, &ArduinoThreads::threadFunc));
 }
 
 void ArduinoThreads::terminate()
 {
-  t->terminate();
-  t->join();
+  _thread->terminate();
+  _thread->join();
 }
 
 void ArduinoThreads::sendEvent(uint32_t const event)
 {
- t->flags_set(event);
+  _thread->flags_set(event);
 }
 
 void ArduinoThreads::setLoopDelay(uint32_t const delay)

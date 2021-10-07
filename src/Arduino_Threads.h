@@ -72,7 +72,7 @@ protected:
 private:
 
   static rtos::EventFlags _global_events;
-  rtos::Thread *t;
+  rtos::Thread * _thread;
   uint32_t _start_flags, _stop_flags;
   uint32_t _loop_delay;
 
