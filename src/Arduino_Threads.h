@@ -54,37 +54,7 @@ class ArduinoThreads {
     uint32_t _loop_delay;
     virtual void setup(void) {};
     virtual void loop(void) {};
-    void execute() {
-      setup();
-      // if _start_flags have been passed then wait until all the flags are set
-      // before starting the loop. this is used to synchronize loops from multiple
-      // sketches.
-      if (_start_flags != 0) {
-        _global_events.wait_all(_start_flags);
-      }
-
-      // if _stop_flags have been passed stop when all the flags are set
-      // otherwise loop forever
-      while ( 1 ) {
-        loop();
-        // on exit clear the flags that have forced us to stop.
-        // note that if two groups of sketches stop on common flags
-        // the first group will clear them so the second group may never
-        // exit
-        if (_stop_flags!=0) {
-          if ((_global_events.get()&_stop_flags)!=_stop_flags) {
-            _global_events.clear(_stop_flags);
-            return;
-          }
-          if ((rtos::ThisThread::flags_get()&_stop_flags)!=_stop_flags) {
-            rtos::ThisThread::flags_clear(_stop_flags);
-            return;
-          }
-        }
-        // sleep for the time we've been asked to insert between loops 
-        rtos::ThisThread::sleep_for(_loop_delay);
-      }
-    }
+    void execute();
     rtos::Thread *t;
 
   protected:
