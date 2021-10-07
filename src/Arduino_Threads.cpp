@@ -35,7 +35,7 @@ void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uin
 {
   _start_flags = start_flags;
   _stop_flags  = stop_flags;
-  _thread = new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname);
+  _thread.reset(new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname));
   _thread->start(mbed::callback(this, &ArduinoThreads::threadFunc));
 }
 

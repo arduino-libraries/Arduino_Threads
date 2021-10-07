@@ -6,6 +6,7 @@
  **************************************************************************************/
 
 #include <mbed.h>
+#include <SharedPtr.h>
 
 #include "Sink.hpp"
 #include "Source.hpp"
@@ -72,7 +73,7 @@ protected:
 private:
 
   static rtos::EventFlags _global_events;
-  rtos::Thread * _thread;
+  mbed::SharedPtr<rtos::Thread> _thread;
   uint32_t _start_flags, _stop_flags;
   uint32_t _loop_delay;
 
