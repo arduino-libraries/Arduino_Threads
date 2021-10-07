@@ -46,7 +46,6 @@ private:
 
 #define _macroToString(sequence) #sequence
 
-
 class ArduinoThreads {
   private:
     static rtos::EventFlags globalEvents;
@@ -117,8 +116,6 @@ class ArduinoThreads {
       loopDelay = delay;
     }
 };
-
-rtos::EventFlags ArduinoThreads::globalEvents;
 
 #define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
 public: \
