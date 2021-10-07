@@ -50,6 +50,7 @@ class ArduinoThreads
 {
 public:
 
+           ArduinoThreads();
   virtual ~ArduinoThreads();
 
 

@@ -14,6 +14,14 @@ rtos::EventFlags ArduinoThreads::_global_events;
  * CTOR/DTOR
  **************************************************************************************/
 
+ArduinoThreads::ArduinoThreads()
+: _start_flags{0}
+, _stop_flags{0}
+, _loop_delay{0}
+{
+
+}
+
 ArduinoThreads::~ArduinoThreads()
 {
   terminate();
@@ -27,7 +35,6 @@ void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uin
 {
   _start_flags = start_flags;
   _stop_flags  = stop_flags;
-  _loop_delay = 0;
   t = new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname);
   t->start(mbed::callback(this, &ArduinoThreads::threadFunc));
 }
