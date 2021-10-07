@@ -48,22 +48,22 @@ private:
 
 class ArduinoThreads {
   private:
-    static rtos::EventFlags globalEvents;
-    uint32_t startFlags;
-    uint32_t stopFlags;
-    uint32_t loopDelay;
+    static rtos::EventFlags _global_events;
+    uint32_t _start_flags;
+    uint32_t _stop_flags;
+    uint32_t _loop_delay;
     virtual void setup(void) {};
     virtual void loop(void) {};
     void execute() {
       setup();
-      // if startFlags have been passed then wait until all the flags are set
+      // if _start_flags have been passed then wait until all the flags are set
       // before starting the loop. this is used to synchronize loops from multiple
       // sketches.
-      if (startFlags != 0) {
-        globalEvents.wait_all(startFlags);
+      if (_start_flags != 0) {
+        _global_events.wait_all(_start_flags);
       }
 
-      // if stopFlags have been passed stop when all the flags are set
+      // if _stop_flags have been passed stop when all the flags are set
       // otherwise loop forever
       while ( 1 ) {
         loop();
@@ -71,18 +71,18 @@ class ArduinoThreads {
         // note that if two groups of sketches stop on common flags
         // the first group will clear them so the second group may never
         // exit
-        if (stopFlags!=0) {
-          if ((globalEvents.get()&stopFlags)!=stopFlags) {
-            globalEvents.clear(stopFlags);
+        if (_stop_flags!=0) {
+          if ((_global_events.get()&_stop_flags)!=_stop_flags) {
+            _global_events.clear(_stop_flags);
             return;
           }
-          if ((rtos::ThisThread::flags_get()&stopFlags)!=stopFlags) {
-            rtos::ThisThread::flags_clear(stopFlags);
+          if ((rtos::ThisThread::flags_get()&_stop_flags)!=_stop_flags) {
+            rtos::ThisThread::flags_clear(_stop_flags);
             return;
           }
         }
         // sleep for the time we've been asked to insert between loops 
-        rtos::ThisThread::sleep_for(loopDelay);
+        rtos::ThisThread::sleep_for(_loop_delay);
       }
     }
     rtos::Thread *t;
@@ -92,10 +92,10 @@ class ArduinoThreads {
 
   public:
     // start this sketch
-    void start(int stacksize = 4096, uint32_t startFlags=0, uint32_t stopFlags=0) {
-      this->startFlags = startFlags;
-      this->stopFlags = stopFlags;
-      loopDelay=0;
+    void start(int stacksize = 4096, uint32_t _start_flags=0, uint32_t _stop_flags=0) {
+      this->_start_flags = _start_flags;
+      this->_stop_flags = _stop_flags;
+      _loop_delay=0;
       t = new rtos::Thread(osPriorityNormal, stacksize, nullptr, _tabname);
       t->start(mbed::callback(this, &ArduinoThreads::execute));
     }
@@ -105,7 +105,7 @@ class ArduinoThreads {
     }
     // send an event to all sketches at the same time
     static void broadcastEvent(uint32_t event) {
-      globalEvents.set(event);
+      _global_events.set(event);
     }
     // send an event only to this sketch
     void sendEvent(uint32_t event) {
@@ -113,7 +113,7 @@ class ArduinoThreads {
     }
     // set the rate at which loop function will be called
     void setLoopDelay(uint32_t delay) {
-      loopDelay = delay;
+      _loop_delay = delay;
     }
 };
 

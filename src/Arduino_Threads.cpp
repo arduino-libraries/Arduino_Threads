@@ -8,4 +8,4 @@
  * STATIC MEMBER DECLARATION
  **************************************************************************************/
 
-rtos::EventFlags ArduinoThreads::globalEvents;
+rtos::EventFlags ArduinoThreads::_global_events;
