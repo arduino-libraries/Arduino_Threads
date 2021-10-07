@@ -50,6 +50,9 @@ class ArduinoThreads
 {
 public:
 
+  virtual ~ArduinoThreads();
+
+
   void start       (int const stack_size = 4096, uint32_t const start_flags = 0, uint32_t const stop_flags = 0);
   void terminate   ();
   void setLoopDelay(uint32_t const delay);
