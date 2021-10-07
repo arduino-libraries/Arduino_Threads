@@ -29,7 +29,7 @@ void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uin
   _stop_flags  = stop_flags;
   _loop_delay = 0;
   t = new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname);
-  t->start(mbed::callback(this, &ArduinoThreads::execute));
+  t->start(mbed::callback(this, &ArduinoThreads::threadFunc));
 }
 
 void ArduinoThreads::terminate()
@@ -57,7 +57,7 @@ void ArduinoThreads::broadcastEvent(uint32_t const event)
  * PRIVATE MEMBER FUNCTIONS
  **************************************************************************************/
 
-void ArduinoThreads::execute()
+void ArduinoThreads::threadFunc()
 {
   setup();
   /* If _start_flags have been passed then wait until all the flags are set

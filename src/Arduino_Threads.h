@@ -75,7 +75,7 @@ private:
   uint32_t _start_flags, _stop_flags;
   uint32_t _loop_delay;
 
-  void execute();
+  void threadFunc();
 };
 
 #define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
