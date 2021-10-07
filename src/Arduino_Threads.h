@@ -48,29 +48,32 @@ private:
 
 class ArduinoThreads
 {
-  private:
-    static rtos::EventFlags _global_events;
-    uint32_t _start_flags;
-    uint32_t _stop_flags;
-    uint32_t _loop_delay;
-    virtual void setup(void) {};
-    virtual void loop(void) {};
-    void execute();
-    rtos::Thread *t;
+public:
 
-  protected:
+  void start       (int const stack_size = 4096, uint32_t const start_flags = 0, uint32_t const stop_flags = 0);
+  void terminate   ();
+  void setLoopDelay(uint32_t const delay);
+  void sendEvent   (uint32_t const event);
 
-    char* _tabname;
+  static void broadcastEvent(uint32_t event);
 
-  public:
 
-    void start(int const stack_size = 4096, uint32_t const start_flags = 0, uint32_t const stop_flags = 0);
-    void terminate();
-    void setLoopDelay(uint32_t const delay);
-    void sendEvent(uint32_t const event);
+protected:
 
-    static void broadcastEvent(uint32_t event);
+  char * _tabname;
 
+
+private:
+
+  static rtos::EventFlags _global_events;
+  rtos::Thread *t;
+  uint32_t _start_flags, _stop_flags;
+  uint32_t _loop_delay;
+
+  virtual void setup(void) {};
+  virtual void loop(void) {};
+
+  void execute();
 };
 
 #define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
