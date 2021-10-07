@@ -46,7 +46,8 @@ private:
 
 #define _macroToString(sequence) #sequence
 
-class ArduinoThreads {
+class ArduinoThreads
+{
   private:
     static rtos::EventFlags _global_events;
     uint32_t _start_flags;
@@ -58,33 +59,18 @@ class ArduinoThreads {
     rtos::Thread *t;
 
   protected:
+
     char* _tabname;
 
   public:
-    // start this sketch
-    void start(int stacksize = 4096, uint32_t _start_flags=0, uint32_t _stop_flags=0) {
-      this->_start_flags = _start_flags;
-      this->_stop_flags = _stop_flags;
-      _loop_delay=0;
-      t = new rtos::Thread(osPriorityNormal, stacksize, nullptr, _tabname);
-      t->start(mbed::callback(this, &ArduinoThreads::execute));
-    }
-    // kill this sketch
-    void terminate() {
-      t->terminate();
-    }
-    // send an event to all sketches at the same time
-    static void broadcastEvent(uint32_t event) {
-      _global_events.set(event);
-    }
-    // send an event only to this sketch
-    void sendEvent(uint32_t event) {
-      t->flags_set(event);
-    }
-    // set the rate at which loop function will be called
-    void setLoopDelay(uint32_t delay) {
-      _loop_delay = delay;
-    }
+
+    void start(int const stack_size = 4096, uint32_t const start_flags = 0, uint32_t const stop_flags = 0);
+    void terminate();
+    void setLoopDelay(uint32_t const delay);
+    void sendEvent(uint32_t const event);
+
+    static void broadcastEvent(uint32_t event);
+
 };
 
 #define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \

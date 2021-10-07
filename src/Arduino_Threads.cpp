@@ -11,6 +11,39 @@
 rtos::EventFlags ArduinoThreads::_global_events;
 
 /**************************************************************************************
+ * PUBLIC MEMBER FUNCTIONS
+ **************************************************************************************/
+
+void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uint32_t const stop_flags)
+{
+  _start_flags = start_flags;
+  _stop_flags  = stop_flags;
+  _loop_delay = 0;
+  t = new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname);
+  t->start(mbed::callback(this, &ArduinoThreads::execute));
+}
+
+void ArduinoThreads::terminate()
+{
+  t->terminate();
+}
+
+void ArduinoThreads::sendEvent(uint32_t const event)
+{
+ t->flags_set(event);
+}
+
+void ArduinoThreads::setLoopDelay(uint32_t const delay)
+{
+  _loop_delay = delay;
+}
+
+void ArduinoThreads::broadcastEvent(uint32_t const event)
+{
+  _global_events.set(event);
+}
+
+/**************************************************************************************
  * PRIVATE MEMBER FUNCTIONS
  **************************************************************************************/
 
