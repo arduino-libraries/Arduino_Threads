@@ -102,6 +102,6 @@ void ArduinoThreads::threadFunc()
 
     /* Sleep for the time we've been asked to insert between loops.
      */
-    rtos::ThisThread::sleep_for(_loop_delay);
+    rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(_loop_delay));
   }
 }
