@@ -75,7 +75,7 @@ private:
   static rtos::EventFlags _global_events;
   mbed::SharedPtr<rtos::Thread> _thread;
   uint32_t _start_flags, _stop_flags;
-  uint32_t _loop_delay;
+  uint32_t _loop_delay_ms;
 
   void threadFunc();
 };

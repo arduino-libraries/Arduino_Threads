@@ -17,7 +17,7 @@ rtos::EventFlags ArduinoThreads::_global_events;
 ArduinoThreads::ArduinoThreads()
 : _start_flags{0}
 , _stop_flags{0}
-, _loop_delay{0}
+, _loop_delay_ms{0}
 {
 
 }
@@ -52,7 +52,7 @@ void ArduinoThreads::sendEvent(uint32_t const event)
 
 void ArduinoThreads::setLoopDelay(uint32_t const delay)
 {
-  _loop_delay = delay;
+  _loop_delay_ms = delay;
 }
 
 void ArduinoThreads::broadcastEvent(uint32_t const event)
@@ -102,6 +102,6 @@ void ArduinoThreads::threadFunc()
 
     /* Sleep for the time we've been asked to insert between loops.
      */
-    rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(_loop_delay));
+    rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(_loop_delay_ms));
   }
 }
