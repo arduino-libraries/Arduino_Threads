@@ -20,7 +20,6 @@ public:
   void operator = (T const & other);
 
   T & peek() { return _val; }
-  T & latest() { return peek(); }
 
 
 private:
