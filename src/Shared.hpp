@@ -18,8 +18,7 @@ public:
 
   operator T();
   void operator = (T const & other);
-
-  T & peek() { return _val; }
+  inline T peek() const { return _val; }
 
 
 private:
