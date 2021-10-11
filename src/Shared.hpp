@@ -23,7 +23,7 @@ class Shared
     void operator = (T const & other);
 
     T& peek() {
-      return val;
+      return _val;
     }
 
     T& latest() {
@@ -32,7 +32,7 @@ class Shared
 
   private:
 
-    T val;
+    T _val;
     rtos::Mail<T, QUEUE_SIZE> _mailbox;
 };
 
@@ -50,7 +50,7 @@ Shared<T,QUEUE_SIZE>::operator T()
     _mailbox.free(val_ptr);
     return tmp_val;
   }
-  return val;
+  return _val;
 }
 
 template<class T, size_t QUEUE_SIZE>
@@ -66,7 +66,7 @@ void Shared<T,QUEUE_SIZE>::operator = (T const & other)
     _mailbox.free(val_ptr);
   }
 
-  val = other;
+  _val = other;
 
   T * val_ptr = _mailbox.try_alloc();
   if (val_ptr)
