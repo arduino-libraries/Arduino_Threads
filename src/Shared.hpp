@@ -6,7 +6,6 @@
  **************************************************************************************/
 
 #include <mbed.h>
-#include <MemoryPool.h>
 
 /**************************************************************************************
  * CLASS DECLARATION
@@ -15,25 +14,19 @@
 template<class T, size_t QUEUE_SIZE = 16>
 class Shared
 {
-  public:
-    Shared() {
-    }
+public:
 
-    operator T();
-    void operator = (T const & other);
+  operator T();
+  void operator = (T const & other);
 
-    T& peek() {
-      return _val;
-    }
+  T & peek() { return _val; }
+  T & latest() { return peek(); }
 
-    T& latest() {
-      return peek();
-    }
 
-  private:
+private:
 
-    T _val;
-    rtos::Mail<T, QUEUE_SIZE> _mailbox;
+  T _val;
+  rtos::Mail<T, QUEUE_SIZE> _mailbox;
 };
 
 /**************************************************************************************
