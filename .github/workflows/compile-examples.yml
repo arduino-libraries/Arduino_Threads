@@ -32,7 +32,7 @@ jobs:
     env:
       # libraries to install for all boards
       UNIVERSAL_LIBRARIES: |
-        # Install the ArduinoThreads library from the repository
+        # Install the Arduino_Threads library from the repository
         - source-path: ./
         - name: Arduino_LSM9DS1
         - name: Arduino_APDS9960

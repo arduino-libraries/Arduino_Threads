@@ -26,13 +26,13 @@
  * STATIC MEMBER DECLARATION
  **************************************************************************************/
 
-rtos::EventFlags ArduinoThreads::_global_events;
+rtos::EventFlags Arduino_Threads::_global_events;
 
 /**************************************************************************************
  * CTOR/DTOR
  **************************************************************************************/
 
-ArduinoThreads::ArduinoThreads()
+Arduino_Threads::Arduino_Threads()
 : _start_flags{0}
 , _stop_flags{0}
 , _loop_delay_ms{0}
@@ -40,7 +40,7 @@ ArduinoThreads::ArduinoThreads()
 
 }
 
-ArduinoThreads::~ArduinoThreads()
+Arduino_Threads::~Arduino_Threads()
 {
   terminate();
 }
@@ -49,31 +49,31 @@ ArduinoThreads::~ArduinoThreads()
  * PUBLIC MEMBER FUNCTIONS
  **************************************************************************************/
 
-void ArduinoThreads::start(int const stack_size, uint32_t const start_flags, uint32_t const stop_flags)
+void Arduino_Threads::start(int const stack_size, uint32_t const start_flags, uint32_t const stop_flags)
 {
   _start_flags = start_flags;
   _stop_flags  = stop_flags;
   _thread.reset(new rtos::Thread(osPriorityNormal, stack_size, nullptr, _tabname));
-  _thread->start(mbed::callback(this, &ArduinoThreads::threadFunc));
+  _thread->start(mbed::callback(this, &Arduino_Threads::threadFunc));
 }
 
-void ArduinoThreads::terminate()
+void Arduino_Threads::terminate()
 {
   _thread->terminate();
   _thread->join();
 }
 
-void ArduinoThreads::sendEvent(uint32_t const event)
+void Arduino_Threads::sendEvent(uint32_t const event)
 {
   _thread->flags_set(event);
 }
 
-void ArduinoThreads::setLoopDelay(uint32_t const delay)
+void Arduino_Threads::setLoopDelay(uint32_t const delay)
 {
   _loop_delay_ms = delay;
 }
 
-void ArduinoThreads::broadcastEvent(uint32_t const event)
+void Arduino_Threads::broadcastEvent(uint32_t const event)
 {
   _global_events.set(event);
 }
@@ -82,7 +82,7 @@ void ArduinoThreads::broadcastEvent(uint32_t const event)
  * PRIVATE MEMBER FUNCTIONS
  **************************************************************************************/
 
-void ArduinoThreads::threadFunc()
+void Arduino_Threads::threadFunc()
 {
   setup();
   /* If _start_flags have been passed then wait until all the flags are set

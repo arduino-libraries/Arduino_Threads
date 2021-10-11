@@ -65,12 +65,12 @@ private:
 
 #define _macroToString(sequence) #sequence
 
-class ArduinoThreads
+class Arduino_Threads
 {
 public:
 
-           ArduinoThreads();
-  virtual ~ArduinoThreads();
+           Arduino_Threads();
+  virtual ~Arduino_Threads();
 
 
   void start       (int const stack_size = 4096, uint32_t const start_flags = 0, uint32_t const stop_flags = 0);
@@ -98,7 +98,7 @@ private:
   void threadFunc();
 };
 
-#define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
+#define THD_ENTER(tabname) class CONCAT(tabname, Class) : public Arduino_Threads { \
 public: \
   CONCAT(tabname, Class)() { _tabname = _macroToString(tabname); } \
 private: \
