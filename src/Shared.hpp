@@ -56,8 +56,15 @@ Shared<T,QUEUE_SIZE>::operator T()
 template<class T, size_t QUEUE_SIZE>
 void Shared<T,QUEUE_SIZE>::operator = (T const & other)
 {
+  /* If the mailbox is full we are discarding the
+   * oldest element and then push the new one into
+   * the queue.
+   **/
   if (_mailbox.full())
-    T discard = *this;
+  {
+    T * val_ptr = _mailbox.try_get_for(rtos::Kernel::wait_for_u32_forever);
+    _mailbox.free(val_ptr);
+  }
 
   val = other;
 
