@@ -43,7 +43,29 @@ public:
 template<typename T>
 class SinkNonBlocking : public SinkBase<T>
 {
-  /* TODO - Do we really need this? */
+public:
+
+           SinkNonBlocking();
+  virtual ~SinkNonBlocking() { }
+
+  virtual T read() override
+  {
+    _mutex.lock();
+    return _data;
+    _mutex.unlock();
+  }
+  virtual void inject(T const & value) override
+  {
+    _mutex.lock();
+    _data = value;
+    _mutex.unlock();
+  }
+
+private:
+
+  T _data;
+  rtos::Mutex _mutex;
+
 };
 
 template<typename T>
