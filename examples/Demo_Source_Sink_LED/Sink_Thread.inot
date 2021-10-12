@@ -3,7 +3,7 @@
  * An 'bool' SINK with a size of '0'. This kind of SINK has no buffer so the reading thread
  * will block until the writing thread has written something, or vice versa.
  */
-SINK(led, bool, 0)
+SINK(led, bool);
 
 void setup()
 {

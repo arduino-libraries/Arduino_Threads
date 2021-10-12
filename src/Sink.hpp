@@ -29,121 +29,79 @@
  * CLASS DECLARATION
  **************************************************************************************/
 
-template<class T>
-class Sink
+template<typename T>
+class SinkBase
 {
-  private:
-    rtos::Mutex dataMutex;
-    rtos::ConditionVariable dataAvailable;
-    rtos::ConditionVariable slotAvailable;
-    T latest;
-    Sink *next;
-    const int size;
-    int first, last;
-    bool full;
-    T *queue;
+public:
 
-  public:
-    Sink(int s) :
-      dataAvailable(dataMutex),
-      slotAvailable(dataMutex),
-      size(s),
-      queue((size > 0) ? new T[size] : nullptr),
-      first(0), last(0), full(false)
-    {};
+  virtual ~SinkBase() { }
 
-    ~Sink() {
-      if (queue != nullptr) { delete queue; }
-    }
-
-
-  //protected: TODO
-    void connectTo(Sink &sink)
-    {
-      if (next == nullptr) {
-        next = &sink;
-      } else {
-        next->connectTo(sink);
-      }
-    }
-
-    T read()
-    {
-      // Non-blocking shared variable
-      if (size == -1) {
-        dataMutex.lock();
-        T res = latest;
-        dataMutex.unlock();
-        return res;
-      }
-
-      // Blocking shared variable
-      if (size == 0) {
-        dataMutex.lock();
-        while (!full) {
-          dataAvailable.wait();
-        }
-        T res = latest;
-        full = false;
-        slotAvailable.notify_all();
-        dataMutex.unlock();
-        return res;
-      }
-
-      // Blocking queue
-      dataMutex.lock();
-      while (first == last && !full) {
-        dataAvailable.wait();
-      }
-      T res = queue[first++];
-      first %= size;
-      if (full) {
-        full = false;
-        slotAvailable.notify_one();
-      }
-      dataMutex.unlock();
-      return res;
-    }
-
-  //protected: TODO
-    void inject(const T &value)
-    {
-      dataMutex.lock();
-
-      // Non-blocking shared variable
-      if (size == -1) {
-        latest = value;
-      }
-
-      // Blocking shared variable
-      else if (size == 0) {
-        while (full) {
-          slotAvailable.wait();
-        }
-        latest = value;
-        full = true;
-        dataAvailable.notify_one();
-        slotAvailable.wait();
-      }
-
-      // Blocking queue
-      else {
-        while (full) {
-          slotAvailable.wait();
-        }
-        if (first == last) {
-          dataAvailable.notify_one();
-        }
-        queue[last++] = value;
-        last %= size;
-        if (first == last) {
-          full = true;
-        }
-      }
-      dataMutex.unlock();
-
-      if (next) next->inject(value);
-    }
+  virtual T read() = 0;
+  virtual void inject(T const & value) = 0;
 };
+
+template<typename T>
+class SinkNonBlocking : public SinkBase<T>
+{
+  /* TODO - Do we really need this? */
+};
+
+template<typename T>
+class SinkBlocking : public SinkBase<T>
+{
+public:
+
+           SinkBlocking();
+  virtual ~SinkBlocking() { }
+
+  virtual T read() override;
+  virtual void inject(T const & value) override;
+
+
+private:
+
+  T _data;
+  bool _is_data_available;
+  rtos::Mutex _mutex;
+  rtos::ConditionVariable _cond_data_available;
+  rtos::ConditionVariable _cond_slot_available;
+
+};
+
+/**************************************************************************************
+ * PUBLIC MEMBER FUNCTIONS - SinkBlocking
+ **************************************************************************************/
+
+template<typename T>
+SinkBlocking<T>::SinkBlocking()
+: _is_data_available{false}
+, _cond_data_available(_mutex)
+, _cond_slot_available(_mutex)
+{ }
+
+template<typename T>
+T SinkBlocking<T>::read()
+{
+  _mutex.lock();
+  while (!_is_data_available)
+    _cond_data_available.wait();
+  T const d = _data;
+  _is_data_available = false;
+  _cond_slot_available.notify_all();
+  _mutex.unlock();
+  return d;
+}
+
+template<typename T>
+void SinkBlocking<T>::inject(T const & value)
+{
+  _mutex.lock();
+  while (_is_data_available)
+    _cond_slot_available.wait();
+  _data = value;
+  _is_data_available = true;
+  _cond_data_available.notify_all();
+  _mutex.unlock();
+}
 
 #endif /* ARDUINO_THREADS_SINK_HPP_ */

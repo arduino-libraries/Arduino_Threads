@@ -1,0 +1,11 @@
+SINK(counter, int);
+
+void setup()
+{
+
+}
+
+void loop()
+{
+  Serial.println(counter.read());
+}

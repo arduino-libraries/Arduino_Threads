@@ -20,36 +20,54 @@
 #define ARDUINO_THREADS_SOURCE_HPP_
 
 /**************************************************************************************
+ * INCLUDE
+ **************************************************************************************/
+
+#include <list>
+#include <algorithm>
+
+/**************************************************************************************
  * FORWARD DECLARATION
  **************************************************************************************/
 
 template<class T>
-class Sink;
+class SinkBase;
 
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
 
-template<class T>
+template<typename T>
 class Source
 {
-  public:
-    Source() {};
+public:
 
-    void connectTo(Sink<T> &sink) {
-      if (destination == nullptr) {
-        destination = &sink;
-      } else {
-        destination->connectTo(sink);
-      }
-    }
+  void connectTo(SinkBase<T> & sink);
+  void write(T const & value);
 
-    void send(const T &value) {
-      if (destination) destination->inject(value);
-    }
-
-  private:
-    Sink<T> *destination;
+private:
+  std::list<SinkBase<T> *> _sink_list;
 };
+
+/**************************************************************************************
+ * PUBLIC MEMBER FUNCTIONS
+ **************************************************************************************/
+
+template<typename T>
+void Source<T>::connectTo(SinkBase<T> & sink)
+{
+  _sink_list.push_back(&sink);
+}
+
+template<typename T>
+void Source<T>::write(T const & value)
+{
+  std::for_each(std::begin(_sink_list),
+                std::end  (_sink_list),
+                [value](SinkBase<T> * sink)
+                {
+                  sink->inject(value);
+                });
+}
 
 #endif /* ARDUINO_THREADS_SOURCE_HPP_ */

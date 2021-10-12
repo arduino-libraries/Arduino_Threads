@@ -1,5 +1,5 @@
 /* The output SOURCE, it sends 'bool' values. */
-SOURCE(led, bool)
+SOURCE(led, bool);
 
 void setup()
 {
@@ -8,8 +8,8 @@ void setup()
 
 void loop()
 {
-  led.send(true);
+  led.write(true);
   delay(100);
-  led.send(false);
+  led.write(false);
   delay(100);
 }

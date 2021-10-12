@@ -1,0 +1,13 @@
+SOURCE(counter, int);
+
+void setup()
+{
+
+}
+
+void loop()
+{
+  static int i = 0;
+  counter.write(i);
+  i++;
+}

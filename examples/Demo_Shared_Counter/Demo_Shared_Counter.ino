@@ -1,4 +1,5 @@
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   while (!Serial) { }
 
@@ -6,6 +7,7 @@ void setup() {
   Consumer.start();
 }
 
-void loop() {
+void loop()
+{
   rtos::ThisThread::yield();
 }

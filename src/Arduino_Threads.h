@@ -39,9 +39,9 @@ public: \
   Source<type> name; \
 private:
 
-#define SINK(name, type, size) \
+#define SINK(name, type) \
 public: \
-  Sink<type> name{size}; \
+  SinkBlocking<type> name; \
 private:
 // we need to call the Sink<T>(int size) non-default constructor using size as parameter.
 // This is done by writing
