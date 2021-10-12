@@ -45,21 +45,12 @@ class SinkNonBlocking : public SinkBase<T>
 {
 public:
 
-           SinkNonBlocking();
+           SinkNonBlocking() { }
   virtual ~SinkNonBlocking() { }
 
-  virtual T read() override
-  {
-    _mutex.lock();
-    return _data;
-    _mutex.unlock();
-  }
-  virtual void inject(T const & value) override
-  {
-    _mutex.lock();
-    _data = value;
-    _mutex.unlock();
-  }
+  virtual T read() override;
+  virtual void inject(T const & value) override;
+
 
 private:
 
@@ -89,6 +80,26 @@ private:
   rtos::ConditionVariable _cond_slot_available;
 
 };
+
+/**************************************************************************************
+ * PUBLIC MEMBER FUNCTIONS - SinkNonBlocking
+ **************************************************************************************/
+
+template<typename T>
+T SinkNonBlocking<T>::read()
+{
+  _mutex.lock();
+  return _data;
+  _mutex.unlock();
+}
+
+template<typename T>
+void SinkNonBlocking<T>::inject(T const & value)
+{
+  _mutex.lock();
+  _data = value;
+  _mutex.unlock();
+}
 
 /**************************************************************************************
  * PUBLIC MEMBER FUNCTIONS - SinkBlocking
