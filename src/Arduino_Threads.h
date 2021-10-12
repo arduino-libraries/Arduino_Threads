@@ -1,16 +1,47 @@
+/*
+ * This file is part of the Arduino_ThreadsafeIO library.
+ * Copyright (c) 2021 Arduino SA.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #ifndef ARDUINO_THREADS_H_
 #define ARDUINO_THREADS_H_
 
-#include <MemoryPool.h>
+/**************************************************************************************
+ * INCLUDE
+ **************************************************************************************/
+
+#include <mbed.h>
+#include <SharedPtr.h>
+
+#include "Sink.hpp"
+#include "Source.hpp"
+#include "Shared.hpp"
+
+/**************************************************************************************
+ * DEFINE
+ **************************************************************************************/
 
 #define SOURCE(name, type) \
 public: \
   Source<type> name; \
 private:
 
-#define SINK(name, type, size) \
+#define SINK(name, type) \
 public: \
-  Sink<type> name{size}; \
+  SinkBlocking<type> name; \
 private:
 // we need to call the Sink<T>(int size) non-default constructor using size as parameter.
 // This is done by writing
@@ -22,197 +53,12 @@ private:
 // This is called "C++11 uniform init" (using "{}" instead of "()" without "="... yikes!)
 // https://chromium.googlesource.com/chromium/src/+/master/styleguide/c++/c++-dos-and-donts.md
 
-// Forward declaration of Sink and Source
-template<class T>
-class Sink;
-template<class T>
-class Source;
+#define SHARED(name, type) \
+  Shared<type> name;
 
-template<class T>
-class Sink
-{
-  private:
-    rtos::Mutex dataMutex;
-    rtos::ConditionVariable dataAvailable;
-    rtos::ConditionVariable slotAvailable;
-    T latest;
-    Sink *next;
-    const int size;
-    int first, last;
-    bool full;
-    T *queue;
-
-  public:
-    Sink(int s) :
-      dataAvailable(dataMutex),
-      slotAvailable(dataMutex),
-      size(s),
-      queue((size > 0) ? new T[size] : nullptr),
-      first(0), last(0), full(false)
-    {};
-
-    ~Sink() {
-      if (queue != nullptr) { delete queue; }
-    }
-
-
-  //protected: TODO
-    void connectTo(Sink &sink)
-    {
-      if (next == nullptr) {
-        next = &sink;
-      } else {
-        next->connectTo(sink);
-      }
-    }
-
-    T read()
-    {
-      // Non-blocking shared variable
-      if (size == -1) {
-        dataMutex.lock();
-        T res = latest;
-        dataMutex.unlock();
-        return res;
-      }
-
-      // Blocking shared variable
-      if (size == 0) {
-        dataMutex.lock();
-        while (!full) {
-          dataAvailable.wait();
-        }
-        T res = latest;
-        full = false;
-        slotAvailable.notify_all();
-        dataMutex.unlock();
-        return res;
-      }
-
-      // Blocking queue
-      dataMutex.lock();
-      while (first == last && !full) {
-        dataAvailable.wait();
-      }
-      T res = queue[first++];
-      first %= size;
-      if (full) {
-        full = false;
-        slotAvailable.notify_one();
-      }
-      dataMutex.unlock();
-      return res;
-    }
-
-  //protected: TODO
-    void inject(const T &value)
-    {
-      dataMutex.lock();
-
-      // Non-blocking shared variable
-      if (size == -1) {
-        latest = value;
-      }
-
-      // Blocking shared variable
-      else if (size == 0) {
-        while (full) {
-          slotAvailable.wait();
-        }
-        latest = value;
-        full = true;
-        dataAvailable.notify_one();
-        slotAvailable.wait();
-      }
-
-      // Blocking queue
-      else {
-        while (full) {
-          slotAvailable.wait();
-        }
-        if (first == last) {
-          dataAvailable.notify_one();
-        }
-        queue[last++] = value;
-        last %= size;
-        if (first == last) {
-          full = true;
-        }
-      }
-      dataMutex.unlock();
-
-      if (next) next->inject(value);
-    }
-};
-
-template<class T>
-class Source
-{
-  public:
-    Source() {};
-
-    void connectTo(Sink<T> &sink) {
-      if (destination == nullptr) {
-        destination = &sink;
-      } else {
-        destination->connectTo(sink);
-      }
-    }
-
-    void send(const T &value) {
-      if (destination) destination->inject(value);
-    }
-
-  private:
-    Sink<T> *destination;
-};
-
-template<class T, size_t QUEUE_SIZE = 16>
-class Shared // template definition
-{
-  public:
-    Shared() {
-    }
-    operator T() {
-      osEvent evt = queue.get();
-      if (evt.status == osEventMessage) {
-        /* Obtain the oldest inserted element from the queue. */
-        T * val_ptr = reinterpret_cast<T *>(evt.value.p);
-        /* Copy the content of T stored in the memory pool since we'll have to free the memory pool afterwards. */
-        T const tmp_val = *val_ptr;
-        /* Free the allocated memory in the memory pool. */
-        memory_pool.free(val_ptr);
-        /* Return obtained value from queue. */
-        return tmp_val;
-      }
-      return val;
-    }
-    T& operator= (const T& other) {
-      if (queue.full()) {
-        // invokes operator T() to discard oldest element and free its memory
-        T discard = *this;
-      }
-      val = other;
-      /* Allocate memory in the memory pool. */
-      T * val_ptr = memory_pool.alloc();
-      /* Copy the content of 'other' into the freshly allocated message. */
-      *val_ptr = other;
-      /* Insert into queue. */
-      queue.put(val_ptr);
-      return (*val_ptr);
-    }
-    T& peek() {
-      return val;
-    }
-    T& latest() {
-      return peek();
-    }
-  private:
-
-    T val;
-    rtos::MemoryPool<T, QUEUE_SIZE> memory_pool;
-    rtos::Queue<T, QUEUE_SIZE> queue;
-};
+/**************************************************************************************
+ * CLASS DECLARATION
+ **************************************************************************************/
 
 #define CONCAT2(x,y) x##y
 #define CONCAT(x,y) CONCAT2(x,y)
@@ -222,81 +68,40 @@ class Shared // template definition
 
 #define _macroToString(sequence) #sequence
 
+class Arduino_Threads
+{
+public:
 
-class ArduinoThreads {
-  private:
-    static rtos::EventFlags globalEvents;
-    uint32_t startFlags;
-    uint32_t stopFlags;
-    uint32_t loopDelay;
-    virtual void setup(void) {};
-    virtual void loop(void) {};
-    void execute() {
-      setup();
-      // if startFlags have been passed then wait until all the flags are set
-      // before starting the loop. this is used to synchronize loops from multiple
-      // sketches.
-      if (startFlags != 0) {
-        globalEvents.wait_all(startFlags);
-      }
+           Arduino_Threads();
+  virtual ~Arduino_Threads();
 
-      // if stopFlags have been passed stop when all the flags are set
-      // otherwise loop forever
-      while ( 1 ) {
-        loop();
-        // on exit clear the flags that have forced us to stop.
-        // note that if two groups of sketches stop on common flags
-        // the first group will clear them so the second group may never
-        // exit
-        if (stopFlags!=0) {
-          if ((globalEvents.get()&stopFlags)!=stopFlags) {
-            globalEvents.clear(stopFlags);
-            return;
-          }
-          if ((rtos::ThisThread::flags_get()&stopFlags)!=stopFlags) {
-            rtos::ThisThread::flags_clear(stopFlags);
-            return;
-          }
-        }
-        // sleep for the time we've been asked to insert between loops 
-        rtos::ThisThread::sleep_for(loopDelay);
-      }
-    }
-    rtos::Thread *t;
 
-  protected:
-    char* _tabname;
+  void start       (int const stack_size = 4096, uint32_t const start_flags = 0, uint32_t const stop_flags = 0);
+  void terminate   ();
+  void setLoopDelay(uint32_t const delay);
+  void sendEvent   (uint32_t const event);
 
-  public:
-    // start this sketch
-    void start(int stacksize = 4096, uint32_t startFlags=0, uint32_t stopFlags=0) {
-      this->startFlags = startFlags;
-      this->stopFlags = stopFlags;
-      loopDelay=0;
-      t = new rtos::Thread(osPriorityNormal, stacksize, nullptr, _tabname);
-      t->start(mbed::callback(this, &ArduinoThreads::execute));
-    }
-    // kill this sketch
-    void terminate() {
-      t->terminate();
-    }
-    // send an event to all sketches at the same time
-    static void broadcastEvent(uint32_t event) {
-      globalEvents.set(event);
-    }
-    // send an event only to this sketch
-    void sendEvent(uint32_t event) {
-      t->flags_set(event);
-    }
-    // set the rate at which loop function will be called
-    void setLoopDelay(uint32_t delay) {
-      loopDelay = delay;
-    }
+  static void broadcastEvent(uint32_t event);
+
+
+protected:
+
+  char * _tabname;
+
+  virtual void setup() = 0;
+  virtual void loop () = 0;
+
+private:
+
+  static rtos::EventFlags _global_events;
+  mbed::SharedPtr<rtos::Thread> _thread;
+  uint32_t _start_flags, _stop_flags;
+  uint32_t _loop_delay_ms;
+
+  void threadFunc();
 };
 
-rtos::EventFlags ArduinoThreads::globalEvents;
-
-#define THD_ENTER(tabname) class CONCAT(tabname, Class) : public ArduinoThreads { \
+#define THD_ENTER(tabname) class CONCAT(tabname, Class) : public Arduino_Threads { \
 public: \
   CONCAT(tabname, Class)() { _tabname = _macroToString(tabname); } \
 private: \
@@ -304,8 +109,5 @@ private: \
 #define THD_DONE(tabname) \
 };  \
 CONCAT(tabname,Class) tabname;
-
-#include "Wire.h"
-#include "SerialDispatcher.h"
 
 #endif /* ARDUINO_THREADS_H_ */

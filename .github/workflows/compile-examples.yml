@@ -26,19 +26,14 @@ env:
 
 jobs:
   compile-test:
-    name: compile for ${{ matrix.fqbn }}
+    name: ${{ matrix.board.fqbn }}
     runs-on: ubuntu-latest
 
     env:
       # libraries to install for all boards
       UNIVERSAL_LIBRARIES: |
-        # Install the ArduinoThreads library from the repository
+        # Install the Arduino_Threads library from the repository
         - source-path: ./
-        - name: Arduino_LSM9DS1
-        - name: Arduino_APDS9960
-        - name: ArduinoECCX08
-        - name: Arduino_HTS221
-        - name: OneWire
       # sketch paths to compile (recursive) for all boards
       UNIVERSAL_SKETCH_PATHS: |
         - examples
@@ -49,10 +44,19 @@ jobs:
       fail-fast: false
 
       matrix:
-        fqbn:
-          - "arduino:mbed:nano33ble"
-          # - "arduino:mbed:envie_m4"
-          - "arduino:mbed:envie_m7"
+        board:
+          - fqbn: arduino:mbed_nano:nano33ble
+            platforms: |
+              - name: arduino:mbed_nano
+          - fqbn: arduino:mbed_nano:nanorp2040connect
+            platforms: |
+              - name: arduino:mbed_nano
+          - fqbn: arduino:mbed_portenta:envie_m4
+            platforms: |
+              - name: arduino:mbed_portenta
+          - fqbn: arduino:mbed_portenta:envie_m7
+            platforms: |
+              - name: arduino:mbed_portenta
 
     steps:
       - name: Checkout
@@ -83,15 +87,10 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           cli-version: 'arduino_threads'
-          fqbn: ${{ matrix.fqbn }}
+          fqbn: ${{ matrix.board.fqbn }}
           libraries: |
             ${{ env.UNIVERSAL_LIBRARIES }}
-          platforms: |
-            # Use Board Manager to install the latest release of Arduino mbed Boards to get the toolchain
-            - name: "arduino:mbed"
-            # Overwrite the Board Manager installation with the local platform
-            - source-path: "extras/ArduinoCore-mbed"
-              name: "arduino:mbed"
+          platforms: ${{ matrix.board.platforms }}
           sketch-paths: |
             ${{ env.UNIVERSAL_SKETCH_PATHS }}
           enable-deltas-report: 'true'

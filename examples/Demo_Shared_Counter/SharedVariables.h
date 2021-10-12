@@ -1,0 +1,1 @@
+SHARED(counter, int);
