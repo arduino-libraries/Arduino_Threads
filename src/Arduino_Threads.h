@@ -53,6 +53,9 @@ private:
 // This is called "C++11 uniform init" (using "{}" instead of "()" without "="... yikes!)
 // https://chromium.googlesource.com/chromium/src/+/master/styleguide/c++/c++-dos-and-donts.md
 
+#define SHARED(name, type) \
+  Shared<type> name;
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/

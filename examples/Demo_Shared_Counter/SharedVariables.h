@@ -1,1 +1,1 @@
-Shared<int> counter;
+SHARED(counter, int);
