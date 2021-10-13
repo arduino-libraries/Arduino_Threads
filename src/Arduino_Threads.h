@@ -26,9 +26,9 @@
 #include <mbed.h>
 #include <SharedPtr.h>
 
-#include "Sink.hpp"
-#include "Source.hpp"
-#include "Shared.hpp"
+#include "threading/Sink.hpp"
+#include "threading/Source.hpp"
+#include "threading/Shared.hpp"
 
 #include "BusDevice.h"
 #include "spi/SpiBusDevice.h"
