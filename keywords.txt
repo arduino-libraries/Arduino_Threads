@@ -6,7 +6,9 @@
 # Class (KEYWORD1)
 #######################################
 
-Shared	KEYWORD1
+SINK	KEYWORD1
+SOURCE	KEYWORD1
+SHARED	KEYWORD1
 
 IoRequest	KEYWORD1
 IoResponse	KEYWORD1
