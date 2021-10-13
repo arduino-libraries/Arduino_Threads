@@ -30,6 +30,11 @@
 #include "Source.hpp"
 #include "Shared.hpp"
 
+#include "BusDevice.h"
+#include "spi/SpiBusDevice.h"
+#include "wire/WireBusDevice.h"
+#include "serial/SerialDispatcher.h"
+
 /**************************************************************************************
  * DEFINE
  **************************************************************************************/
