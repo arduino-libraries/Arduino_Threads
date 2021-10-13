@@ -26,14 +26,14 @@
 #include <mbed.h>
 #include <SharedPtr.h>
 
-#include "Sink.hpp"
-#include "Source.hpp"
-#include "Shared.hpp"
+#include "threading/Sink.hpp"
+#include "threading/Source.hpp"
+#include "threading/Shared.hpp"
 
-#include "BusDevice.h"
-#include "spi/SpiBusDevice.h"
-#include "wire/WireBusDevice.h"
-#include "serial/SerialDispatcher.h"
+#include "io/BusDevice.h"
+#include "io/spi/SpiBusDevice.h"
+#include "io/wire/WireBusDevice.h"
+#include "io/serial/SerialDispatcher.h"
 
 /**************************************************************************************
  * DEFINE
