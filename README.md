@@ -10,15 +10,14 @@
 This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state.
 
 ## :zap: Features
-### :thread: Multi-Threading 
-#### :thread: Multi-threaded sketch execution
+### :thread: Multi-threaded sketch execution
 Instead of one big state-machine-of-doom you can split your application into multiple independent threads, each with it's own `setup()` and `loop()` function. Instead of implementing your application in a single `.ino` file, each independent thread is implemented in a dedicated `.inot` representing a clear separation of concerns on a file level.
 
-#### :calling: Easy communication between multiple threads
+### :calling: Easy communication between multiple threads
 Easy inter-thread-communication is facilitated via a `Shared` abstraction providing thread-safe sink/source semantics allowing to safely exchange data of any type between threads.
 
-### :thread: Threadsafe IO
-#### :thread: Threadsafe
+### :electric_plug: Threadsafe, asynchronous and convenient Input/Output API
+#### Threadsafe
 A key problem of multi-tasking is the **prevention of erroneous state when multiple threads share a single resource**. The following example borrowed from a typical application demonstrates the problems resulting from multiple threads sharing a single resource:
 
 Imagine a embedded system where multiple `Wire` client devices are physically connected to a single `Wire` server. Each `Wire` client device is managed by a separate software thread. Each thread polls its `Wire` client device periodically. Access to the I2C bus is managed via the `Wire` library and typically follows this pattern:
@@ -43,16 +42,13 @@ Since we are using [ARM Mbed OS](https://os.mbed.com/mbed-os/) which is a [preem
 
 As a result this interruption by the scheduler will break Wire IO access for both devices and leave the Wire IO controller in an undefined state. :fire:.
 
-`Arduino_ThreadsafeIO` solves this problem by encapsulating a complete IO access (e.g. reading from a `Wire` client device) within a single function call which generates an IO request to be asynchronously executed by a high-priority IO thread. The high-priority IO thread is the **only** instance which actually directly communicates with physical hardware.
+`Arduino_Threads` solves this problem by encapsulating a complete IO access (e.g. reading from a `Wire` client device) within a single function call which generates an IO request to be asynchronously executed by a high-priority IO thread. The high-priority IO thread is the **only** instance which actually directly communicates with physical hardware.
 
-#### :zzz: Asynchronous
+#### Asynchronous
+The mechanisms implemented in this library allow any thread to dispatch an IO request asynchronously and either continue operation or [yield](https://en.wikipedia.org/wiki/Yield_(multithreading))-ing control to the next scheduled thread. All IO requests are stored in a queue and are executed within a high-priority IO thread after a context-switch. An example of this can be seen [here](examples/Threadsafe_IO/Threadsafe_SPI/Threadsafe_SPI.ino)).
 
-The mechanisms implemented in this library allow any thread to dispatch an IO request asynchronously and either continue operation or [yield](https://en.wikipedia.org/wiki/Yield_(multithreading))-ing control to the next scheduled thread. All IO requests are stored in a queue and are executed within a high-priority IO thread after a context-switch. An example of this can be seen [here](examples/Threadsafe_SPI/Threadsafe_SPI.ino)).
-
-#### :sparkling_heart: Convenient API
-
-Although you are free to directly manipulate IO requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_Wire/Threadsafe_Wire.ino)) there do exist convenient `read`/`write`/`write_then_read` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
-
+#### Convenient API
+Although you are free to directly manipulate IO requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_IO/Threadsafe_Wire/Threadsafe_Wire.ino)) there do exist convenient `read`/`write`/`write_then_read` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_IO/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
 
 ## :mag_right: Resources
 
