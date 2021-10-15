@@ -16,6 +16,5 @@ void loop()
    * this call will surely block until something comes from the connected SOURCE. In this case
    * the pace is dictated by the SOURCE that sends data every 100 ms.
    */
-  bool led_on = led.read();
-  digitalWrite(LED_BUILTIN, led_on);
+  digitalWrite(LED_BUILTIN, led);
 }

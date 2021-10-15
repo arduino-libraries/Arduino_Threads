@@ -8,6 +8,6 @@ void setup()
 void loop()
 {
   static int i = 0;
-  counter.write(i);
+  counter = i;
   i++;
 }
