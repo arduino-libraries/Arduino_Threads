@@ -25,6 +25,8 @@
 
 #include <mbed.h>
 
+#include "CircularBuffer.hpp"
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
@@ -64,7 +66,7 @@ class SinkBlocking : public SinkBase<T>
 {
 public:
 
-           SinkBlocking();
+           SinkBlocking(size_t const size);
   virtual ~SinkBlocking() { }
 
   virtual operator T() override;
@@ -73,8 +75,7 @@ public:
 
 private:
 
-  T _data;
-  bool _is_data_available;
+  CircularBuffer<T> _data;
   rtos::Mutex _mutex;
   rtos::ConditionVariable _cond_data_available;
   rtos::ConditionVariable _cond_slot_available;
@@ -106,8 +107,8 @@ void SinkNonBlocking<T>::inject(T const & value)
  **************************************************************************************/
 
 template<typename T>
-SinkBlocking<T>::SinkBlocking()
-: _is_data_available{false}
+SinkBlocking<T>::SinkBlocking(size_t const size)
+: _data(size)
 , _cond_data_available(_mutex)
 , _cond_slot_available(_mutex)
 { }
@@ -116,10 +117,9 @@ template<typename T>
 SinkBlocking<T>::operator T()
 {
   _mutex.lock();
-  while (!_is_data_available)
+  while (_data.isEmpty())
     _cond_data_available.wait();
-  T const d = _data;
-  _is_data_available = false;
+  T const d = _data.read();
   _cond_slot_available.notify_all();
   _mutex.unlock();
   return d;
@@ -129,10 +129,9 @@ template<typename T>
 void SinkBlocking<T>::inject(T const & value)
 {
   _mutex.lock();
-  while (_is_data_available)
+  while (_data.isFull())
     _cond_slot_available.wait();
-  _data = value;
-  _is_data_available = true;
+  _data.store(value);
   _cond_data_available.notify_all();
   _mutex.unlock();
 }
