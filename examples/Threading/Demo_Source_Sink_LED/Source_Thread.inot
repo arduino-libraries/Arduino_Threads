@@ -8,8 +8,8 @@ void setup()
 
 void loop()
 {
-  led.write(true);
+  led = true;
   delay(100);
-  led.write(false);
+  led = false;
   delay(100);
 }
