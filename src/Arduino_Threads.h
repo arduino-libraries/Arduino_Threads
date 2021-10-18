@@ -79,17 +79,14 @@ private:
 #define SHARED(name, type) \
   Shared<type> name;
 
+#define ARDUINO_THREADS_CONCAT_(x,y) x##y
+#define ARDUINO_THREADS_CONCAT(x,y) ARDUINO_THREADS_CONCAT_(x,y)
+
+#define ARDUINO_THREADS_TO_STRING(sequence) #sequence
+
 /**************************************************************************************
  * CLASS DECLARATION
  **************************************************************************************/
-
-#define CONCAT2(x,y) x##y
-#define CONCAT(x,y) CONCAT2(x,y)
-
-#define INCF(F) INCF_(F)
-#define INCF_(F) #F
-
-#define _macroToString(sequence) #sequence
 
 class Arduino_Threads
 {
@@ -124,13 +121,13 @@ private:
   void threadFunc();
 };
 
-#define THD_ENTER(tabname) class CONCAT(tabname, Class) : public Arduino_Threads { \
+#define THD_ENTER(tabname) class ARDUINO_THREADS_CONCAT(tabname, Class) : public Arduino_Threads { \
 public: \
-  CONCAT(tabname, Class)() { _tabname = _macroToString(tabname); } \
+  ARDUINO_THREADS_CONCAT(tabname, Class)() { _tabname = ARDUINO_THREADS_TO_STRING(tabname); } \
 private: \
 
 #define THD_DONE(tabname) \
 };  \
-CONCAT(tabname,Class) tabname;
+ARDUINO_THREADS_CONCAT(tabname,Class) tabname;
 
 #endif /* ARDUINO_THREADS_H_ */
