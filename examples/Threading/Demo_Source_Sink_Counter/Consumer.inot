@@ -1,4 +1,4 @@
-SINK(counter, int);
+SINK(counter, int, 10);
 
 void setup()
 {
