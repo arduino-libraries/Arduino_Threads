@@ -118,8 +118,17 @@ void Arduino_Threads::threadFunc()
       }
     }
 
-    /* Sleep for the time we've been asked to insert between loops.
-     */
-    rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(_loop_delay_ms));
+    if (_loop_delay_ms) {
+      /* Sleep for the time we've been asked to insert between loops.
+      */
+      rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(_loop_delay_ms));
+    }
+    else
+    {
+      /* In any case yield here so that other threads can also be
+       * executed following the round-robin scheduling paradigm.
+       */
+      rtos::ThisThread::yield();
+    }
   }
 }
