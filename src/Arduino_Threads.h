@@ -44,19 +44,37 @@ public: \
   Source<type> name; \
 private:
 
-#define SINK(name, type) \
+/* We need to call the SinkBlocking<T>(size_t const size)
+ * non-default constructor using size as parameter.
+
+ * This is achieved via
+ *   SinkBlocking<type> name{size};
+ * instead of
+ *   SinkBlocking<type> name(size);
+ * otherwise the compiler will read it as a declaration
+ * of a method called "name" and we get a syntax error.
+ *
+ * This is called "C++11 uniform init" (using "{}" instead
+ * of "()" without "="... yikes!)
+ *   https://chromium.googlesource.com/chromium/src/+/master/styleguide/c++/c++-dos-and-donts.md
+ */
+
+#define SINK_2_ARG(name, type) \
 public: \
-  SinkBlocking<type> name; \
+  SinkBlocking<type> name{1}; \
 private:
-// we need to call the Sink<T>(int size) non-default constructor using size as parameter.
-// This is done by writing
-//    Sink<type> name{size};
-// instead of:
-//    Sink<type> name(size);
-// otherwise the compiler will read it as a declaration of a method called "name" and we
-// get a syntax error.
-// This is called "C++11 uniform init" (using "{}" instead of "()" without "="... yikes!)
-// https://chromium.googlesource.com/chromium/src/+/master/styleguide/c++/c++-dos-and-donts.md
+
+#define SINK_3_ARG(name, type, size) \
+public: \
+  SinkBlocking<type> name{size}; \
+private:
+
+/* Black C macro magic enabling "macro overloading"
+ * with same name macro, but multiple arguments.
+ * https://stackoverflow.com/questions/11761703/overloading-macro-on-number-of-arguments
+ */
+#define GET_SINK_MACRO(_1,_2,_3,NAME,...) NAME
+#define SINK(...) GET_SINK_MACRO(__VA_ARGS__, SINK_3_ARG, SINK_2_ARG)(__VA_ARGS__)
 
 #define SHARED(name, type) \
   Shared<type> name;
