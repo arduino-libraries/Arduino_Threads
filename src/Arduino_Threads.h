@@ -86,9 +86,6 @@ private:
 #define CONCAT2(x,y) x##y
 #define CONCAT(x,y) CONCAT2(x,y)
 
-#define INCF(F) INCF_(F)
-#define INCF_(F) #F
-
 #define _macroToString(sequence) #sequence
 
 class Arduino_Threads
