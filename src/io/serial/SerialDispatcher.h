@@ -102,4 +102,11 @@ private:
   void handleSerialReader();
 };
 
+/**************************************************************************************
+ * EXTERN DECLARATION
+ **************************************************************************************/
+
+#undef Serial
+extern SerialDispatcher Serial;
+
 #endif /* SERIAL_DISPATCHER_H_ */
