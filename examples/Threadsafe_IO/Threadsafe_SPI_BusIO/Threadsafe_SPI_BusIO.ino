@@ -35,9 +35,6 @@ static char thread_name[NUM_THREADS][32];
 
 void setup()
 {
-  Serial.begin(9600);
-  while (!Serial) { }
-
   pinMode(BMP388_CS_PIN, OUTPUT);
   digitalWrite(BMP388_CS_PIN, HIGH);
 
@@ -70,6 +67,9 @@ byte bmp388_read_reg(byte const reg_addr)
 
 void bmp388_thread_func()
 {
+  Serial.begin(9600);
+  while(!Serial) { }
+
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
