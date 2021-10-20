@@ -45,7 +45,11 @@ void setup()
 
 void loop()
 {
-
+  /* If we don't hand back control then the main thread
+   * will hog the CPU and all other thread's won't get
+   * time to be executed.
+   */
+  rtos::ThisThread::yield();
 }
 
 /**************************************************************************************
@@ -61,11 +65,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
   byte read_buf  = 0;
   
   IoRequest  req(write_buf, read_buf);
-  IoResponse rsp = lsm6dsox.transfer(req);
-  
-  /* Optionally do other stuff */
-
-  rsp->wait();
+  IoResponse rsp = transfer_and_wait(lsm6dsox, req);
   
   return read_buf;
 }

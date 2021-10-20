@@ -31,6 +31,7 @@
 #include "threading/Shared.hpp"
 
 #include "io/BusDevice.h"
+#include "io/util/util.h"
 #include "io/spi/SpiBusDevice.h"
 #include "io/wire/WireBusDevice.h"
 #include "io/serial/SerialDispatcher.h"
