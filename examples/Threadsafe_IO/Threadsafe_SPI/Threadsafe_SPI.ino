@@ -75,6 +75,9 @@ byte bmp388_read_reg(byte const reg_addr)
 
 void bmp388_thread_func()
 {
+  Serial.begin(9600);
+  while(!Serial) { }
+
   for(;;)
   {
     /* Sleep between 5 and 500 ms */

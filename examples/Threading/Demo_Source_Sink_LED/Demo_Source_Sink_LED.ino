@@ -4,12 +4,14 @@
  * together using the "connectTo" method.
  */
 
-void setup() {
+void setup()
+{
   Source_Thread.led.connectTo(Sink_Thread.led);
   Sink_Thread.start();
   Source_Thread.start();
 }
 
-void loop() {
+void loop()
+{
   rtos::ThisThread::yield();
 }

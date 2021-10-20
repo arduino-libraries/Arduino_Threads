@@ -34,9 +34,6 @@ static char thread_name[NUM_THREADS][32];
 
 void setup()
 {
-  Serial.begin(9600);
-  while (!Serial) { }
-
   /* Fire up some threads all accessing the LSM6DSOX */
   for(size_t i = 0; i < NUM_THREADS; i++)
   {
@@ -76,6 +73,9 @@ byte lsm6dsox_read_reg(byte const reg_addr)
 
 void lsm6dsox_thread_func()
 {
+  Serial.begin(9600);
+  while(!Serial) { }
+
   for(;;)
   {
     /* Sleep between 5 and 500 ms */
