@@ -77,6 +77,11 @@ private:
 #define GET_SINK_MACRO(_1,_2,_3,NAME,...) NAME
 #define SINK(...) GET_SINK_MACRO(__VA_ARGS__, SINK_3_ARG, SINK_2_ARG)(__VA_ARGS__)
 
+#define SINK_NON_BLOCKING(name, type) \
+public: \
+  SinkNonBlocking<type> name{}; \
+private:
+
 #define SHARED(name, type) \
   Shared<type> name;
 
