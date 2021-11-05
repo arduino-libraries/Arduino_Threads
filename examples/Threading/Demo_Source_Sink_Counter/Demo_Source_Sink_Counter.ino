@@ -11,6 +11,7 @@ void setup()
   Consumer.start();
 }
 
-void loop() {
-  rtos::ThisThread::yield();
+void loop()
+{
+
 }
