@@ -1,0 +1,15 @@
+/* This fails to compile because in-class-initialisation of
+ * a static member variable is forbidden.
+ */
+
+static int my_global_variable = 0;
+
+void setup()
+{
+
+}
+
+void loop()
+{
+
+}
