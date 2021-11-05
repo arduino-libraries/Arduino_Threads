@@ -71,7 +71,7 @@ private:
 
   bool _is_initialized;
   rtos::Mutex _mutex;
-  rtos::ConditionVariable _cond;
+  rtos::EventFlags _data_available_for_transmit;
   arduino::HardwareSerial & _serial;
 
   rtos::Thread _thread;
@@ -84,15 +84,27 @@ private:
   static int constexpr THREADSAFE_SERIAL_TRANSMIT_RINGBUFFER_SIZE = 128;
   typedef arduino::RingBufferN<THREADSAFE_SERIAL_TRANSMIT_RINGBUFFER_SIZE> SerialTransmitRingbuffer;
 
-  typedef struct
+  class ThreadCustomerData
   {
+  public:
+    ThreadCustomerData(osThreadId_t const t, uint32_t const t_event_flag)
+    : thread_id{t}
+    , thread_event_flag{t_event_flag}
+    , tx_buffer{}
+    , block_tx_buffer{false}
+    , rx_buffer{}
+    , prefix_func{nullptr}
+    , suffix_func{nullptr}
+    { }
+
     osThreadId_t thread_id;
+    uint32_t thread_event_flag;
     SerialTransmitRingbuffer tx_buffer;
     bool block_tx_buffer;
     mbed::SharedPtr<arduino::RingBuffer> rx_buffer; /* Only when a thread has expressed interested to read from serial a receive ringbuffer is allocated. */
     PrefixInjectorCallbackFunc prefix_func;
     SuffixInjectorCallbackFunc suffix_func;
-  } ThreadCustomerData;
+  };
 
   std::list<ThreadCustomerData> _thread_customer_list;
 
