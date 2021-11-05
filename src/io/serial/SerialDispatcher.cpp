@@ -29,7 +29,6 @@
 SerialDispatcher::SerialDispatcher(arduino::HardwareSerial & serial)
 : _is_initialized{false}
 , _mutex{}
-, _cond{_mutex}
 , _serial{serial}
 , _thread(osPriorityRealtime, 4096, nullptr, "SerialDispatcher")
 , _has_tread_started{false}
@@ -68,11 +67,8 @@ void SerialDispatcher::begin(unsigned long baudrate, uint16_t config)
     /* Since the thread is not in the list yet we are
      * going to create a new entry to the list.
      */
-    ThreadCustomerData data;
-    data.thread_id = current_thread_id;
-    data.block_tx_buffer = false;
-    data.prefix_func = nullptr;
-    data.suffix_func = nullptr;
+    uint32_t const thread_event_flag = (1<<(_thread_customer_list.size()));
+    ThreadCustomerData data{current_thread_id, thread_event_flag};
     _thread_customer_list.push_back(data);
   }
 }
@@ -87,7 +83,10 @@ void SerialDispatcher::end()
   osThreadId_t const current_thread_id = rtos::ThisThread::get_id();
   std::remove_if(std::begin(_thread_customer_list),
                  std::end  (_thread_customer_list),
-                 [current_thread_id](ThreadCustomerData const d) -> bool { return (d.thread_id == current_thread_id); });
+                 [current_thread_id](ThreadCustomerData const d) -> bool
+                 {
+                   return (d.thread_id == current_thread_id);
+                 });
 
   /* If no thread consumers are left also end
    * the serial device altogether.
@@ -104,7 +103,7 @@ int SerialDispatcher::available()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return 0;
+  assert(iter != std::end(_thread_customer_list));
 
   prepareSerialReader(iter);
   handleSerialReader();
@@ -116,7 +115,7 @@ int SerialDispatcher::peek()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return 0;
+  assert(iter != std::end(_thread_customer_list));
 
   prepareSerialReader(iter);
   handleSerialReader();
@@ -128,7 +127,7 @@ int SerialDispatcher::read()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return 0;
+  assert(iter != std::end(_thread_customer_list));
 
   prepareSerialReader(iter);
   handleSerialReader();
@@ -150,14 +149,8 @@ size_t SerialDispatcher::write(uint8_t const b)
 size_t SerialDispatcher::write(const uint8_t * data, size_t len)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-
-  /* If this thread hasn't registered yet
-   * with the SerialDispatcher via 'begin'.
-   */
-  if (iter == std::end(_thread_customer_list))
-    return 0;
+  assert(iter != std::end(_thread_customer_list));
 
   size_t bytes_written = 0;
   for (; (bytes_written < len) && iter->tx_buffer.availableForStore(); bytes_written++)
@@ -166,7 +159,7 @@ size_t SerialDispatcher::write(const uint8_t * data, size_t len)
   /* Inform the worker thread that new data has
    * been written to a Serial transmit buffer.
    */
-  _cond.notify_one();
+  _data_available_for_transmit.set(iter->thread_event_flag);
 
   return bytes_written;
 }
@@ -175,7 +168,8 @@ void SerialDispatcher::block()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return;
+  assert(iter != std::end(_thread_customer_list));
+
   iter->block_tx_buffer = true;
 }
 
@@ -183,16 +177,19 @@ void SerialDispatcher::unblock()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return;
+  assert(iter != std::end(_thread_customer_list));
+
   iter->block_tx_buffer = false;
-  _cond.notify_one();
+
+  _data_available_for_transmit.set(iter->thread_event_flag);
 }
 
 void SerialDispatcher::prefix(PrefixInjectorCallbackFunc func)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return;
+  assert(iter != std::end(_thread_customer_list));
+
   iter->prefix_func = func;
 }
 
@@ -200,7 +197,8 @@ void SerialDispatcher::suffix(SuffixInjectorCallbackFunc func)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   auto iter = findThreadCustomerDataById(rtos::ThisThread::get_id());
-  if (iter == std::end(_thread_customer_list)) return;
+  assert(iter != std::end(_thread_customer_list));
+
   iter->suffix_func = func;
 }
 
@@ -226,12 +224,10 @@ void SerialDispatcher::threadFunc()
 
   while(!_terminate_thread)
   {
-      /* Prevent race conditions by multi-threaded
-       * access to shared data.
-       */
-      mbed::ScopedLock<rtos::Mutex> lock(_mutex);
-      /* Wait for new data to be available */      
-      _cond.wait();
+      /* Wait for data to be available in a transmit buffer. */
+      static uint32_t constexpr ALL_EVENT_FLAGS = 0x7fffffff;
+      _data_available_for_transmit.wait_any(ALL_EVENT_FLAGS, osWaitForever, /* clear */ true);
+
       /* Iterate over all list entries. */
       std::for_each(std::begin(_thread_customer_list),
                     std::end  (_thread_customer_list),
@@ -303,7 +299,10 @@ std::list<SerialDispatcher::ThreadCustomerData>::iterator SerialDispatcher::find
 {
   return std::find_if(std::begin(_thread_customer_list), 
                       std::end  (_thread_customer_list),
-                      [thread_id](ThreadCustomerData const d) -> bool { return (d.thread_id == thread_id); });
+                      [thread_id](ThreadCustomerData const d) -> bool
+                      {
+                        return (d.thread_id == thread_id);
+                      });
 }
 
 void SerialDispatcher::prepareSerialReader(std::list<ThreadCustomerData>::iterator & iter)
