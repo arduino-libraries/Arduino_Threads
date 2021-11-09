@@ -127,13 +127,28 @@ private:
   void threadFunc();
 };
 
-#define THD_ENTER(tabname) class ARDUINO_THREADS_CONCAT(tabname, Class) : public Arduino_Threads { \
-public: \
-  ARDUINO_THREADS_CONCAT(tabname, Class)() { _tabname = ARDUINO_THREADS_TO_STRING(tabname); } \
-private: \
+#define THD_SETUP(ns) ns::setup()
+#define THD_LOOP(ns) ns::loop()
 
-#define THD_DONE(tabname) \
-};  \
+#define THD_ENTER(tabname) \
+namespace ARDUINO_THREADS_CONCAT(tabname,Private)\
+{\
+  void setup();\
+  void loop();\
+}\
+class ARDUINO_THREADS_CONCAT(tabname, Class) : public Arduino_Threads\
+{\
+public:\
+  ARDUINO_THREADS_CONCAT(tabname, Class)() { _tabname = ARDUINO_THREADS_TO_STRING(tabname); }\
+protected:\
+  virtual void setup() override { THD_SETUP(ARDUINO_THREADS_CONCAT(tabname,Private)); }\
+  virtual void loop() override { THD_LOOP(ARDUINO_THREADS_CONCAT(tabname,Private)); }\
+};\
+namespace ARDUINO_THREADS_CONCAT(tabname,Private)\
+{
+
+#define THD_DONE(tabname)\
+};\
 ARDUINO_THREADS_CONCAT(tabname,Class) tabname;
 
 #endif /* ARDUINO_THREADS_H_ */
