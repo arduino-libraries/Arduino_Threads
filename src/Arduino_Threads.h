@@ -41,9 +41,7 @@
  **************************************************************************************/
 
 #define SOURCE(name, type) \
-public: \
-  Source<type> name; \
-private:
+Source<type> name;
 
 /* We need to call the SinkBlocking<T>(size_t const size)
  * non-default constructor using size as parameter.
@@ -61,14 +59,10 @@ private:
  */
 
 #define SINK_2_ARG(name, type) \
-public: \
-  SinkBlocking<type> name{1}; \
-private:
+SinkBlocking<type> name{1}
 
 #define SINK_3_ARG(name, type, size) \
-public: \
-  SinkBlocking<type> name{size}; \
-private:
+SinkBlocking<type> name{size}
 
 /* Black C macro magic enabling "macro overloading"
  * with same name macro, but multiple arguments.
@@ -78,12 +72,10 @@ private:
 #define SINK(...) GET_SINK_MACRO(__VA_ARGS__, SINK_3_ARG, SINK_2_ARG)(__VA_ARGS__)
 
 #define SINK_NON_BLOCKING(name, type) \
-public: \
-  SinkNonBlocking<type> name{}; \
-private:
+SinkNonBlocking<type> name{}
 
 #define SHARED(name, type) \
-  Shared<type> name;
+  Shared<type> name
 
 #define ARDUINO_THREADS_CONCAT_(x,y) x##y
 #define ARDUINO_THREADS_CONCAT(x,y) ARDUINO_THREADS_CONCAT_(x,y)
