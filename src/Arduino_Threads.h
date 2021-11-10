@@ -74,6 +74,9 @@ SinkBlocking<type> name{size}
 #define SINK_NON_BLOCKING(name, type) \
 SinkNonBlocking<type> name{}
 
+#define CONNECT(source_thread, source_name, sink_thread, sink_name) \
+source_thread##Private::source_name.connectTo(sink_thread##Private::sink_name)
+
 #define SHARED(name, type) \
   Shared<type> name
 
