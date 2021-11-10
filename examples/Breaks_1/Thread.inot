@@ -1,5 +1,5 @@
 /* This fails to compile because it doesn't look like a
- * declaration and a definitio but rather like an attempt
+ * declaration and a definition but rather like an attempt
  * to overload myFunc with the same signature (again)
  * resulting in a compile error.
  */
