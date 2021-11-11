@@ -1,0 +1,19 @@
+/* This fails to compile because myEventHandler is declared
+ * after setup/loop and currently there's not automatic prototype
+ * generation as done for the ino file.
+ */
+
+void setup()
+{
+  attachInterrupt(digitalPinToInterrupt(2), myEventHandler, CHANGE);
+}
+
+void loop()
+{
+
+}
+
+void myEventHandler()
+{
+  /* Do something. */
+}
