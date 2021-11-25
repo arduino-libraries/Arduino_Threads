@@ -1,0 +1,54 @@
+/* Breaks for all kind of stuff ...
+ */
+
+/* To fix this in the "class-wrapping" method, remove `static`
+ * and change objects declarations
+ * from `Classname obj(args...)`
+ * to `Classname obj = Classname{args..}`
+ */
+
+/**************************************************************************************
+ * CONSTANTS
+ **************************************************************************************/
+
+static byte constexpr LSM6DSOX_ADDRESS      = 0x6A;
+static byte constexpr LSM6DSOX_WHO_AM_I_REG = 0x0F;
+
+/**************************************************************************************
+ * GLOBAL VARIABLES
+ **************************************************************************************/
+
+// BusDevice lsm6dsox(Wire, LSM6DSOX_ADDRESS);
+BusDevice lsm6dsox = BusDevice{Wire, LSM6DSOX_ADDRESS};
+
+/**************************************************************************************
+ * FUNCTIONS
+ **************************************************************************************/
+
+byte lsm6dsox_read_reg(byte reg_addr)
+{
+  byte read_buf = 0;
+  lsm6dsox.wire().write_then_read(&reg_addr, 1, &read_buf, 1);
+  return read_buf;
+}
+
+/**************************************************************************************
+ * SETUP/LOOP
+ **************************************************************************************/
+
+void setup()
+{
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  /* Sleep between 5 and 500 ms */
+  rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
+  /* Try to read some data from the LSM6DSOX. */
+  byte const who_am_i = lsm6dsox_read_reg(LSM6DSOX_WHO_AM_I_REG);
+  /* Print thread id and chip id value to serial. */
+  char msg[64] = {0};
+  snprintf(msg, sizeof(msg), "%s: LSM6DSOX[WHO_AM_I] = 0x%X", rtos::ThisThread::get_name(), who_am_i);
+  Serial.println(msg);
+}

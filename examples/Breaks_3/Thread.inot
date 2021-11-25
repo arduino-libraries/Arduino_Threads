@@ -1,0 +1,25 @@
+/* This fails to compile because in-class-initialisation of
+ * a static member variable is forbidden.
+ */
+
+/* To fix this in the "class-wrapping" method, remove `static`
+ * or remove the initialization.
+ */
+
+/*static*/ int my_global_variable = 0;
+
+#if ANOTHER_WAY
+static int my_global_variable;
+#endif
+
+void setup()
+{
+#if ANOTHER_WAY
+    // my_global_variable = 0;
+#endif
+}
+
+void loop()
+{
+
+}

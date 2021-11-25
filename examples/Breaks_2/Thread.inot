@@ -1,0 +1,25 @@
+/* This fails to compile because myEventHandler has the
+ * function signature of 'void Thread::myEventHandler(void)'
+ * and is a member function of 'class Thread' while
+ * attachInterrupt expects a function with the signature
+ * 'void myEventHandler(void)'
+ */
+
+/* To fix this in the "class-wrapping" method, add `static`
+ * in front of the callback declaration.
+ */
+
+static void myEventHandler()
+{
+  /* Do something. */
+}
+
+void setup()
+{
+  attachInterrupt(digitalPinToInterrupt(2), myEventHandler, CHANGE);
+}
+
+void loop()
+{
+
+}
