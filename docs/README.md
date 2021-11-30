@@ -11,7 +11,14 @@ The following Arduino architectures and boards are supported:
 
 Threading on Arduino can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with [arduino-cli](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased).
 
-[Download](https://downloads.arduino.cc/arduino-cli/arduino-cli_arduino_threads_Linux_64bit.tar.gz) `arduino-cli` supporting multi-threading. Currently only available for Linux.
+Download pre-built `arduino-cli`:
+* [MacOS_64Bit](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_macOS_64bit.tar.gz)
+* [Linux_32Bit](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_32bit.tar.gz)
+* [Linux_64Bit](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_64bit.tar.gz)
+* [Linux_ARMv6](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_ARMv6.tar.gz)
+* [Linux_ARMv7](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_ARMv7.tar.gz)
+* [Windows_32Bit](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Windows_32bit.zip)
+* [Windows_64Bit](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Windows_64bit.zip)
 
 ### Table of Contents
 * [Threading Basics](01-threading-basics.md)
