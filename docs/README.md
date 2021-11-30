@@ -14,3 +14,4 @@ Threading on Arduino can be achieved by leveraging the [Arduino_Threads](https:/
 ### Table of Contents
 * [Threading Basics](01-threading-basics.md)
 * [Data exchange between threads](02-data-exchange.md)
+* [Threadsafe `Serial`](03-threadsafe-serial.md)
