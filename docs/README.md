@@ -11,6 +11,8 @@ The following Arduino architectures and boards are supported:
 
 Threading on Arduino can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with [arduino-cli](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased).
 
+[Download](https://downloads.arduino.cc/arduino-cli/arduino-cli_arduino_threads_Linux_64bit.tar.gz) `arduino-cli` supporting multi-threading. Currently only available for Linux.
+
 ### Table of Contents
 * [Threading Basics](01-threading-basics.md)
 * [Data exchange between threads](02-data-exchange.md)
