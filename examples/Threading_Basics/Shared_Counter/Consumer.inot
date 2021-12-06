@@ -6,5 +6,11 @@ void setup()
 
 void loop()
 {
+  /* If a value is available for reading within the internal
+   * queue then the value is removed from the queue and made
+   * available to the calling function. Should no data be
+   * available, then this thread is suspended until new data
+   * is available for reading.
+   */
   Serial.println(counter);
 }

@@ -1,8 +1,4 @@
-
-/*
- * An 'bool' SINK with a size of '0'. This kind of SINK has no buffer so the reading thread
- * will block until the writing thread has written something, or vice versa.
- */
+/* Define a data sink named 'led' of type 'bool' with a internal queue size of 1. */
 SINK(led, bool);
 
 void setup()
@@ -12,9 +8,9 @@ void setup()
 
 void loop()
 {
-  /* Read a 'bool' from the SINK and discard it. Since there is basically no delay in the loop
-   * this call will surely block until something comes from the connected SOURCE. In this case
-   * the pace is dictated by the SOURCE that sends data every 100 ms.
+  /* Read a 'bool' value from the SINK and discard it. Since there is no delay in the loop
+   * this call will block until new data is inserted from the connected SOURCE. This means
+   * that the pace is dictated by the SOURCE that sends data every 100 ms.
    */
   digitalWrite(LED_BUILTIN, led);
 }

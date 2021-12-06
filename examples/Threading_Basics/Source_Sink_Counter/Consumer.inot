@@ -1,3 +1,4 @@
+/* Define a data sink named 'counter' of type 'int' with a internal queue size of 10. */
 SINK(counter, int, 10);
 
 void setup()

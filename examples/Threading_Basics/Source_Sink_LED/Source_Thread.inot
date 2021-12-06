@@ -1,4 +1,4 @@
-/* The output SOURCE, it sends 'bool' values. */
+/* Define a data source named 'led' of type 'bool'. */
 SOURCE(led, bool);
 
 void setup()

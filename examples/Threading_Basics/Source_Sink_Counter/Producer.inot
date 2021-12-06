@@ -1,3 +1,4 @@
+/* Define a data source named 'counter' of type 'int'. */
 SOURCE(counter, int);
 
 void setup()

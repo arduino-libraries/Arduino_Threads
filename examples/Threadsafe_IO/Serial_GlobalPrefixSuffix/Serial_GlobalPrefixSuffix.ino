@@ -1,3 +1,10 @@
+/* This example demonstrates how every Serial message can be prefixed
+ * as well as suffixed by a user-configurable message. In this example
+ * this functionality is used for appending the current timestamp and
+ * prepending a line feed. Other uses might be to prepend the thread
+ * from which a given serial message is originating.
+ */
+
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
