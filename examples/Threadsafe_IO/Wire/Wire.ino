@@ -1,3 +1,9 @@
+/* This example demonstrates how multiple threads can communicate
+ * with a single Wire client device using the BusDevice abstraction
+ * for Wire. In a similar way multiple threads can interface
+ * with different client devices on the same Wire bus.
+ */
+
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/

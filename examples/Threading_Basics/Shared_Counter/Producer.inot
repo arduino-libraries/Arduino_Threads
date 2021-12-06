@@ -6,6 +6,10 @@ void setup()
 void loop()
 {
   static int i = 0;
+  /* Every 100 ms a new value is inserted into the shared variable
+   * 'counter'. Internally this is stored within a queue in a FIFO
+   * (First-In/First-Out) manner.
+   */
   counter = i;
   i++;
   delay(100);

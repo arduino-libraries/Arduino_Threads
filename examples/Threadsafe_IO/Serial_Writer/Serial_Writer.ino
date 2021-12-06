@@ -1,3 +1,8 @@
+/* This example demonstrates how multiple threads can write to
+ * the same physical Serial interface without interfering with
+ * one another.
+ */
+
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/

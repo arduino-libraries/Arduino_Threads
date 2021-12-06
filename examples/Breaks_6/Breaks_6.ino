@@ -1,3 +1,7 @@
+/* This example is in fact expected to break, since we try
+ * to access a thread-private variable.
+ */
+
 #include <Arduino_Threads.h>
 
 void setup()

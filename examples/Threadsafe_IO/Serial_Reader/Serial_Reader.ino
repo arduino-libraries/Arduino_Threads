@@ -1,3 +1,9 @@
+/* This example demonstrates how multiple threads can subscribe to
+ * reading from the same physical Serial interface. Incoming data
+ * is copied into per-thread receive buffers so that no thread
+ * can "steal" data from another thread by reading it first.
+ */
+
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
