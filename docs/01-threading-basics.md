@@ -3,7 +3,7 @@
 Threading Basics
 ================
 ## Introduction
-In the historic single-threaded execution of Arduino programs the complete program logic is contained within the `*.ino` file. It contains both a `setup()` function, which is executed only once at program start, and a `loop()` function, which is executed indefinitely. In order to support multi-threaded (or parallel) sketch execution a new file type called the `*.inot` file is introduced. While a Arduino program can contain one `*.ino` file, they can contain multiple `*.inot` files. Each `*.inot` file contains it's own `setup()` and `loop()` and represent separate thread.
+In the historic single-threaded execution of Arduino sketches the complete program logic is contained within the `*.ino` file. It contains both a `setup()` function, which is executed only once at program start, and a `loop()` function, which is executed indefinitely. In order to support multi-threaded (or parallel) sketch execution a new file type called the `*.inot` file is introduced. While a Arduino project can contain multiple `*.ino` file you can define `setup()` or `loop()` only once. On the contrary a Arduino project can contain multiple `*.inot` files. Each `*.inot` file represents a separate thread and contains it's own `setup()` and `loop()` functions.
 
 The advantage of this approach is that a complicated and a long `loop()` function (consisting of nested [finite state machines](https://en.wikipedia.org/wiki/Finite-state_machine)) found in typical Arduino sketches can be broken up in several, parallel executed `loop()` functions with a much smaller scope. This increases program readability and maintainability, directly reducing to bugs (software errors).
 
