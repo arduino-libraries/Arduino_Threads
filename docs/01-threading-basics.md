@@ -99,3 +99,9 @@ void loop() {
   delay(DELAY_BLUE_msec);
 }
 ```
+As you can see from the example the name of the `*.inot`-file is used to generate a class and instantiate a object with the same name as the `*.inot`-file. Hence the `*.inot`-file can be only named in concordance with the rules to declare a variable in C++, which are: `*.inot`-file names
+* must begin with a letter of the alphabet or an underscore(_).
+* can also contain letters and numbers after the first initial letter.
+* are case sensitive.
+* no spaces or special characters are allowed.
+* cannot be a C++ keyword (i.e. `register`, `volatile`, `while`, etc.).
