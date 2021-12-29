@@ -115,3 +115,5 @@ As you can see from the example the name of the `*.inot`-file is used to generat
 * are case sensitive.
 * cannot contain spaces or special characters.
 * cannot be a C++ keyword (i.e. `register`, `volatile`, `while`, etc.).
+
+To be consistent with the Arduino programming style we recommend using [camel case](https://en.wikipedia.org/wiki/Camel_case) for the file names.
