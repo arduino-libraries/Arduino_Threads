@@ -11,8 +11,10 @@ In order to support multi-threaded (or parallel) sketch execution a new file typ
 The advantage of this approach is that a complex and lengthy `loop()` function (potentially consisting of nested [finite state machines](https://en.wikipedia.org/wiki/Finite-state_machine)) found in typical Arduino sketches can be broken up into several, parallelly executed `loop()` functions with a much smaller scope. This not only increases program readability and maintainability but as a result leads to a reduction of software errors (bugs).
 
 #### Example (Single-Threaded):
-This sketch demonstrates how one would implement a program which requires the execution of three different actions on three different periodic intervals.
+This sketch demonstrates how one would implement a program which requires the execution of three different actions on three different periodic intervals. In this example we blink three different LEDs at three different intervals.
+
 **Blink_Three_LEDs.ino**:
+
 ```C++
 void setup()
 {
@@ -49,6 +51,8 @@ void loop()
   }
 }
 ```
+You can imagine that with increasing complexity of a sketch it gets quite difficult to keep track of the different states used for the different sub-tasks (here: blinking each of the LEDs).
+
 #### Example (Multi-Threaded):
 The same functionality can be provided via multi-threaded execution in a much simpler way.
 **Blink_Three_LEDs.ino**
