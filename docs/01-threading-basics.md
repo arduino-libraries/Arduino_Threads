@@ -54,17 +54,20 @@ void loop()
 You can imagine that with increasing complexity of a sketch it gets quite difficult to keep track of the different states used for the different sub-tasks (here: blinking each of the LEDs).
 
 #### Example (Multi-Threaded):
-The same functionality can be provided via multi-threaded execution in a much simpler way.
+
+The same functionality can be provided via multi-threaded execution in a much cleaner way.
+
 **Blink_Three_LEDs.ino**
+
 ```C++
 void setup() {
+  // Start the task defined in the corresponding .inot file
   LedRed.start();
   LedGreen.start();
   LedBlue.start();
 }
 
 void loop() {
-
 }
 ```
 **LedRed.inot**
@@ -106,9 +109,9 @@ void loop() {
   delay(DELAY_BLUE_msec);
 }
 ```
-As you can see from the example the name of the `*.inot`-file is used to generate a class and instantiate a object with the same name as the `*.inot`-file. Hence the `*.inot`-file can be only named in concordance with the rules to declare a variable in C++, which are: `*.inot`-file names
-* must begin with a letter of the alphabet or an underscore(_).
-* can also contain letters and numbers after the first initial letter.
+As you can see from the example the name of the `*.inot`-file is used to generate a class and instantiate an object with the **same name** as the `*.inot`-file. Hence the `*.inot`-file can be only named in concordance with the rules to declare a variable in C++.  `*.inot`-file names:
+* must begin with a letter of the alphabet or an underscore (_).
+* can contain letters and numbers after the first initial letter.
 * are case sensitive.
-* no spaces or special characters are allowed.
+* cannot contain spaces or special characters.
 * cannot be a C++ keyword (i.e. `register`, `volatile`, `while`, etc.).
