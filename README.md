@@ -7,9 +7,9 @@
 [![Check Arduino status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml)
 [![Spell Check status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/spell-check.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/spell-check.yml)
 
-This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state.
+This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state. ​
 
-## :zap: Features
+## :star: Features
 ### :thread: Multi-threaded sketch execution
 Instead of one big state-machine-of-doom you can split your application into multiple independent threads, each with it's own `setup()` and `loop()` function. Instead of implementing your application in a single `.ino` file, each independent thread is implemented in a dedicated `.inot` file (t suffix stands for **t**hread) representing a clear separation of concerns on a file level.
 
@@ -49,6 +49,10 @@ The mechanisms implemented in this library allow any thread to dispatch an I/O r
 Although you are free to directly manipulate I/O requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_IO/Threadsafe_Wire/Threadsafe_Wire.ino)) <!-- TODO: link is broken --> there are convenient `read`/`write`/`write_then_read` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_IO/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
 
 <!-- Not clear what we're talking about here. How does it relate to the advertised 'Convenient API'? Doesn't this library provide an abstraction for thread-safe Wire access too? -->
+
+## :zap: Caveats
+
+<!-- Any implications on time critical applicaitons? Can I make sure a thread is not interrupted? -->
 
 ## :mag_right: Resources
 
