@@ -26,8 +26,8 @@ Download a preliminary, pre-built `arduino-cli` binary for your operating system
 
 In the following documents you will find more information about the topics covered by this library.
 
-* [Threading Basics](01-threading-basics.md)
-* [Data exchange between threads](02-data-exchange.md)
-* [Threadsafe `Serial`](03-threadsafe-serial.md)
-* [Threadsafe `Wire`](04-threadsafe-wire.md)
-* [Threadsafe `SPI`](05-threadsafe-spi.md)
+1. [Threading Basics](01-threading-basics.md)
+2. [Data exchange between threads](02-data-exchange.md)
+3. [Threadsafe `Serial`](03-threadsafe-serial.md)
+4. [Threadsafe `Wire`](04-threadsafe-wire.md)
+5. [Threadsafe `SPI`](05-threadsafe-spi.md)
