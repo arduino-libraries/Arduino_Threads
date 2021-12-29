@@ -53,6 +53,7 @@ Although you are free to directly manipulate I/O requests and responses (e.g. [T
 ## :zap: Caveats
 
 <!-- Any implications on time critical applicaitons? Can I make sure a thread is not interrupted? -->
+<!-- Shall we say a word about the usage on multi-core MCUs? -->
 
 ## :mag_right: Resources
 
