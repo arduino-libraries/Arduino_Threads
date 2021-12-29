@@ -8,6 +8,8 @@ Previously Arduino sketches didn't support the concept of multitasking, unless y
 In the historic single-threaded execution of Arduino sketches the complete program logic is contained within the `*.ino` file. It contains both a `setup()` function, which is executed only once at program start, and a `loop()` function, which is executed indefinitely. 
 In order to support multi-threaded (or parallel) sketch execution a new file type called the `*.inot` file is introduced. While an Arduino project can contain multiple `*.ino` files you can define `setup()` or `loop()` only once among those <!-- TODO: What's a use case for using multiple ino files? -->. However, an Arduino project can contain multiple `*.inot` files. Each `*.inot` file represents a separate thread and contains it's own `setup()` and `loop()` functions. Consequently each one of the `*.inot` files can take up a specific task that they perform independent from each other. To get back to our above mentioned example, the program in one `*.inot` file could read from the distance sensor, while the one in the other file could take care of controlling the servo motor. <!-- TODO: Would this example actually work? -->
 
+<!-- TODO: Add graphic of ino and inot file "hierarchy" -->
+
 The advantage of this approach is that a complex and lengthy `loop()` function (potentially consisting of nested [finite state machines](https://en.wikipedia.org/wiki/Finite-state_machine)) found in typical Arduino sketches can be broken up into several, parallelly executed `loop()` functions with a much smaller scope. This not only increases program readability and maintainability but as a result leads to a reduction of software errors (bugs).
 
 #### Example (Single-Threaded):
