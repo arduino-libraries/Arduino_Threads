@@ -9,9 +9,9 @@ The following Arduino architectures and boards are currently supported:
 * `mbed_nano`: [Nano 33 BLE](https://store.arduino.cc/arduino-nano-33-ble), [Nano RP2040 Connect](https://store.arduino.cc/nano-rp2040-connect)
 * `mbed_edge`: [Edge Control](https://store.arduino.cc/products/arduino-edge-control)
 
-<!-- TODO: Is Nicla Sense ME also supported? I'd guess so. -->
 
-Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli). <!-- Will it be supported by the IDE too? Should we mention it? -->
+
+Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli). 
 
 Download a preliminary, pre-built `arduino-cli` binary for your operating system that supports threading:
 * [MacOS_64Bit](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_macOS_64bit.tar.gz)

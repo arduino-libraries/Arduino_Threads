@@ -22,7 +22,7 @@ Since we are using the [preemptive](https://os.mbed.com/docs/mbed-os/v6.11/progr
 
 As a result this interruption by the scheduler will break `Wire` access for both devices and leave the `Wire` controller in an undefined state. 
 
-In Arduino Parallela we introduced the concept of `BusDevice`s which are meant to unify the way sketches access peripherals through heterogeneous busses such as `Wire`, `SPI` and `Serial`. A `BusDevice` is declared simply by specifying the type of interface and its parameters<!-- TODO: I think I'd add a graphic here to explain it visually -->: 
+In Arduino Parallela we introduced the concept of `BusDevice`s which are meant to unify the way sketches access peripherals through heterogeneous busses such as `Wire`, `SPI` and `Serial`. A `BusDevice` is declared simply by specifying the type of interface and its parameters: 
 ```C++
 BusDevice lsm6dsox(Wire, LSM6DSOX_ADDRESS);
 /* or */
@@ -33,7 +33,7 @@ BusDevice lsm6dsox(Wire, LSM6DSOX_ADDRESS, false /* restart */, true, /* stop */
 
 ### Asynchronous thread-safe `Wire` access with `transfer`/`wait` 
 Once a `BusDevice` is declared it can be used to transfer data to and from the peripheral by means of the `transfer()` API. As opposed to the traditional Arduino bus APIs, `transfer()` is asynchronous and thus won't block execution unless the `wait()` function is called.
-Note that we are in a parallel programming environment which means that calls to `transfer()` on the same bus from different sketches will be arbitrated <!-- TODO: I'd elaborate on what arbitration means --> and that calling the `wait()` API will suspend the sketch until the transfer is complete. This allows other processes to run or to go into low power state. <!-- TODO: As mentioned in another comment, I'd put my vote for await(). More precise if you ask me. -->
+Note that we are in a parallel programming environment which means that calls to `transfer()` on the same bus from different sketches will be arbitrated 
 
 ```C++
 byte lsm6dsox_read_reg(byte const reg_addr)
@@ -55,7 +55,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
 ### Synchronous thread-safe `Wire` access with `transfer_and_wait` 
 ([`examples/Threadsafe_IO/Wire`](../examples/Threadsafe_IO/Wire))
 
-As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transfer_and_wait`. <!-- TODO: Not sure I understand the difference. This one is supposed to be synchroneous, but doesnt' seem so as wait() is called implicitely? --><!-- TODO: AFAIK we promote the use of camel case, that way it'd need to be transferAndWait() -->
+As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transfer_and_wait`. 
 ```C++
 byte lsm6dsox_read_reg(byte const reg_addr)
 {
@@ -72,7 +72,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
 ### `Adafruit_BusIO` style **synchronous** thread-safe `Wire` access
 ([`examples/Threadsafe_IO/Wire_BusIO`](../examples/Threadsafe_IO/Wire_BusIO))
 
-For further simplification [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) style APIs are provided:<!-- TODO: AFAIK we promote the use of camel case, that way it'd need to be writeThenRead() --><!-- TODO: Another option for naming this would be request() or get() (the 'write' data could be seen as the equivalent of headers in HTTP) which would be more similar to the terminology used for web technologies --><!-- TODO: Why do I have to access the Wire interface through wire() if I already defined the type upon declaration? -->
+For further simplification [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) style APIs are provided:
 
 ```C++
 byte lsm6dsox_read_reg(byte reg_addr)
