@@ -9,7 +9,6 @@ In the historic single-threaded execution of Arduino sketches the complete progr
 In order to support multi-threaded (or parallel) sketch execution a new file type called the `*.inot` file is introduced. While a single-threaded Arduino project can contain multiple `*.ino` files you can define `setup()` or `loop()` only once.
 
 
-
 The advantage of this approach is that a complex and lengthy `loop()` function (potentially consisting of nested [finite state machines](https://en.wikipedia.org/wiki/Finite-state_machine)) found in typical Arduino sketches can be broken up into several, parallelly executed `loop()` functions with a much smaller scope. This not only increases program readability and maintainability but as a result leads to a reduction of software errors (bugs).
 
 #### Example (Single-Threaded):
