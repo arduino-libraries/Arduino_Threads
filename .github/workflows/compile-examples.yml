@@ -99,7 +99,7 @@ jobs:
           verbose: 'true'
 
       - name: Save memory usage change report as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
           if-no-files-found: error
