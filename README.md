@@ -46,7 +46,7 @@ As a result this interruption by the scheduler will break Wire I/O access for bo
 The mechanisms implemented in this library allow any thread to dispatch an I/O request asynchronously and either continue its operation or [yield](https://en.wikipedia.org/wiki/Yield_(multithreading)) control to the next scheduled thread. All I/O requests are stored in a queue and are executed within a high-priority I/O thread after a [context-switch](https://en.wikipedia.org/wiki/Context_switch). An example of this can be seen [here](examples/Threadsafe_IO/Threadsafe_SPI/Threadsafe_SPI.ino)). 
 
 ### :relieved: Convenient API
-Although you are free to directly manipulate I/O requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_IO/Threadsafe_Wire/Threadsafe_Wire.ino))  there are convenient `read`/`write`/`write_then_read` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_IO/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
+Although you are free to directly manipulate I/O requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_IO/Threadsafe_Wire/Threadsafe_Wire.ino)) there are convenient `read`/`write`/`write_then_read` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_IO/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
 
 
 
