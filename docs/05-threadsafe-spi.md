@@ -27,7 +27,7 @@ BusDevice bmp388(SPI, device_cs_select, device_cs_deselect, spi_settings);
 
 ### Asynchronous thread-safe `SPI` access with `transfer`/`wait` 
 Once a `BusDevice` is declared it can be used to transfer data to and from the peripheral by means of the `transfer()` API. As opposed to the traditional Arduino bus APIs, `transfer()` is asynchronous and thus won't block execution unless the `wait()` function is called.
-Note that we are in a parallel programming environment which means that calls to `transfer()` on the same bus from different sketches will be arbitrated 
+Note that we are in a parallel programming environment which means that calls to `transfer()` on the same bus from different sketches will be arbitrated.
 
 ```C++
 byte bmp388_read_reg(byte const reg_addr)
