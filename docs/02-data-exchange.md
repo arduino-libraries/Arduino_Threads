@@ -19,7 +19,7 @@ SHARED(counter, int); /* A globally available, threadsafe, shared variable of ty
 /* Thread_1.inot */
 counter = 10; /* Store a value into the shared variable in a threadsafe manner. */
 ```
-If the internal queue is full the oldest element is discarded and the latest element is inserted into the queue. 
+If the internal queue is full the oldest element is discarded and the latest element is inserted into the queue.
 
 Retrieving stored data works also very naturally like it would for any POD data type:
 ```C++
