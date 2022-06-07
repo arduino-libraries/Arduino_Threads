@@ -36,7 +36,7 @@ The idea behind the `Sink`/`Source` semantics is to model data exchange between 
 /* DataProducerThread.inot */
 SOURCE(counter, int); /* Declaration of a data source of type `int`. */
 ```
-In a similar way, a data consumer can be declared in any `*.ino` or `*.inot`-file using the `SINK` macro. In difference to `Shared` where the size of the internal queue is globally set for all shared variables  you can define your desired internal buffer size separately for each `Sink`.
+In a similar way, a data consumer can be declared in any `*.ino` or `*.inot`-file using the `SINK` macro. In difference to `Shared` where the size of the internal queue is globally set for all shared variables you can define your desired internal buffer size separately for each `Sink`.
 ```C++
 /* DataConsumerThread_1.inot */
 SINK(counter, int); /* Declaration of a data sink of type `int` with a internal queue size of '1'. */
