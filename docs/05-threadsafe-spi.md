@@ -47,7 +47,7 @@ byte bmp388_read_reg(byte const reg_addr)
 ### Synchronous thread-safe `SPI` access with `transfer_and_wait` 
 ([`examples/Threadsafe_IO/SPI`](../examples/Threadsafe_IO/SPI))
 
-As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transfer_and_wait`. 
+As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transfer_and_wait`.
 ```C++
 byte bmp388_read_reg(byte const reg_addr)
 {
