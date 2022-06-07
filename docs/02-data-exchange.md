@@ -3,7 +3,7 @@
 Data Exchange between Threads
 =============================
 ## Introduction
-When an Arduino sketch formerly consisting of just a single `loop()` is split into multiple `loop()` functions contained in multiple `*.inot` files it becomes necessary to define a thread-safe mechanism to exchange data between those threads. For example, one  `*.inot` file could calculate a math formula and send the result back to the main `*.ino` file to act upon it. Meanwhile the main `*.ino` file can take care of other tasks.
+When an Arduino sketch formerly consisting of just a single `loop()` is split into multiple `loop()` functions contained in multiple `*.inot` files it becomes necessary to define a thread-safe mechanism to exchange data between those threads. For example, one `*.inot` file could calculate a math formula and send the result back to the main `*.ino` file to act upon it. Meanwhile the main `*.ino` file can take care of other tasks.
 
  `Arduino_Threads` supports two different mechanisms for data exchange between threads: `Shared` variables and `Sink`/`Source` semantics. Both have their pros and cons as described below.
 
