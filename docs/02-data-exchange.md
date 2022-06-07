@@ -27,7 +27,7 @@ Retrieving stored data works also very naturally like it would for any POD data 
 Serial.println(counter); /* Retrieves a value from the shared variable in a threadsafe manner. */
 ```
 
-
+Should the internal queue be empty when trying to read the latest available value then the thread reading the shared variable will be suspended and the next available thread will be scheduled. Once a new value is stored inside the shared variable the suspended thread resumes operation and consumes the value which has been stored in the internal queue.
 Since shared variables are globally accessible from every thread, each thread can read from or write to the shared variable. The user is responsible for using the shared variable in a responsible and sensible way, i.e. reading a shared variable from different threads is generally a bad idea, as on every read an item is removed from the queue within the shared variable and other threads can't access the read value anymore .
 
 ## `Sink`/`Source`
