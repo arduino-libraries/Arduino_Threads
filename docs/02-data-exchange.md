@@ -65,7 +65,7 @@ Serial.println(counter);
 /* DataConsumerThread_2.inot */
 Serial.println(counter);
 ```
-If a thread tries to read from an empty `Sink` the thread is suspended and the next ready thread is scheduled. When a new value is written to a `Source` and consequently copied to a `Sink` the suspended thread is resumed and continuous execution (i.e. read the data and act upon it). 
+If a thread tries to read from an empty `Sink` the thread is suspended and the next ready thread is scheduled. When a new value is written to a `Source` and consequently copied to a `Sink` the suspended thread is resumed and continuous execution (i.e. read the data and act upon it).
 
 Since the data added to the source is copied multiple threads can read data from a single source without data being lost. This is an advantage compared to a simple shared variable. Furthermore you cannot accidentally write to a `Sink` or read from a `Source`. Attempting to do so results in a compilation error.
 
