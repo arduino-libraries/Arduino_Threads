@@ -52,7 +52,7 @@ As the use of the `transfer` API might be difficult to grasp there's also a sync
 byte bmp388_read_reg(byte const reg_addr)
 {
   /* REG_ADDR | DUMMY_BYTE | REG_VAL is on SDO */
-  byte read_write_buffer[] = {static_cast<byte>(0x80 | reg_addr), 0, 0};
+  byte read_write_buffer[] = {0x80 | reg_addr, 0, 0};
 
   IoRequest request(read_write_buffer, sizeof(read_write_buffer), nullptr, 0);
   IoResponse response = transfer_and_wait(bmp388, request);
