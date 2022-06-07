@@ -8,7 +8,7 @@ The following Arduino architectures and boards are currently supported:
 * `mbed_portenta`: [Portenta H7](https://store.arduino.cc/products/portenta-h7)
 * `mbed_nano`: [Nano 33 BLE](https://store.arduino.cc/arduino-nano-33-ble), [Nano RP2040 Connect](https://store.arduino.cc/nano-rp2040-connect)
 * `mbed_edge`: [Edge Control](https://store.arduino.cc/products/arduino-edge-control)
-
+* `mbed_nicla`: [Nicla Sense ME](https://store.arduino.cc/products/nicla-sense-me), [Nicla Vision](http://store.arduino.cc/products/nicla-vision)
 
 
 Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli). 
