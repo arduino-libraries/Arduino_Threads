@@ -31,7 +31,7 @@ Should the internal queue be empty when trying to read the latest available valu
 Since shared variables are globally accessible from every thread, each thread can read from or write to the shared variable. The user is responsible for using the shared variable in a responsible and sensible way, i.e. reading a shared variable from different threads is generally a bad idea, as on every read an item is removed from the queue within the shared variable and other threads can't access the read value anymore .
 
 ## `Sink`/`Source`
-The idea behind the `Sink`/`Source` semantics is to model data exchange between one data producer (`Source`) and zero, one or multiple data consumers (`Sink`). A data producer or `Source` can be declared in any `*.ino` or `*.inot`-file using the `SOURCE` macro :
+The idea behind the `Sink`/`Source` semantics is to model data exchange between one data producer (`Source`) and one or multiple data consumers (`Sink`). A data producer or `Source` can be declared in any `*.ino` or `*.inot`-file using the `SOURCE` macro:
 ```C++
 /* DataProducerThread.inot */
 SOURCE(counter, int); /* Declaration of a data source of type `int`. */
