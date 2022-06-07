@@ -71,7 +71,7 @@ For a further simplification [Adafruit_BusIO](https://github.com/adafruit/Adafru
 byte bmp388_read_reg(byte const reg_addr)
 {
   /* REG_ADDR | DUMMY_BYTE | REG_VAL is on SDO */
-  byte write_buffer[2] = {static_cast<byte>(0x80 | reg_addr), 0};
+  byte write_buffer[2] = {0x80 | reg_addr, 0};
   byte read_buffer = 0;
 
   bmp388.spi().write_then_read(write_buffer, sizeof(write_buffer), &read_buffer, sizeof(read_buffer));
