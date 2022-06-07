@@ -45,7 +45,7 @@ SINK(counter, int); /* Declaration of a data sink of type `int` with a internal 
 /* DataConsumerThread_2.inot */
 SINK(counter, int, 10); /* Declaration of a data sink of type `int` with a internal queue size of '10'. */
 ```
-In order to actually facilitate the flow of data from a source to a sink the sinks must be connected to the desired data source . This is done within the main `ino`-file:
+In order to actually facilitate the flow of data from a source to a sink the sinks must be connected to the desired data source. This is done within the main `ino`-file:
 ```C++
 /* MySinkSourceDemo.ino */
 DataProducerThread.counter.connectTo(DataConsumerThread_1.counter);
