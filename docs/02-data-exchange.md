@@ -3,15 +3,19 @@
 Data Exchange between Threads
 =============================
 ## Introduction
-When a Arduino sketch formerly consisting of a single `loop()` is split into multiple `loop()` functions contained in multiple `*.inot` files it becomes necessary to device a thead-safe mechanism to exchange data between those threads. `Arduino_Threads` supports two different semantics for data exchange between threads, `Shared` variables and `Sink`/`Source` semantic.
+When an Arduino sketch formerly consisting of just a single `loop()` is split into multiple `loop()` functions contained in multiple `*.inot` files it becomes necessary to define a thread-safe mechanism to exchange data between those threads. For example, one `*.inot` file could calculate a math formula and send the result back to the main `*.ino` file to act upon it. Meanwhile the main `*.ino` file can take care of other tasks.
+
+ `Arduino_Threads` supports two different mechanisms for data exchange between threads: `Shared` variables and `Sink`/`Source` semantics. Both have their pros and cons as described below.
 
 ## `Shared`
-A `Shared` variable is a global variable accessible to all threads. It is declared within `SharedVariables.h` which is automatically included on the top of each `*.inot`-file. Shared variables are declared using the `SHARED` macro in the following way:
+A `Shared` variable is a global variable accessible to all threads. It can be declared within a header file named `SharedVariables.h` which is automatically included at the top of each `*.inot`-file :
 ```C++
 /* SharedVariables.h */
 SHARED(counter, int); /* A globally available, threadsafe, shared variable of type 'int'. */
 ```
-A shared variable can contain up to `SHARED_QUEUE_SIZE` entries and semantically represents a FIFO ([First-In/First-Out](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))) queue. New values can be inserted into the queue by naturally using the assignment operator `=` as if it was just any ordinary [plain-old-data](https://en.wikipedia.org/wiki/Passive_data_structure) (POD) type, i.e. `int`, `char`, ... 
+Writing to and reading from the shared variable may not always happen concurrently. I.e. a thread reading sensor data may update the shared variable faster than a slower reader thread would extract those values. Therefore the shared variable is modeled as a queue which can store (buffer) a certain number of entries. That way the slower reader thread can access all the values in the same order as they have been written.
+New values can be inserted naturally by using the assignment operator `=` as if it was just any ordinary variable type, i.e. `int`, `char`, ...
+
 ```C++
 /* Thread_1.inot */
 counter = 10; /* Store a value into the shared variable in a threadsafe manner. */
@@ -23,12 +27,12 @@ Retrieving stored data works also very naturally like it would for any POD data 
 /* Thread_2.inot */
 Serial.println(counter); /* Retrieves a value from the shared variable in a threadsafe manner. */
 ```
-Should the internal queue be empty when trying to read the latest available value then the thread reading the shared variable will be suspended and the next available thread will be schedulded. Once a new value is stored inside the shared variable the suspended thread resumes operation and consumes the value which has been stored in the internal queue.
 
-Since shared variables are globally accessible from every thread each thread can read from or write to the shared variable. The user is responsible for using the shared variable in a responsible and sensible way, i.e. reading a shared variable from different threads is generally a bad idea, as on every read a item is removed from the queue within the shared variable and other threads can't access the read value anymore.
+Should the internal queue be empty when trying to read the latest available value then the thread reading the shared variable will be suspended and the next available thread will be scheduled. Once a new value is stored inside the shared variable the suspended thread resumes operation and consumes the value which has been stored in the internal queue.
+Since shared variables are globally accessible from every thread, each thread can read from or write to the shared variable. The user is responsible for using the shared variable in a responsible and sensible way, i.e. reading a shared variable from different threads is generally a bad idea, as on every read an item is removed from the queue within the shared variable and other threads can't access the read value anymore .
 
 ## `Sink`/`Source`
-The idea behind the `Sink`/`Source` semantics is to model data exchange between one data producer (`Source`) and zero, one or multiple data consumers (`Sink`). A data producer or `Source` can be declared in any `*.ino` or `*.inot`-file using the `SOURCE` macro:
+The idea behind the `Sink`/`Source` semantics is to model data exchange between one data producer (`Source`) and one or multiple data consumers (`Sink`). A data producer or `Source` can be declared in any `*.ino` or `*.inot`-file using the `SOURCE` macro:
 ```C++
 /* DataProducerThread.inot */
 SOURCE(counter, int); /* Declaration of a data source of type `int`. */
@@ -64,10 +68,10 @@ Serial.println(counter);
 ```
 If a thread tries to read from an empty `Sink` the thread is suspended and the next ready thread is scheduled. When a new value is written to a `Source` and consequently copied to a `Sink` the suspended thread is resumed and continuous execution (i.e. read the data and act upon it).
 
-Since data is actually copied multiple threads can read data from a single source without data being lost. This is an advantage compared to a simple shared variable. Furthermore you can not write to `Sink` or read from a `Source` - attempting to do so results in a compilation error.
+Since the data added to the source is copied multiple threads can read data from a single source without data being lost. This is an advantage compared to a simple shared variable. Furthermore you cannot accidentally write to a `Sink` or read from a `Source`. Attempting to do so results in a compilation error.
 
 ## Comparison
 |  | :+1: | :-1: |
 |:---:|:---:|:---:|
-| `Shared` | :+1: Needs only to declared once (`SharedVariables.h`). | :-1: Basically a global variable, with all the disadvantages those entail.<br/> :-1: Size of internal queue fixed for ALL shared variables.<br/> :-1: No protection against misuse (i.e. reading from multiple threads).<br/> |
-| `Sink`/`Source` | :+1: Define internal queue size separately for each `Sink`.<br/> :+1: Supports multiple data consumers for a single data producer.<br/> :+1: Read/Write protection - Can't read from `Source`, can't write to `Sink`.<br/> :+1: Mandatory connecting (plumbing) within main `*.ino`-file makes data flows easily visible.<br/> | :-1: Needs manual connection (plumbing) to connect `Sink`'s to `Source`'s. |
+| `Shared` | :+1: Needs to be declared only once (in `SharedVariables.h`). | :-1: Basically a global variable, with all the disadvantages those entail.<br/> :-1: Size of internal queue fixed for ALL shared variables.<br/> :-1: No protection against misuse (i.e. reading from multiple threads).<br/> |
+| `Sink`/`Source` | :+1: Define internal queue size separately for each `Sink`.<br/> :+1: Supports multiple data consumers for a single data producer.<br/> :+1: Read/Write protection: Can't read from `Source`, can't write to `Sink`.<br/> :+1: Mandatory connecting (plumbing) within main `*.ino`-file makes data flows easily visible.<br/> | :-1: Needs manual connection (plumbing) to connect `Sink`'s to `Source`'s. |
