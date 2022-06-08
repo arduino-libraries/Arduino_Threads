@@ -13,7 +13,8 @@ A `Shared` variable is a global variable accessible to all threads. It can be de
 /* SharedVariables.h */
 SHARED(counter, int); /* A globally available, threadsafe, shared variable of type 'int'. */
 ```
- 
+Writing to and reading from the shared variable may not always happen concurrently. I.e. a thread reading sensor data may update the shared variable faster than a slower reader thread would extract those values. Therefore the shared variable is modelled as a queue which can store (buffer) a certain number of entries. That way the slower reader thread can access all the values in the same order as they have been written.
+New values can be inserted naturally by using the assignment operator `=` as if it was just any ordinary variable type, i.e. `int`, `char`, ...
 
 ```C++
 /* Thread_1.inot */
