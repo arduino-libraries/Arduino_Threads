@@ -2,7 +2,7 @@
 
 `Arduino_Threads`
 =================
-*Note: This library is currently in BETA.*
+*Note: This library is currently in [beta](#zap-caveats).*
 
 [![Compile Examples status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/compile-examples.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/compile-examples.yml)
 [![Check Arduino status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml)
