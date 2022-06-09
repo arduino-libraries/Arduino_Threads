@@ -9,6 +9,8 @@
 
 This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state. ​
 
+Preeliminary documentation is available within the [`/docs`](docs/README.md) subfolder.
+
 ## :star: Features
 ### :thread: Multi-threaded sketch execution
 Instead of one big state-machine-of-doom you can split your application into multiple independent threads, each with it's own `setup()` and `loop()` function. Instead of implementing your application in a single `.ino` file, each independent thread is implemented in a dedicated `.inot` file (t suffix stands for **t**hread) representing a clear separation of concerns on a file level.
