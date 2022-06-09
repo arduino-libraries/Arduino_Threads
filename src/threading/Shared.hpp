@@ -40,6 +40,9 @@ class Shared
 {
 public:
 
+  T get();
+  void set(T const & val);
+
   operator T();
   void operator = (T const & other);
   inline T peek() const { return _val; }
@@ -57,7 +60,7 @@ private:
  **************************************************************************************/
 
 template<class T, size_t QUEUE_SIZE>
-Shared<T,QUEUE_SIZE>::operator T()
+T Shared<T,QUEUE_SIZE>::get()
 {
   T * val_ptr = _mailbox.try_get_for(rtos::Kernel::wait_for_u32_forever);
   if (val_ptr)
@@ -70,7 +73,7 @@ Shared<T,QUEUE_SIZE>::operator T()
 }
 
 template<class T, size_t QUEUE_SIZE>
-void Shared<T,QUEUE_SIZE>::operator = (T const & other)
+void Shared<T,QUEUE_SIZE>::set(T const & val)
 {
   /* If the mailbox is full we are discarding the
    * oldest element and then push the new one into
@@ -90,6 +93,18 @@ void Shared<T,QUEUE_SIZE>::operator = (T const & other)
     *val_ptr = other;
     _mailbox.put(val_ptr);
   }
+}
+
+template<class T, size_t QUEUE_SIZE>
+Shared<T,QUEUE_SIZE>::operator T()
+{
+  return get();
+}
+
+template<class T, size_t QUEUE_SIZE>
+void Shared<T,QUEUE_SIZE>::operator = (T const & other)
+{
+  set(other);
 }
 
 #endif /* ARDUINO_THREADS_SHARED_HPP_ */
