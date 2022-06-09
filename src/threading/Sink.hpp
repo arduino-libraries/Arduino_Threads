@@ -38,8 +38,10 @@ public:
 
   virtual ~SinkBase() { }
 
-  virtual operator T() = 0;
+  virtual T get() = 0;
   virtual void inject(T const & value) = 0;
+
+  inline operator T() { return get(); }
 };
 
 template<typename T>
@@ -50,7 +52,7 @@ public:
            SinkNonBlocking() { }
   virtual ~SinkNonBlocking() { }
 
-  virtual operator T() override;
+  virtual T get() override;
   virtual void inject(T const & value) override;
 
 
@@ -69,7 +71,7 @@ public:
            SinkBlocking(size_t const size);
   virtual ~SinkBlocking() { }
 
-  virtual operator T() override;
+  virtual T get() override;
   virtual void inject(T const & value) override;
 
 
@@ -87,7 +89,7 @@ private:
  **************************************************************************************/
 
 template<typename T>
-SinkNonBlocking<T>::operator T()
+T SinkNonBlocking<T>::get()
 {
   _mutex.lock();
   return _data;
@@ -114,7 +116,7 @@ SinkBlocking<T>::SinkBlocking(size_t const size)
 { }
 
 template<typename T>
-SinkBlocking<T>::operator T()
+T SinkBlocking<T>::get()
 {
   _mutex.lock();
   while (_data.isEmpty())
