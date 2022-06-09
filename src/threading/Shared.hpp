@@ -44,7 +44,7 @@ public:
   void set(T const & val);
 
   operator T();
-  void operator = (T const & other);
+  void operator = (T const & val);
   inline T peek() const { return _val; }
 
 
@@ -85,12 +85,12 @@ void Shared<T,QUEUE_SIZE>::set(T const & val)
     _mailbox.free(val_ptr);
   }
 
-  _val = other;
+  _val = val;
 
   T * val_ptr = _mailbox.try_alloc();
   if (val_ptr)
   {
-    *val_ptr = other;
+    *val_ptr = val;
     _mailbox.put(val_ptr);
   }
 }
@@ -102,9 +102,9 @@ Shared<T,QUEUE_SIZE>::operator T()
 }
 
 template<class T, size_t QUEUE_SIZE>
-void Shared<T,QUEUE_SIZE>::operator = (T const & other)
+void Shared<T,QUEUE_SIZE>::operator = (T const & val)
 {
-  set(other);
+  set(val);
 }
 
 #endif /* ARDUINO_THREADS_SHARED_HPP_ */
