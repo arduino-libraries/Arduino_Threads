@@ -53,7 +53,7 @@ Although you are free to directly manipulate I/O requests and responses (e.g. [T
 
 ## :zap: Caveats
 
-This library is currently in **BETA** stage. This means that neither the API nor the usage patters are set in stone and are likely to change. We are publishing this library in the full knowledge that we can't foresee every possible use-case and edge-case. Therefore we would like to treat this library as an experiment and ask for your input for shaping this library into a useful tool. Please help us by providing feedback on the [issues](https://github.com/bcmi-labs/Arduino_Threads/issues) or participating in our [discussions](https://github.com/arduino/ArduinoCore-API/discussions).
+This library is currently in **BETA** phase. This means that neither the API nor the usage patterns are set in stone and are likely to change. We are publishing this library in the full knowledge that we can't foresee every possible use-case and edge-case. Therefore we would like to treat this library, while it's in beta phase, as an experiment and ask for your input for shaping this library. Please help us by providing feedback in the [issues section](https://github.com/bcmi-labs/Arduino_Threads/issues) or participating in our [discussions](https://github.com/arduino/ArduinoCore-API/discussions).
 
 ## :mag_right: Resources
 
