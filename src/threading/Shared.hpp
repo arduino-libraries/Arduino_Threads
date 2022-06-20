@@ -42,11 +42,10 @@ public:
 
   T pop();
   void push(T const & val);
-
-  operator T();
-  void operator = (T const & val);
   inline T peek() const { return _val; }
 
+  operator T() [[deprecated("Use 'pop()' instead.")]];
+  void operator = (T const & val) [[deprecated("Use 'push()' instead.")]];
 
 private:
 

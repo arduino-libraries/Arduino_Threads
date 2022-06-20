@@ -41,7 +41,10 @@ public:
   virtual T pop() = 0;
   virtual void inject(T const & value) = 0;
 
-  inline operator T() { return pop(); }
+  inline operator T() [[deprecated("Use 'pop()' instead.")]]
+  {
+    return pop();
+  }
 };
 
 template<typename T>

@@ -44,7 +44,8 @@ public:
 
   void connectTo(SinkBase<T> & sink);
   void push(T const & val);
-  void operator = (T const & val);
+
+  void operator = (T const & val) [[deprecated("Use 'push()' instead.")]];
 
 private:
   std::list<SinkBase<T> *> _sink_list;
