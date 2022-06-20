@@ -12,5 +12,5 @@ void loop()
    * available, then this thread is suspended until new data
    * is available for reading.
    */
-  Serial.println(counter);
+  Serial.println(counter.pop());
 }
