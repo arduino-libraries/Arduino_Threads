@@ -52,10 +52,10 @@ byte lsm6dsox_read_reg(byte const reg_addr)
 }
 ```
 
-### Synchronous thread-safe `Wire` access with `transfer_and_wait` 
+### Synchronous thread-safe `Wire` access with `transferAndWait` 
 ([`examples/Threadsafe_IO/Wire`](../examples/Threadsafe_IO/Wire))
 
-As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transfer_and_wait`. 
+As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transferAndWait`. 
 ```C++
 byte lsm6dsox_read_reg(byte const reg_addr)
 {
@@ -63,7 +63,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
   byte read_buffer  = 0;
   
   IoRequest  request(write_buffer, read_buffer);
-  IoResponse response = transfer_and_wait(lsm6dsox, request); /* Transmit IO request for execution and wait for completion of request. */
+  IoResponse response = transferAndWait(lsm6dsox, request); /* Transmit IO request for execution and wait for completion of request. */
   
   return read_buffer;
 }
@@ -78,7 +78,7 @@ For further simplification [Adafruit_BusIO](https://github.com/adafruit/Adafruit
 byte lsm6dsox_read_reg(byte reg_addr)
 {
   byte read_buffer = 0;
-  lsm6dsox.wire().write_then_read(&reg_addr, 1, &read_buffer, 1);
+  lsm6dsox.wire().writeThenRead(&reg_addr, 1, &read_buffer, 1);
   return read_buffer;
 }
 ```

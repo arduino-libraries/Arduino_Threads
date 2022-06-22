@@ -4,7 +4,7 @@
  * with different client devices on the same SPI bus.
  *
  * This example uses Adafruit_BusIO style read(), write(),
- * write_then_read() APIs.
+ * writeThenRead() APIs.
  */
 
 /**************************************************************************************
@@ -70,7 +70,7 @@ byte bmp388_read_reg(byte const reg_addr)
   byte write_buf[2] = {static_cast<byte>(0x80 | reg_addr), 0};
   byte read_buf = 0;
 
-  bmp388.spi().write_then_read(write_buf, sizeof(write_buf), &read_buf, sizeof(read_buf));
+  bmp388.spi().writeThenRead(write_buf, sizeof(write_buf), &read_buf, sizeof(read_buf));
   return read_buf;
 }
 

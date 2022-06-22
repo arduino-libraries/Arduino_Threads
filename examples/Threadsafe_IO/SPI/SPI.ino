@@ -70,7 +70,7 @@ byte bmp388_read_reg(byte const reg_addr)
   byte read_write_buf[] = {static_cast<byte>(0x80 | reg_addr), 0, 0};
 
   IoRequest req(read_write_buf, sizeof(read_write_buf), nullptr, 0);
-  IoResponse rsp = transfer_and_wait(bmp388, req);
+  IoResponse rsp = transferAndWait(bmp388, req);
 
   return read_write_buf[2];
 }

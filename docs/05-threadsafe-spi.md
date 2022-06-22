@@ -44,10 +44,10 @@ byte bmp388_read_reg(byte const reg_addr)
 }
 ```
 
-### Synchronous thread-safe `SPI` access with `transfer_and_wait` 
+### Synchronous thread-safe `SPI` access with `transferAndWait` 
 ([`examples/Threadsafe_IO/SPI`](../examples/Threadsafe_IO/SPI))
 
-As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transfer_and_wait`.
+As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transferAndWait`.
 ```C++
 byte bmp388_read_reg(byte const reg_addr)
 {
@@ -55,7 +55,7 @@ byte bmp388_read_reg(byte const reg_addr)
   byte read_write_buffer[] = {0x80 | reg_addr, 0, 0};
 
   IoRequest request(read_write_buffer, sizeof(read_write_buffer), nullptr, 0);
-  IoResponse response = transfer_and_wait(bmp388, request);
+  IoResponse response = transferAndWait(bmp388, request);
 
   auto value = read_write_buffer[2]; 
   return value;
@@ -74,7 +74,7 @@ byte bmp388_read_reg(byte const reg_addr)
   byte write_buffer[2] = {0x80 | reg_addr, 0};
   byte read_buffer = 0;
 
-  bmp388.spi().write_then_read(write_buffer, sizeof(write_buffer), &read_buffer, sizeof(read_buffer));
+  bmp388.spi().writeThenRead(write_buffer, sizeof(write_buffer), &read_buffer, sizeof(read_buffer));
   return read_buffer;
 }
 ```

@@ -4,7 +4,7 @@
  * with different client devices on the same Wire bus.
  *
  * This example uses Adafruit_BusIO style read(), write(),
- * write_then_read() APIs.
+ * writeThenRead() APIs.
  */
 
 /**************************************************************************************
@@ -64,7 +64,7 @@ void loop()
 byte lsm6dsox_read_reg(byte reg_addr)
 {
   byte read_buf = 0;
-  lsm6dsox.wire().write_then_read(&reg_addr, 1, &read_buf, 1);
+  lsm6dsox.wire().writeThenRead(&reg_addr, 1, &read_buf, 1);
   return read_buf;
 }
 

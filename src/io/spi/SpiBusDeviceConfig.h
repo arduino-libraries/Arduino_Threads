@@ -64,10 +64,10 @@ public:
   SPISettings settings   () const { return _spi_settings; }
   void        select     () const { if (_spi_select) _spi_select(); }
   void        deselect   () const { if (_spi_deselect) _spi_deselect(); }
-  byte        fill_symbol() const { return _fill_symbol; }
+  byte        fillSymbol () const { return _fill_symbol; }
 
-  SpiSelectFunc   select_func  () const { return _spi_select;  }
-  SpiDeselectFunc deselect_func() const { return _spi_deselect;  }
+  SpiSelectFunc   selectFunc  () const { return _spi_select;  }
+  SpiDeselectFunc deselectFunc() const { return _spi_deselect;  }
 
 private:
 
