@@ -45,7 +45,7 @@ IoResponse WireBusDevice::transfer(IoRequest & req)
 
 bool WireBusDevice::read(uint8_t * buffer, size_t len, bool stop)
 {
-  WireBusDeviceConfig config(_config.wire(), _config.slave_addr(), _config.restart(), stop);
+  WireBusDeviceConfig config(_config.wire(), _config.slaveAddr(), _config.restart(), stop);
   IoRequest req(nullptr, 0, buffer, len);
   IoResponse rsp = WireDispatcher::instance().dispatch(&req, &config);
   rsp->wait();
@@ -55,20 +55,20 @@ bool WireBusDevice::read(uint8_t * buffer, size_t len, bool stop)
 bool WireBusDevice::write(uint8_t * buffer, size_t len, bool stop)
 {
   bool const restart = !stop;
-  WireBusDeviceConfig config(_config.wire(), _config.slave_addr(), restart, _config.stop());
+  WireBusDeviceConfig config(_config.wire(), _config.slaveAddr(), restart, _config.stop());
   IoRequest req(buffer, len, nullptr, 0);
   IoResponse rsp = WireDispatcher::instance().dispatch(&req, &config);
   rsp->wait();
   return true;
 }
 
-bool WireBusDevice::write_then_read(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop)
+bool WireBusDevice::writeThenRead(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, bool stop)
 {
   /* Copy the Wire parameters from the device and modify only those
    * which can be modified via the parameters of this function.
    */
   bool const restart = !stop;
-  WireBusDeviceConfig config(_config.wire(), _config.slave_addr(), restart, _config.stop());
+  WireBusDeviceConfig config(_config.wire(), _config.slaveAddr(), restart, _config.stop());
   /* Fire off the IO request and await its response. */
   IoRequest req(write_buffer, write_len, read_buffer, read_len);
   IoResponse rsp = WireDispatcher::instance().dispatch(&req, &config);

@@ -158,7 +158,7 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
   size_t bytes_received = 0;
   for(; bytes_received < io_request->bytes_to_read; bytes_received++)
   {
-    uint8_t const tx_byte = config->fill_symbol();
+    uint8_t const tx_byte = config->fillSymbol();
     uint8_t const rx_byte = config->spi().transfer(tx_byte);
 
     io_request->read_buf[bytes_received] = rx_byte;

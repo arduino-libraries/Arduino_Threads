@@ -138,7 +138,7 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
 
   if (io_request->bytes_to_write > 0)
   {
-    config->wire().beginTransmission(config->slave_addr());
+    config->wire().beginTransmission(config->slaveAddr());
 
     size_t bytes_written = 0;
     for (; bytes_written < io_request->bytes_to_write; bytes_written++)
@@ -155,7 +155,7 @@ void WireDispatcher::processWireIoRequest(WireIoTransaction * wire_io_transactio
 
   if (io_request->bytes_to_read > 0)
   {
-    config->wire().requestFrom(config->slave_addr(), io_request->bytes_to_read, config->stop());
+    config->wire().requestFrom(config->slaveAddr(), io_request->bytes_to_read, config->stop());
 
     while(config->wire().available() != static_cast<int>(io_request->bytes_to_read))
     {

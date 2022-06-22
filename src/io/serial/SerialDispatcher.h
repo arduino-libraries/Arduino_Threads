@@ -63,8 +63,8 @@ public:
   typedef std::function<String(String const &, String const &)>  SuffixInjectorCallbackFunc;
   void prefix(PrefixInjectorCallbackFunc func);
   void suffix(SuffixInjectorCallbackFunc func);
-  void global_prefix(PrefixInjectorCallbackFunc func);
-  void global_suffix(SuffixInjectorCallbackFunc func);
+  void globalPrefix(PrefixInjectorCallbackFunc func);
+  void globalSuffix(SuffixInjectorCallbackFunc func);
 
 
 private:

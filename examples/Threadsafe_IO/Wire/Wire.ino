@@ -67,7 +67,7 @@ byte lsm6dsox_read_reg(byte const reg_addr)
   byte read_buf  = 0;
   
   IoRequest  req(write_buf, read_buf);
-  IoResponse rsp = transfer_and_wait(lsm6dsox, req);
+  IoResponse rsp = transferAndWait(lsm6dsox, req);
   
   return read_buf;
 }

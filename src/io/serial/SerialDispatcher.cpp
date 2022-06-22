@@ -202,13 +202,13 @@ void SerialDispatcher::suffix(SuffixInjectorCallbackFunc func)
   iter->suffix_func = func;
 }
 
-void SerialDispatcher::global_prefix(PrefixInjectorCallbackFunc func)
+void SerialDispatcher::globalPrefix(PrefixInjectorCallbackFunc func)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   _global_prefix_callback = func;
 }
 
-void SerialDispatcher::global_suffix(SuffixInjectorCallbackFunc func)
+void SerialDispatcher::globalSuffix(SuffixInjectorCallbackFunc func)
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
   _global_suffix_callback = func;
