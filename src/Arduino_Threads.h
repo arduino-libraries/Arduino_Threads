@@ -85,6 +85,9 @@ private:
 #define SHARED(name, type) \
   Shared<type> name;
 
+#define SHARED(name, type, size) \
+  Shared<type, size> name;
+
 #define ARDUINO_THREADS_CONCAT_(x,y) x##y
 #define ARDUINO_THREADS_CONCAT(x,y) ARDUINO_THREADS_CONCAT_(x,y)
 
