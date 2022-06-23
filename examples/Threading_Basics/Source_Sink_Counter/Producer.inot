@@ -9,6 +9,6 @@ void setup()
 void loop()
 {
   static int i = 0;
-  counter = i;
+  counter.push(i);
   i++;
 }

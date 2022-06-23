@@ -9,5 +9,5 @@ void setup()
 
 void loop()
 {
-  Serial.println(counter);
+  Serial.println(counter.pop());
 }

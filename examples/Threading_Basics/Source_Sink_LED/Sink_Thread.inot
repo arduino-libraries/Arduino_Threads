@@ -12,5 +12,5 @@ void loop()
    * this call will block until new data is inserted from the connected SOURCE. This means
    * that the pace is dictated by the SOURCE that sends data every 100 ms.
    */
-  digitalWrite(LED_BUILTIN, led);
+  digitalWrite(LED_BUILTIN, led.pop());
 }

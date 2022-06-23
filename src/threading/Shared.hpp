@@ -40,10 +40,12 @@ class Shared
 {
 public:
 
-  operator T();
-  void operator = (T const & other);
+  T pop();
+  void push(T const & val);
   inline T peek() const { return _val; }
 
+  operator T() [[deprecated("Use 'pop()' instead.")]];
+  void operator = (T const & val) [[deprecated("Use 'push()' instead.")]];
 
 private:
 
@@ -57,7 +59,7 @@ private:
  **************************************************************************************/
 
 template<class T, size_t QUEUE_SIZE>
-Shared<T,QUEUE_SIZE>::operator T()
+T Shared<T,QUEUE_SIZE>::pop()
 {
   T * val_ptr = _mailbox.try_get_for(rtos::Kernel::wait_for_u32_forever);
   if (val_ptr)
@@ -70,7 +72,7 @@ Shared<T,QUEUE_SIZE>::operator T()
 }
 
 template<class T, size_t QUEUE_SIZE>
-void Shared<T,QUEUE_SIZE>::operator = (T const & other)
+void Shared<T,QUEUE_SIZE>::push(T const & val)
 {
   /* If the mailbox is full we are discarding the
    * oldest element and then push the new one into
@@ -82,14 +84,26 @@ void Shared<T,QUEUE_SIZE>::operator = (T const & other)
     _mailbox.free(val_ptr);
   }
 
-  _val = other;
+  _val = val;
 
   T * val_ptr = _mailbox.try_alloc();
   if (val_ptr)
   {
-    *val_ptr = other;
+    *val_ptr = val;
     _mailbox.put(val_ptr);
   }
+}
+
+template<class T, size_t QUEUE_SIZE>
+Shared<T,QUEUE_SIZE>::operator T()
+{
+  return pop();
+}
+
+template<class T, size_t QUEUE_SIZE>
+void Shared<T,QUEUE_SIZE>::operator = (T const & val)
+{
+  push(val);
 }
 
 #endif /* ARDUINO_THREADS_SHARED_HPP_ */

@@ -20,14 +20,14 @@ New values can be inserted naturally by using the assignment operator `=` as if 
 
 ```C++
 /* Thread_1.inot */
-counter = 10; /* Store a value into the shared variable in a threadsafe manner. */
+counter.push(10); /* Store a value into the shared variable in a threadsafe manner. */
 ```
 If the internal queue is full the oldest element is discarded and the latest element is inserted into the queue.
 
 Retrieving stored data works also very naturally like it would for any POD data type:
 ```C++
 /* Thread_2.inot */
-Serial.println(counter); /* Retrieves a value from the shared variable in a threadsafe manner. */
+Serial.println(counter.pop()); /* Retrieves a value from the shared variable in a threadsafe manner. */
 ```
 
 Should the internal queue be empty when trying to read the latest available value then the thread reading the shared variable will be suspended and the next available thread will be scheduled. Once a new value is stored inside the shared variable the suspended thread resumes operation and consumes the value which has been stored in the internal queue.
@@ -57,16 +57,16 @@ DataProducerThread.counter.connectTo(DataConsumerThread_2.counter);
 Whenever a new value is assigned to a data source, i.e.
 ```C++
 /* DataProducerThread.inot */
-counter = 10;
+counter.push(10);
 ```
 data is automatically copied and stored within the internal queues of all connected data sinks, from where it can be retrieved, i.e.
 ```C++
 /* DataConsumerThread_1.inot */
-Serial.println(counter);
+Serial.println(counter.pop());
 ```
 ```C++
 /* DataConsumerThread_2.inot */
-Serial.println(counter);
+Serial.println(counter.pop());
 ```
 If a thread tries to read from an empty `Sink` the thread is suspended and the next ready thread is scheduled. When a new value is written to a `Source` and consequently copied to a `Sink` the suspended thread is resumed and continuous execution (i.e. read the data and act upon it).
 
