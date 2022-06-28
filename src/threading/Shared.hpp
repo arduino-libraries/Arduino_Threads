@@ -44,9 +44,6 @@ public:
   void push(T const & val);
   inline T peek() const { return _val; }
 
-  operator T() [[deprecated("Use 'pop()' instead.")]];
-  void operator = (T const & val) [[deprecated("Use 'push()' instead.")]];
-
 private:
 
   T _val;
@@ -92,18 +89,6 @@ void Shared<T,QUEUE_SIZE>::push(T const & val)
     *val_ptr = val;
     _mailbox.put(val_ptr);
   }
-}
-
-template<class T, size_t QUEUE_SIZE>
-Shared<T,QUEUE_SIZE>::operator T()
-{
-  return pop();
-}
-
-template<class T, size_t QUEUE_SIZE>
-void Shared<T,QUEUE_SIZE>::operator = (T const & val)
-{
-  push(val);
 }
 
 #endif /* ARDUINO_THREADS_SHARED_HPP_ */
