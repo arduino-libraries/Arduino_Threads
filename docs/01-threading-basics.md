@@ -17,6 +17,8 @@ The advantage of this approach is that a complex and lengthy `loop()` function (
 #### Example (Single-Threaded):
 This sketch demonstrates how one would implement a program which requires the execution of three different actions on three different periodic intervals. In this example we blink three different LEDs at three different intervals.
 
+![Diagram showing the sequential execution of the tasks](assets/Arduino-Threads-Sequential.svg)
+
 **Blink_Three_LEDs.ino**:
 
 ```C++
@@ -59,7 +61,9 @@ You can imagine that with increasing complexity of a sketch it gets quite diffic
 
 #### Example (Multi-Threaded):
 
-The same functionality can be provided via multi-threaded execution in a much cleaner way.
+The same functionality can be provided via multi-threaded execution in a much cleaner way by splitting up the tasks into separate files / threads.
+
+![Diagram showing the parallel execution of the tasks](assets/Arduino-Threads-Parallel.svg)
 
 **Blink_Three_LEDs.ino**
 
