@@ -24,7 +24,7 @@ counter.push(10); /* Store a value into the shared variable in a threadsafe mann
 ```
 If the internal queue is full the oldest element is discarded and the latest element is inserted into the queue.
 
-Retrieving stored data works also very naturally like it would for any POD data type:
+Stored data can be retrieved by using the `pop` function:
 ```C++
 /* Thread_2.inot */
 Serial.println(counter.pop()); /* Retrieves a value from the shared variable in a threadsafe manner. */
