@@ -16,7 +16,7 @@ SHARED(counter, int); /* A globally available, threadsafe, shared variable of ty
 SHARED(counter, int, 8); /* Same as before, but now the internal queue size is defined as 8. */
 ```
 Writing to and reading from the shared variable may not always happen concurrently. I.e. a thread reading sensor data may update the shared variable faster than a slower reader thread would extract those values. Therefore the shared variable is modeled as a queue which can store (buffer) a certain number of entries. That way the slower reader thread can access all the values in the same order as they have been written.
-New values can be inserted naturally by using the assignment operator `=` as if it was just any ordinary variable type, i.e. `int`, `char`, ...
+New values can be inserted by using the `push` function that you may know from other data structures.
 
 ```C++
 /* Thread_1.inot */
@@ -24,7 +24,7 @@ counter.push(10); /* Store a value into the shared variable in a threadsafe mann
 ```
 If the internal queue is full the oldest element is discarded and the latest element is inserted into the queue.
 
-Retrieving stored data works also very naturally like it would for any POD data type:
+Stored data can be retrieved by using the `pop` function:
 ```C++
 /* Thread_2.inot */
 Serial.println(counter.pop()); /* Retrieves a value from the shared variable in a threadsafe manner. */
