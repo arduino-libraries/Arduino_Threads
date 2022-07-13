@@ -82,11 +82,16 @@ public: \
   SinkNonBlocking<type> name{}; \
 private:
 
-#define SHARED(name, type) \
+
+#define SHARED_2_ARG(name, type) \
   Shared<type> name;
 
-#define SHARED(name, type, size) \
+#define SHARED_3_ARG(name, type, size) \
   Shared<type, size> name;
+
+#define GET_SHARED_MACRO(_1,_2,_3,NAME,...) NAME
+#define SHARED(...) GET_SHARED_MACRO(__VA_ARGS__, SHARED_3_ARG, SHARED_2_ARG)(__VA_ARGS__)
+
 
 #define ARDUINO_THREADS_CONCAT_(x,y) x##y
 #define ARDUINO_THREADS_CONCAT(x,y) ARDUINO_THREADS_CONCAT_(x,y)
