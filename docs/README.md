@@ -12,7 +12,9 @@ The following Arduino architectures and boards are currently supported:
 
 ### Tooling
 
-Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli). 
+Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli).
+
+For those who are unsure how to use the Arduino CLI in combination with multi-threading take a look a condensed [getting started guide](06-cli-getting-started.md). There's also the comprehensive [arduino-cli documentation](https://arduino.github.io/arduino-cli/getting-started) to consider.
 
 Download a preliminary, pre-built `arduino-cli` binary (experimental) or patched `Arduino IDE` (very experimental) for your operating system that supports threading:
 | Platform | Download CLI | Download IDE |

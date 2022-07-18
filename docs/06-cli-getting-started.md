@@ -8,7 +8,7 @@ For now, you need to use the Arduino CLI to upload sketches made with the `Ardui
 This document will help you get started, showing you how to find all the information you need to get off the ground without needing to go in depth and learn everything there is to know about the CLI. 
 
 ## Installing 
-To use the Arduino_Threads library, a special version of the Arduino CLI needs to be downloaded and installed. Installing the Arduino CLI is really just as simple as downloading it and extracting the files from the .zip archive, once it is on your computer it is installed. However, to keep your workflow tidy and organized, we recommend moving it to a directory with a short path. If you have been using the Arduino IDE, most likely the files are stored in your `Documents` folder, so let's put the CLI files in the same place. 
+To use the `Arduino_Threads` library, a special version of the Arduino CLI needs to be downloaded and installed. Installing the Arduino CLI is really just as simple as downloading it and extracting the files from the .zip archive, once it is on your computer it is installed. However, to keep your workflow tidy and organized, we recommend moving it to a directory with a short path. If you have been using the Arduino IDE, most likely the files are stored in your `Documents` folder, so let's put the CLI files in the same place. 
 
 Make a new folder in your `Documents` folder, and name it `CLI`, extract the files from the .zip archive to this folder. 
 
