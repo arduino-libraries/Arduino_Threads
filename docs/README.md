@@ -21,9 +21,9 @@ Download a preliminary, pre-built `arduino-cli` binary (experimental) or patched
 | Linux_32Bit | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_32bit.tar.gz) | [`Arduino IDE`](https://downloads.arduino.cc/ide_staging/arduino_threads/arduino-PR-ae92bd4498e867b07581d1d4191be14b9ef0f69a-BUILD-65-linux32.tar.xz) |
 | Linux_64Bit | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_64bit.tar.gz) | [`Arduino IDE`](https://downloads.arduino.cc/ide_staging/arduino_threads/arduino-PR-ae92bd4498e867b07581d1d4191be14b9ef0f69a-BUILD-65-linux64.tar.xz) |
 | Linux_ARMv6 | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_ARMv6.tar.gz) | |
-| Linux_ARMv7 | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_ARMv7.tar.gz) | |
+| Linux_ARMv7 | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Linux_ARMv7.tar.gz) | ([`Arduino IDE`](https://downloads.arduino.cc/ide_staging/arduino_threads/arduino-PR-ae92bd4498e867b07581d1d4191be14b9ef0f69a-BUILD-65-linuxarm.tar.xz) |
 | Windows_32Bit | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Windows_32bit.zip) | |
-| Windows_64Bit | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Windows_64bit.zip) | |
+| Windows_64Bit | [`arduino-cli`](https://downloads.arduino.cc/tools/arduino-cli/inot_support/arduino-cli_git-snapshot_Windows_64bit.zip) | [`Arduino IDE`](https://downloads.arduino.cc/ide_staging/arduino_threads/arduino-PR-ae92bd4498e867b07581d1d4191be14b9ef0f69a-BUILD-65-windows.zip) |
 
 ### Table of Contents
 
