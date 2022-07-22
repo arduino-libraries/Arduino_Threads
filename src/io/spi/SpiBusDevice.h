@@ -44,7 +44,7 @@ public:
 
   bool read(uint8_t * buffer, size_t len, uint8_t sendvalue = 0xFF);
   bool write(uint8_t * buffer, size_t len);
-  bool write_then_read(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue = 0xFF);
+  bool writeThenRead(uint8_t * write_buffer, size_t write_len, uint8_t * read_buffer, size_t read_len, uint8_t sendvalue = 0xFF);
 
 
 private:

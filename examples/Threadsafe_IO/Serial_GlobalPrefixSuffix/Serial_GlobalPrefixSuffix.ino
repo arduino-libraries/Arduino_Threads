@@ -26,8 +26,8 @@ void setup()
   Serial.begin(9600);
   while (!Serial) { }
 
-  Serial.global_prefix(serial_log_message_prefix);
-  Serial.global_suffix(serial_log_message_suffix);
+  Serial.globalPrefix(serial_log_message_prefix);
+  Serial.globalSuffix(serial_log_message_suffix);
 
   Thread_1.start();
   Thread_2.start();

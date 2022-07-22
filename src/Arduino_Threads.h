@@ -77,8 +77,15 @@ SinkNonBlocking<type> name{}
 #define CONNECT(source_thread, source_name, sink_thread, sink_name) \
 source_thread##Private::source_name.connectTo(sink_thread##Private::sink_name)
 
-#define SHARED(name, type) \
-  Shared<type> name
+#define SHARED_2_ARG(name, type) \
+  Shared<type> name;
+
+#define SHARED_3_ARG(name, type, size) \
+  Shared<type, size> name;
+
+#define GET_SHARED_MACRO(_1,_2,_3,NAME,...) NAME
+#define SHARED(...) GET_SHARED_MACRO(__VA_ARGS__, SHARED_3_ARG, SHARED_2_ARG)(__VA_ARGS__)
+
 
 #define ARDUINO_THREADS_CONCAT_(x,y) x##y
 #define ARDUINO_THREADS_CONCAT(x,y) ARDUINO_THREADS_CONCAT_(x,y)

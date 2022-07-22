@@ -30,6 +30,6 @@
  * FUNCTION DECLARATION
  **************************************************************************************/
 
-IoResponse transfer_and_wait(BusDevice & dev, IoRequest & req);
+IoResponse transferAndWait(BusDevice & dev, IoRequest & req);
 
 #endif /* ARDUINO_THREADS_UTIL_H_ */

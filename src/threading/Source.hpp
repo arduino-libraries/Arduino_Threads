@@ -43,7 +43,7 @@ class Source
 public:
 
   void connectTo(SinkBase<T> & sink);
-  void operator = (T const & other);
+  void push(T const & val);
 
 private:
   std::list<SinkBase<T> *> _sink_list;
@@ -60,13 +60,13 @@ void Source<T>::connectTo(SinkBase<T> & sink)
 }
 
 template<typename T>
-void Source<T>::operator = (T const & value)
+void Source<T>::push(T const & val)
 {
   std::for_each(std::begin(_sink_list),
                 std::end  (_sink_list),
-                [value](SinkBase<T> * sink)
+                [val](SinkBase<T> * sink)
                 {
-                  sink->inject(value);
+                  sink->inject(val);
                 });
 }
 

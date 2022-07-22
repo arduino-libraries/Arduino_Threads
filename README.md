@@ -2,12 +2,15 @@
 
 `Arduino_Threads`
 =================
+*Note: This library is currently in [beta](#zap-caveats).*
 
 [![Compile Examples status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/compile-examples.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/compile-examples.yml)
 [![Check Arduino status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml)
 [![Spell Check status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/spell-check.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/spell-check.yml)
 
 This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state. ​
+
+Preeliminary **documentation** and download links for **required tooling** are available within the [`/docs`](docs/README.md) subfolder.
 
 ## :star: Features
 ### :thread: Multi-threaded sketch execution
@@ -43,17 +46,14 @@ As a result this interruption by the scheduler will break Wire I/O access for bo
 `Arduino_Threads` solves this problem by encapsulating the complete I/O access (e.g. reading from a `Wire` client device) within a single function call which generates an I/O request to be asynchronously executed by a high-priority I/O thread. The high-priority I/O thread is the **only** instance which directly communicates with physical hardware.
 
 ### :runner: Asynchronous
-The mechanisms implemented in this library allow any thread to dispatch an I/O request asynchronously and either continue its operation or [yield](https://en.wikipedia.org/wiki/Yield_(multithreading)) control to the next scheduled thread. All I/O requests are stored in a queue and are executed within a high-priority I/O thread after a [context-switch](https://en.wikipedia.org/wiki/Context_switch). An example of this can be seen [here](examples/Threadsafe_IO/Threadsafe_SPI/Threadsafe_SPI.ino)). 
+The mechanisms implemented in this library allow any thread to dispatch an I/O request asynchronously and either continue its operation or [yield](https://en.wikipedia.org/wiki/Yield_(multithreading)) control to the next scheduled thread. All I/O requests are stored in a queue and are executed within a high-priority I/O thread after a [context-switch](https://en.wikipedia.org/wiki/Context_switch). An example of this can be seen [here](examples/Threadsafe_IO/Threadsafe_SPI/Threadsafe_SPI.ino).
 
 ### :relieved: Convenient API
-Although you are free to directly manipulate I/O requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_IO/Threadsafe_Wire/Threadsafe_Wire.ino)) there are convenient `read`/`write`/`write_then_read` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_IO/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
-
-
+Although you are free to directly manipulate I/O requests and responses (e.g. [Threadsafe_Wire](examples/Threadsafe_IO/Threadsafe_Wire/Threadsafe_Wire.ino)) there are convenient `read`/`write`/`writeThenRead` abstractions inspired by the [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) library (e.g. [Threadsafe_Wire_BusIO](examples/Threadsafe_IO/Threadsafe_Wire_BusIO/Threadsafe_Wire_BusIO.ino)).
 
 ## :zap: Caveats
 
-
-
+This library is currently in **BETA** phase. This means that neither the API nor the usage patterns are set in stone and are likely to change. We are publishing this library in the full knowledge that we can't foresee every possible use-case and edge-case. Therefore we would like to treat this library, while it's in beta phase, as an experiment and ask for your input for shaping this library. Please help us by providing feedback in the [issues section](https://github.com/bcmi-labs/Arduino_Threads/issues) or participating in our [discussions](https://github.com/arduino/language/discussions).
 
 ## :mag_right: Resources
 

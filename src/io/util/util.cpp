@@ -26,7 +26,7 @@
  * FUNCTION DEFINITION
  **************************************************************************************/
 
-IoResponse transfer_and_wait(BusDevice & dev, IoRequest & req)
+IoResponse transferAndWait(BusDevice & dev, IoRequest & req)
 {
   IoResponse rsp = dev.transfer(req);
   rsp->wait();

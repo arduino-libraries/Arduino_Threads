@@ -10,7 +10,7 @@ void loop()
    * 'counter'. Internally this is stored within a queue in a FIFO
    * (First-In/First-Out) manner.
    */
-  counter = i;
+  counter.push(i);
   i++;
   delay(100);
 }

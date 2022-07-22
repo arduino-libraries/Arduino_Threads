@@ -12,20 +12,22 @@ A `Shared` variable is a global variable accessible to all threads. It can be de
 ```C++
 /* SharedVariables.h */
 SHARED(counter, int); /* A globally available, threadsafe, shared variable of type 'int'. */
+/* ... or ... */
+SHARED(counter, int, 8); /* Same as before, but now the internal queue size is defined as 8. */
 ```
 Writing to and reading from the shared variable may not always happen concurrently. I.e. a thread reading sensor data may update the shared variable faster than a slower reader thread would extract those values. Therefore the shared variable is modeled as a queue which can store (buffer) a certain number of entries. That way the slower reader thread can access all the values in the same order as they have been written.
-New values can be inserted naturally by using the assignment operator `=` as if it was just any ordinary variable type, i.e. `int`, `char`, ...
+New values can be inserted by using the `push` function that you may know from other data structures.
 
 ```C++
 /* Thread_1.inot */
-counter = 10; /* Store a value into the shared variable in a threadsafe manner. */
+counter.push(10); /* Store a value into the shared variable in a threadsafe manner. */
 ```
 If the internal queue is full the oldest element is discarded and the latest element is inserted into the queue.
 
-Retrieving stored data works also very naturally like it would for any POD data type:
+Stored data can be retrieved by using the `pop` function:
 ```C++
 /* Thread_2.inot */
-Serial.println(counter); /* Retrieves a value from the shared variable in a threadsafe manner. */
+Serial.println(counter.pop()); /* Retrieves a value from the shared variable in a threadsafe manner. */
 ```
 
 Should the internal queue be empty when trying to read the latest available value then the thread reading the shared variable will be suspended and the next available thread will be scheduled. Once a new value is stored inside the shared variable the suspended thread resumes operation and consumes the value which has been stored in the internal queue.
@@ -55,16 +57,16 @@ DataProducerThread.counter.connectTo(DataConsumerThread_2.counter);
 Whenever a new value is assigned to a data source, i.e.
 ```C++
 /* DataProducerThread.inot */
-counter = 10;
+counter.push(10);
 ```
 data is automatically copied and stored within the internal queues of all connected data sinks, from where it can be retrieved, i.e.
 ```C++
 /* DataConsumerThread_1.inot */
-Serial.println(counter);
+Serial.println(counter.pop());
 ```
 ```C++
 /* DataConsumerThread_2.inot */
-Serial.println(counter);
+Serial.println(counter.pop());
 ```
 If a thread tries to read from an empty `Sink` the thread is suspended and the next ready thread is scheduled. When a new value is written to a `Source` and consequently copied to a `Sink` the suspended thread is resumed and continuous execution (i.e. read the data and act upon it).
 

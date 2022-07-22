@@ -44,7 +44,7 @@ public:
 
 
   inline arduino::HardwareI2C & wire() { return _wire; }
-  inline byte slave_addr() const { return _slave_addr; }
+  inline byte slaveAddr()  const { return _slave_addr; }
   inline bool restart()    const { return _restart; }
   inline bool stop()       const { return _stop; }
 
