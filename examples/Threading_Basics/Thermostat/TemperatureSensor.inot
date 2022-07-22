@@ -9,9 +9,9 @@ void setup()
 void loop()
 {
   /* Read temperature - since this is just a simulation
-   * so we take a random value between 15 and 25 °C.
+   * so we take a random value between 15 and 30 °C.
    */
-  float const temperature_deg = (rand() % 16) + 10;
+  float const temperature_deg = (rand() % 16) + 15;
   /* Store in temperature source variable. */
   temperature.push(temperature_deg);
   /* Do only one temperature sensore measurement per second. */

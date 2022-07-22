@@ -1,15 +1,9 @@
 /* Define a data sink named 'temperature' of type 'float'. */
 SINK(temperature, float, 10);
 
-static String living_room_message_prefix(String const & /* msg */)
-{
-  return String("[Living Room] ");
-}
-
 void setup()
 {
   Serial.begin(9600);
-  Serial.prefix(living_room_message_prefix);
   while (!Serial) { }
 }
 

@@ -14,11 +14,11 @@
 
 void setup()
 {
-  /* Connect the TemperatureSensor thread providing temperature readings
-   * with the various TemperatureControl_* threads.
+  /* Connect the temperature sensor thread providing temperature readings
+   * with the various temperature control unit threads.
    */
-  TemperatureSensor.temperature.connectTo(TemperatureControl_LivingRoom.temperature);
-  TemperatureSensor.temperature.connectTo(TemperatureControl_SleepingRoom.temperature);
+  TemperatureSensor.temperature.connectTo(HeatingControl.temperature);
+  TemperatureSensor.temperature.connectTo(AirConditionerControl.temperature);
   TemperatureSensor.temperature.connectTo(TemperatureSensorReporter.temperature);
 
   /* Start the individual threads for sensing the temperature
@@ -26,8 +26,8 @@ void setup()
    * temperature on a per-room basis.
    */
   TemperatureSensor.start();
-  TemperatureControl_LivingRoom.start();
-  TemperatureControl_SleepingRoom.start();
+  HeatingControl.start();
+  AirConditionerControl.start();
   TemperatureSensorReporter.start();
 }
 
