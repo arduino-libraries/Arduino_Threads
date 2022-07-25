@@ -1,0 +1,19 @@
+/* Define a data source named 'temperature' of type 'float'. */
+SOURCE(temperature, float);
+
+void setup()
+{
+
+}
+
+void loop()
+{
+  /* Read temperature - since this is just a simulation
+   * so we take a random value between 15 and 30 °C.
+   */
+  float const temperature_deg = (rand() % 16) + 15;
+  /* Store in temperature source variable. */
+  temperature.push(temperature_deg);
+  /* Do only one temperature sensore measurement per second. */
+  delay(5000);
+}

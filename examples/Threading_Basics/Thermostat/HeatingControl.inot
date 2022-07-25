@@ -1,0 +1,53 @@
+/* Define a data sink named 'temperature' of type 'float'. */
+SINK(temperature, float, 10);
+
+void setup()
+{
+  Serial.begin(9600);
+  while (!Serial) { }
+}
+
+bool is_heating_on = false;
+
+void loop()
+{
+  float current_temperature_deg = temperature.pop();
+
+  /* Check if the temperature reported by the thermostat is above
+   * or below 22.0 °C. If the temperature is below 22.0 °C, turn
+   * on the heating.
+   */
+  bool turn_heating_on  = false,
+       turn_heating_off = false;
+
+  if (current_temperature_deg < 22.0f)
+    turn_heating_on = true;
+  else
+    turn_heating_off = true;
+
+  /* Only perform a simulated turning on of
+   * the heating if the heating is currently
+   * turned off.
+   */
+  if (is_heating_on && turn_heating_off)
+  {
+    is_heating_on = false;
+  
+    Serial.block();
+    Serial.print("Heating OFF (");
+    Serial.print(current_temperature_deg);
+    Serial.println(" °C)");
+    Serial.unblock();
+  }
+
+  if (!is_heating_on && turn_heating_on)
+  {
+    is_heating_on = true;
+    
+    Serial.block();
+    Serial.print("Heating ON (");
+    Serial.print(current_temperature_deg);
+    Serial.println(" °C)");
+    Serial.unblock();
+  }
+}

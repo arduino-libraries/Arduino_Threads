@@ -1,0 +1,19 @@
+/* Define a data sink named 'temperature' of type 'float'. */
+SINK(temperature, float);
+
+void setup()
+{
+  Serial.begin(9600);
+  while (!Serial) { }
+}
+
+void loop()
+{
+  float const current_temperature_deg = temperature.pop();
+
+  Serial.block();
+  Serial.print("Temperature = ");
+  Serial.print(current_temperature_deg);
+  Serial.println(" °C");
+  Serial.unblock();
+}
