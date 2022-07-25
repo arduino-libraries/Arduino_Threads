@@ -36,3 +36,4 @@ In the following documents you will find more information about the topics cover
 3. [Threadsafe `Serial`](threadsafe-serial.md)
 4. [Threadsafe `Wire`](threadsafe-wire.md)
 5. [Threadsafe `SPI`](threadsafe-spi.md)
+6. [FAQ Known Limitation](faq-compilation-failure.md)
