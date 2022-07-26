@@ -17,9 +17,9 @@ void setup()
   /* Connect the temperature sensor thread providing temperature readings
    * with the various temperature control unit threads.
    */
-  TemperatureSensor.temperature.connectTo(HeatingControl.temperature);
-  TemperatureSensor.temperature.connectTo(AirConditionerControl.temperature);
-  TemperatureSensor.temperature.connectTo(TemperatureSensorReporter.temperature);
+  CONNECT(TemperatureSensor, temperature, HeatingControl, temperature);
+  CONNECT(TemperatureSensor, temperature, AirConditionerControl, temperature);
+  CONNECT(TemperatureSensor, temperature, TemperatureSensorReporter, temperature);
 
   /* Start the individual threads for sensing the temperature
    * and controlling heating/air-conditioning based on the sensed
