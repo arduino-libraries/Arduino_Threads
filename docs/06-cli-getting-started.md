@@ -1,7 +1,7 @@
 <img src="https://content.arduino.cc/website/Arduino_logo_teal.svg" height="100" align="right"/>
 
-Getting Started With the `Arduino CLI`
-===============
+How to get started with the `Arduino CLI` and `Arduino_Threads`
+===============================================================
 ## Introduction
 For now, you need to use the Arduino CLI to upload sketches made with the `Arduino_Threads` library. It can be intimidating at first, but once you get the hang of it, it is not that different from working in the IDE. 
 
