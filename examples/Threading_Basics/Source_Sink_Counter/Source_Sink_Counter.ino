@@ -5,7 +5,7 @@
 
 void setup()
 {
-  Producer.counter.connectTo(Consumer.counter);
+  CONNECT(Producer, counter, Consumer, counter);
   Producer.start();
   Consumer.start();
 }

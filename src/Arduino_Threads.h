@@ -41,9 +41,7 @@
  **************************************************************************************/
 
 #define SOURCE(name, type) \
-public: \
-  Source<type> name; \
-private:
+Source<type> name;
 
 /* We need to call the SinkBlocking<T>(size_t const size)
  * non-default constructor using size as parameter.
@@ -61,14 +59,10 @@ private:
  */
 
 #define SINK_2_ARG(name, type) \
-public: \
-  SinkBlocking<type> name{1}; \
-private:
+SinkBlocking<type> name{1}
 
 #define SINK_3_ARG(name, type, size) \
-public: \
-  SinkBlocking<type> name{size}; \
-private:
+SinkBlocking<type> name{size}
 
 /* Black C macro magic enabling "macro overloading"
  * with same name macro, but multiple arguments.
@@ -78,10 +72,10 @@ private:
 #define SINK(...) GET_SINK_MACRO(__VA_ARGS__, SINK_3_ARG, SINK_2_ARG)(__VA_ARGS__)
 
 #define SINK_NON_BLOCKING(name, type) \
-public: \
-  SinkNonBlocking<type> name{}; \
-private:
+SinkNonBlocking<type> name{}
 
+#define CONNECT(source_thread, source_name, sink_thread, sink_name) \
+source_thread##Private::source_name.connectTo(sink_thread##Private::sink_name)
 
 #define SHARED_2_ARG(name, type) \
   Shared<type> name;
@@ -135,13 +129,28 @@ private:
   void threadFunc();
 };
 
-#define THD_ENTER(tabname) class ARDUINO_THREADS_CONCAT(tabname, Class) : public Arduino_Threads { \
-public: \
-  ARDUINO_THREADS_CONCAT(tabname, Class)() { _tabname = ARDUINO_THREADS_TO_STRING(tabname); } \
-private: \
+#define THD_SETUP(ns) ns::setup()
+#define THD_LOOP(ns) ns::loop()
 
-#define THD_DONE(tabname) \
-};  \
+#define THD_ENTER(tabname) \
+namespace ARDUINO_THREADS_CONCAT(tabname,Private)\
+{\
+  void setup();\
+  void loop();\
+}\
+class ARDUINO_THREADS_CONCAT(tabname, Class) : public Arduino_Threads\
+{\
+public:\
+  ARDUINO_THREADS_CONCAT(tabname, Class)() { _tabname = ARDUINO_THREADS_TO_STRING(tabname); }\
+protected:\
+  virtual void setup() override { THD_SETUP(ARDUINO_THREADS_CONCAT(tabname,Private)); }\
+  virtual void loop() override { THD_LOOP(ARDUINO_THREADS_CONCAT(tabname,Private)); }\
+};\
+namespace ARDUINO_THREADS_CONCAT(tabname,Private)\
+{
+
+#define THD_DONE(tabname)\
+};\
 ARDUINO_THREADS_CONCAT(tabname,Class) tabname;
 
 #endif /* ARDUINO_THREADS_H_ */

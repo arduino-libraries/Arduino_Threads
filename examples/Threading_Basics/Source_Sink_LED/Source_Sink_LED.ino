@@ -5,7 +5,7 @@
 
 void setup()
 {
-  Source_Thread.led.connectTo(Sink_Thread.led);
+  CONNECT(Source_Thread, led, Sink_Thread, led);
   Sink_Thread.start();
   Source_Thread.start();
 }
