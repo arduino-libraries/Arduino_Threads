@@ -3,7 +3,7 @@
 Thread-safe `SPI`
 ===============
 ## Introduction
-`SPI` communication shares the same problems that [have been outlined](04-threadsafe-wire.md) for using `Wire` in a multithreaded environment. This is due to the fact that every `SPI` transaction consists of multiple function calls, i.e.
+`SPI` communication shares the same problems that [have been outlined](threadsafe-wire.md) for using `Wire` in a multithreaded environment. This is due to the fact that every `SPI` transaction consists of multiple function calls, i.e.
 
 ```C++
 digitalWrite(cs, LOW);
