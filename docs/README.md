@@ -2,7 +2,7 @@
 
 `Arduino_Threads/docs`
 ======================
-The Arduino threading APIs brings multi-threading to the world of Arduino. If you're new to the concept of threads we suggest you have first a look at the [Threading Basics](01-threading-basics.md) document.
+The Arduino threading APIs brings multi-threading to the world of Arduino. If you're new to the concept of threads we suggest you have first a look at the [Threading Basics](threading-basics.md) document.
 
 The following Arduino architectures and boards are currently supported:
 * `mbed_portenta`: [Portenta H7](https://store.arduino.cc/products/portenta-h7)
@@ -12,7 +12,9 @@ The following Arduino architectures and boards are currently supported:
 
 ### Tooling
 
-Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli). 
+Threading with the above mentioned Arduino cores can be achieved by leveraging the [Arduino_Threads](https://github.com/bcmi-labs/Arduino_Threads) library in combination with the [Arduino Command Line Interface](https://github.com/facchinm/arduino-cli/commits/arduino_threads_rebased) (arduino-cli).
+
+For those who are unsure how to use the Arduino CLI in combination with multi-threading take a look a condensed [getting started guide](cli-getting-started.md). There's also the comprehensive [arduino-cli documentation](https://arduino.github.io/arduino-cli/getting-started) to consider.
 
 Download a preliminary, pre-built `arduino-cli` binary (experimental) or patched `Arduino IDE` (very experimental) for your operating system that supports threading:
 | Platform | Download CLI | Download IDE |
@@ -29,8 +31,8 @@ Download a preliminary, pre-built `arduino-cli` binary (experimental) or patched
 
 In the following documents you will find more information about the topics covered by this library.
 
-1. [Threading Basics](01-threading-basics.md)
-2. [Data exchange between threads](02-data-exchange.md)
-3. [Threadsafe `Serial`](03-threadsafe-serial.md)
-4. [Threadsafe `Wire`](04-threadsafe-wire.md)
-5. [Threadsafe `SPI`](05-threadsafe-spi.md)
+1. [Threading Basics](threading-basics.md)
+2. [Data exchange between threads](data-exchange.md)
+3. [Threadsafe `Serial`](threadsafe-serial.md)
+4. [Threadsafe `Wire`](threadsafe-wire.md)
+5. [Threadsafe `SPI`](threadsafe-spi.md)

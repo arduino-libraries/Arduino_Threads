@@ -1,0 +1,53 @@
+/* Define a data sink named 'temperature' of type 'float'. */
+SINK(temperature, float, 10);
+
+void setup()
+{
+  Serial.begin(9600);
+  while (!Serial) { }
+}
+
+bool is_ac_on = false;
+
+void loop()
+{
+  float current_temperature_deg = temperature.pop();
+
+  /* Check if the temperature reported by the thermostat is above
+   * or below 26.0 °C. If the temperature is above 26.0 °C, turn
+   * on the AC.
+   */
+  bool turn_ac_on  = false,
+       turn_ac_off = false;
+
+  if (current_temperature_deg > 26.0f)
+    turn_ac_on = true;
+  else
+    turn_ac_off = true;
+
+  /* Only perform a simulated turning on of
+   * the air conditioner if the heating is
+   * air conditioner is currently turned off.
+   */
+  if (is_ac_on && turn_ac_off)
+  {
+    is_ac_on = false;
+  
+    Serial.block();
+    Serial.print("AC OFF (");
+    Serial.print(current_temperature_deg);
+    Serial.println(" °C)");
+    Serial.unblock();
+  }
+
+  if (!is_ac_on && turn_ac_on)
+  {
+    is_ac_on = true;
+    
+    Serial.block();
+    Serial.print("AC ON  (");
+    Serial.print(current_temperature_deg);
+    Serial.println(" °C)");
+    Serial.unblock();
+  }
+}
