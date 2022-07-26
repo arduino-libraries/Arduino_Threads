@@ -107,4 +107,4 @@ If everything went as it should, the sketch is now uploading to the board, and o
 
 ![Uploaded sketch](./assets/uploaded.png)
 
-Now that you know how to do this, it might be a good opportunity to take the deep dive in the DIY-spirit, experiment with different workflows and interfaces for the terminal to tailor your Arduino experience to your liking. 
+Now that you know how to do this, it might be a good opportunity to take the deep dive in the DIY-spirit, experiment with different workflows and interfaces for the terminal to tailor your Arduino experience to your liking.
