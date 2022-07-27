@@ -51,8 +51,8 @@ SINK(counter, int, 10); /* Declaration of a data sink of type `int` with a inter
 In order to actually facilitate the flow of data from a source to a sink the sinks must be connected to the desired data source. This is done within the main `ino`-file:
 ```C++
 /* MySinkSourceDemo.ino */
-DataProducerThread.counter.connectTo(DataConsumerThread_1.counter);
-DataProducerThread.counter.connectTo(DataConsumerThread_2.counter);
+CONNECT(DataProducerThread, counter, DataConsumerThread_1, counter);
+CONNECT(DataProducerThread, counter, DataConsumerThread_2, counter);
 ```
 Whenever a new value is assigned to a data source, i.e.
 ```C++
