@@ -342,7 +342,7 @@ void SerialDispatcher::handleSerialReader()
  * GLOBAL VARIABLE DECLARATION
  **************************************************************************************/
 
-#ifdef ARDUINO_PORTENTA_H7_M4
+#ifdef ARDUINO_GENERIC_STM32H747_M4
   SerialDispatcher Serial(Serial1); /* No SerialUSB for Portenta H7 / M4 Core */
 #else
   SerialDispatcher Serial(SerialUSB);
