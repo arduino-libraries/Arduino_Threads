@@ -48,15 +48,19 @@ jobs:
           - fqbn: arduino:mbed_nano:nano33ble
             platforms: |
               - name: arduino:mbed_nano
+            artifact-name-suffix: arduino-mbed_nano-nano33ble
           - fqbn: arduino:mbed_nano:nanorp2040connect
             platforms: |
               - name: arduino:mbed_nano
+            artifact-name-suffix: arduino-mbed_nano-nanorp2040connect
           - fqbn: arduino:mbed_portenta:envie_m7:target_core=cm4
             platforms: |
               - name: arduino:mbed_portenta
+            artifact-name-suffix: arduino-mbed_portenta-envie_m7-target_core-cm4
           - fqbn: arduino:mbed_portenta:envie_m7:target_core=cm7
             platforms: |
               - name: arduino:mbed_portenta
+            artifact-name-suffix: arduino-mbed_portenta-envie_m7
 
     steps:
       - name: Checkout
@@ -101,6 +105,6 @@ jobs:
       - name: Save memory usage change report as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.SKETCHES_REPORTS_ARTIFACT_NAME }}
+          name: sketches-report-${{ matrix.board.artifact-name-suffix }}
           if-no-files-found: error
           path: ${{ env.SKETCHES_REPORTS_PATH }}
