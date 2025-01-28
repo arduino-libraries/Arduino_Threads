@@ -65,10 +65,10 @@ byte lsm6dsox_read_reg(byte const reg_addr)
    */
   byte write_buf = reg_addr;
   byte read_buf  = 0;
-  
+
   IoRequest  req(write_buf, read_buf);
   IoResponse rsp = transferAndWait(lsm6dsox, req);
-  
+
   return read_buf;
 }
 
@@ -84,7 +84,7 @@ void lsm6dsox_thread_func()
     rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
     /* Try to read some data from the LSM6DSOX. */
     byte const who_am_i = lsm6dsox_read_reg(LSM6DSOX_WHO_AM_I_REG);
-    /* Print thread id and chip id value to serial. */
+    /* Print thread ID and chip ID value to serial. */
     char msg[64] = {0};
     snprintf(msg, sizeof(msg), "%s: LSM6DSOX[WHO_AM_I] = 0x%X", rtos::ThisThread::get_name(), who_am_i);
     Serial.println(msg);

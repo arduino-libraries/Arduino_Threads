@@ -77,7 +77,7 @@ void SerialDispatcher::end()
 {
   mbed::ScopedLock<rtos::Mutex> lock(_mutex);
 
-  /* Retrieve the current thread id and remove
+  /* Retrieve the current thread ID and remove
    * the thread data from the thread data list.
    */
   osThreadId_t const current_thread_id = rtos::ThisThread::get_id();
@@ -297,7 +297,7 @@ void SerialDispatcher::threadFunc()
 
 std::list<SerialDispatcher::ThreadCustomerData>::iterator SerialDispatcher::findThreadCustomerDataById(osThreadId_t const thread_id)
 {
-  return std::find_if(std::begin(_thread_customer_list), 
+  return std::find_if(std::begin(_thread_customer_list),
                       std::end  (_thread_customer_list),
                       [thread_id](ThreadCustomerData const d) -> bool
                       {

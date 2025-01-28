@@ -8,9 +8,9 @@
 [![Check Arduino status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/check-arduino.yml)
 [![Spell Check status](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/spell-check.yml/badge.svg)](https://github.com/arduino-libraries/Arduino_Threads/actions/workflows/spell-check.yml)
 
-This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state. ​
+This library makes it easy to use the multi-threading capability of [Arduino](https://www.arduino.cc/) boards that use an [Mbed OS](https://os.mbed.com/docs/mbed-os/latest/introduction/index.html)-based core library. Additionally this library provides thread-safe access to `Wire`, `SPI` and `Serial` which is relevant when creating multi-threaded sketches in order to avoid common pitfalls such as race-conditions and invalid state.
 
-Preeliminary **documentation** and download links for **required tooling** are available within the [`/docs`](docs/README.md) subfolder.
+Preliminary **documentation** and download links for **required tooling** are available within the [`/docs`](docs/README.md) subfolder.
 
 ## :star: Features
 ### :thread: Multi-threaded sketch execution

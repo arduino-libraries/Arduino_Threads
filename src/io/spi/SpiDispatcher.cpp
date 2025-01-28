@@ -141,7 +141,7 @@ void SpiDispatcher::processSpiIoRequest(SpiIoTransaction * spi_io_transaction)
   config->spi().beginTransaction(config->settings());
 
   /* In a first step transmit the complete write buffer and
-   * write back the receive data directly into the write buffer  
+   * write back the receive data directly into the write buffer
    */
   size_t bytes_sent = 0;
   for(; bytes_sent < io_request->bytes_to_write; bytes_sent++)

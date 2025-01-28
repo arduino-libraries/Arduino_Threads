@@ -85,7 +85,7 @@ void bmp388_thread_func()
     rtos::ThisThread::sleep_for(rtos::Kernel::Clock::duration_u32(random(5,500)));
     /* Try to read some data from the BMP3888. */
     byte const chip_id = bmp388_read_reg(BMP388_CHIP_ID_REG_ADDR);
-    /* Print thread id and chip id value to serial. */
+    /* Print thread ID and chip ID value to serial. */
     char msg[64] = {0};
     snprintf(msg, sizeof(msg), "%s: Chip ID = 0x%X", rtos::ThisThread::get_name(), chip_id);
     Serial.println(msg);

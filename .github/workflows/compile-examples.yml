@@ -68,22 +68,22 @@ jobs:
 
       # it's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
       - name: Checkout ArduinoCore-mbed
-        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        # this step only needed when the Arduino Mbed OS Boards platform sourced from the repository is being used
         uses: actions/checkout@v4
         with:
           repository: arduino/ArduinoCore-mbed
-          # the arduino/actions/libraries/compile-examples action will install the platform from this path
+          # the arduino/compile-sketches action will install the platform from this path
           path: ${{ env.ARDUINOCORE_MBED_STAGING_PATH }}
 
       - name: Checkout ArduinoCore-API
-        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        # this step only needed when the Arduino Mbed OS Boards platform sourced from the repository is being used
         uses: actions/checkout@v4
         with:
           repository: arduino/ArduinoCore-API
           path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
 
       - name: Install ArduinoCore-API
-        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        # this step only needed when the Arduino Mbed OS Boards platform sourced from the repository is being used
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
 

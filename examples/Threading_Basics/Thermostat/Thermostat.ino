@@ -1,10 +1,10 @@
 /* This example emulates a thermostat system which consists of
- * a single temperature sensore and multiple heating devices
+ * a single temperature sensor and multiple heating devices
  * or air-conditioners. The temperature sensor provides periodic
  * temperature sensor measurements and acts as a temperature source.
  * This temperature is consumed by various TemperatureControl_ threads
  * which perform the act of actual room temperature control.
- * 
+ *
  * Note: While there is only a single temperature "source" there are
  * multiple temperature "sinks". The source/sink paradigm is constructed
  * in such a way, that each sink is guaranteed to see every value provided

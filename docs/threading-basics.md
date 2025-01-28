@@ -3,7 +3,7 @@
 Threading Basics
 ================
 ## Introduction
-Threading is a concept that is used on many operating systems to run tasks in parallel. An Arduino example of two such tasks could be to read the position of a potentiometer knob while controlling a servo motor to follow that position. Running such tasks in parallel is also called multitasking. 
+Threading is a concept that is used on many operating systems to run tasks in parallel. An Arduino example of two such tasks could be to read the position of a potentiometer knob while controlling a servo motor to follow that position. Running such tasks in parallel is also called multitasking.
 
 Previously Arduino sketches didn't support the concept of multitasking, unless you took specific measures to support it. With this so called single-threaded approach instructions in your Arduino sketch are executed sequentially one by one. If an instruction or a function call respectively makes the runtime environment wait for its execution to complete, it's called a "blocking" function. You may have encountered the limitations of this when interacting with multiple sensors and actuators at once. For example if you let a servo motor react to the data read from a potentiometer as mentioned above. While the servo motor is moving to its target position no further reading of the potentiometer can be done because the program waits until the servo is done moving. To solve this issue multitasking can be used which allows to "simultaneously" execute multiple task such as reading from a sensor and controlling a motor. In the context of multitasking a thread is basically a mechanism (provided usually by the operating system) to encapsulate a task to be run concurrently with others.
 
