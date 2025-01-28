@@ -14,7 +14,7 @@ void loop()
   while (Serial.available())
     serial_msg += (char)Serial.read();
 
-  /* Print thread id and chip id value to serial. */
+  /* Print thread ID and chip ID value to serial. */
   if (serial_msg.length())
   {
     Serial.block();

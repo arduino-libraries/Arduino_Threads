@@ -2,7 +2,7 @@
 
 `Arduino_Threads/docs`
 ======================
-The Arduino threading APIs brings multi-threading to the world of Arduino. If you're new to the concept of threads we suggest you have first a look at the [Threading Basics](threading-basics.md) document.
+The Arduino threading APIs bring multi-threading to the world of Arduino. If you're new to the concept of threads we suggest you first take a look at the [Threading Basics](threading-basics.md) document.
 
 The following Arduino architectures and boards are currently supported:
 * `mbed_portenta`: [Portenta H7](https://store.arduino.cc/products/portenta-h7)

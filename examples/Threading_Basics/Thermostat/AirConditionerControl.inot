@@ -32,7 +32,7 @@ void loop()
   if (is_ac_on && turn_ac_off)
   {
     is_ac_on = false;
-  
+
     Serial.block();
     Serial.print("AC OFF (");
     Serial.print(current_temperature_deg);
@@ -43,7 +43,7 @@ void loop()
   if (!is_ac_on && turn_ac_on)
   {
     is_ac_on = true;
-    
+
     Serial.block();
     Serial.print("AC ON  (");
     Serial.print(current_temperature_deg);

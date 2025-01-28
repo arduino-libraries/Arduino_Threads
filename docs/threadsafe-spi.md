@@ -25,7 +25,7 @@ BusDevice bmp388(SPI, DEVICE_CS_PIN, spi_clock, spi_bit_order, spi_bit_mode);
 BusDevice bmp388(SPI, device_cs_select, device_cs_deselect, spi_settings);
 ```
 
-### Asynchronous thread-safe `SPI` access with `transfer`/`wait` 
+### Asynchronous thread-safe `SPI` access with `transfer`/`wait`
 Once a `BusDevice` is declared it can be used to transfer data to and from the peripheral by means of the `transfer()` API. As opposed to the traditional Arduino bus APIs, `transfer()` is asynchronous and thus won't block execution unless the `wait()` function is called.
 Note that we are in a parallel programming environment which means that calls to `transfer()` on the same bus from different sketches will be arbitrated.
 
@@ -39,12 +39,12 @@ byte bmp388_read_reg(byte const reg_addr)
   IoResponse response = bmp388.transfer(request);
   /* Do other stuff */
   response->wait(); /* Wait for the completion of the IO Request. */
-  auto value = read_write_buffer[2]; 
+  auto value = read_write_buffer[2];
   return value;
 }
 ```
 
-### Synchronous thread-safe `SPI` access with `transferAndWait` 
+### Synchronous thread-safe `SPI` access with `transferAndWait`
 ([`examples/Threadsafe_IO/SPI`](../examples/Threadsafe_IO/SPI))
 
 As the use of the `transfer` API might be difficult to grasp there's also a synchronous API call combining the request of the transfer and waiting for its result using `transferAndWait`.
@@ -57,7 +57,7 @@ byte bmp388_read_reg(byte const reg_addr)
   IoRequest request(read_write_buffer, sizeof(read_write_buffer), nullptr, 0);
   IoResponse response = transferAndWait(bmp388, request);
 
-  auto value = read_write_buffer[2]; 
+  auto value = read_write_buffer[2];
   return value;
 }
 ```
