@@ -64,12 +64,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # it's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
       - name: Checkout ArduinoCore-mbed
         # this step only needed when the Arduino Mbed OS Boards platform sourced from the repository is being used
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: arduino/ArduinoCore-mbed
           # the arduino/compile-sketches action will install the platform from this path
@@ -77,7 +77,7 @@ jobs:
 
       - name: Checkout ArduinoCore-API
         # this step only needed when the Arduino Mbed OS Boards platform sourced from the repository is being used
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: arduino/ArduinoCore-API
           path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
